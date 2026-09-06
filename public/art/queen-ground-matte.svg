@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="768" viewBox="0 0 432 768">
+ <defs>
+  <linearGradient id="coverage" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="768">
+   <stop offset="0" stop-color="white"/>
+   <stop offset=".64" stop-color="white"/>
+   <stop offset=".70" stop-color="white" stop-opacity=".85"/>
+   <stop offset=".79" stop-color="white" stop-opacity="0"/>
+  </linearGradient>
+  <filter id="drift" x="-20%" y="-10%" width="140%" height="120%">
+   <feTurbulence type="fractalNoise" baseFrequency=".019 .035" numOctaves="2" seed="17" result="noise"/>
+   <feDisplacementMap in="SourceGraphic" in2="noise" scale="48" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+ </defs>
+ <rect x="-60" y="-60" width="552" height="888" fill="url(#coverage)" filter="url(#drift)"/>
+</svg>
+

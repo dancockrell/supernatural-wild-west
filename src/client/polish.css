@@ -1,0 +1,329 @@
+/* Play-first presentation: the surrounding fiction lives in the Legend dialog. */
+@media (prefers-reduced-motion: reduce) {
+  .symbol:after {
+    animation: none !important;
+  }
+}
+.reduced-motion .symbol:after {
+  animation: none !important;
+}
+.symbol:not(.wild):not(.scatter) > span {
+  display: none;
+}
+.symbol.win-focus {
+  z-index: 3;
+  border-color: #fff0bb;
+  box-shadow:
+    inset 0 0 24px #ffd57588,
+    0 0 22px #e6b85377;
+}
+.symbol.win-focus:after {
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    #ffedb96b 45%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+  animation: spirit-sweep 0.65s ease-out both;
+}
+@keyframes spirit-sweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+.lore-aside,
+.feature-strip,
+.eyebrow,
+.subtitle,
+.town-caption,
+.studio > span:last-child,
+.cabinet-bottom,
+.under-controls > span:nth-child(2) {
+  display: none;
+}
+.topbar {
+  height: 58px;
+  border: 0;
+}
+.shell {
+  max-width: 1600px;
+  padding: 0 28px;
+}
+.title-area {
+  margin: 0 0 12px;
+}
+.title-area h1 {
+  font-size: clamp(42px, 5vw, 68px);
+  line-height: 1.05;
+}
+.game {
+  max-width: min(1000px, calc((100svh - 250px) * 1.88));
+  min-width: 650px;
+}
+.symbol {
+  height: clamp(58px, calc((100svh - 340px) / 5), 138px);
+}
+.relic-art {
+  width: clamp(80px, 12vh, 130px);
+  height: clamp(80px, 12vh, 130px);
+}
+.cabinet {
+  padding-bottom: 9px;
+  border-radius: 8px;
+}
+.locations {
+  height: 38px;
+}
+.location-number {
+  display: none;
+}
+.event-line {
+  height: 34px;
+}
+.event-line p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.controls {
+  background: linear-gradient(180deg, #172333f5, #060d16fa);
+  border-color: #ae8e58;
+  border-radius: 8px;
+  box-shadow:
+    0 12px 45px #000a,
+    inset 0 1px #e4c28233;
+}
+.spin-button {
+  box-shadow:
+    0 0 28px #d6973440,
+    inset 0 1px #fff1aa;
+  transition:
+    filter 0.15s,
+    transform 0.15s;
+}
+.spin-button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.under-controls {
+  opacity: 0.7;
+  margin-top: 9px;
+}
+footer {
+  max-width: 1000px;
+  margin: 12px auto 0;
+  padding: 8px 0;
+  border: 0;
+  font-size: 8px;
+}
+.portrait-art {
+  transform-origin: 50% 65%;
+  transition:
+    transform 0.6s ease,
+    filter 0.6s;
+}
+.reel:not(.rolling) .symbol:hover .portrait-art {
+  transform: scale(1.07) translateY(-1%);
+  filter: brightness(1.25);
+}
+.night .reel:not(.rolling) .portrait-medium {
+  animation: medium-drift 6s ease-in-out infinite alternate;
+}
+.night .reel:not(.rolling) .portrait-rider {
+  animation: rider-breathe 7s ease-in-out infinite alternate;
+}
+.symbol.winning .portrait-gunslinger,
+.symbol.winning .portrait-queen {
+  animation: outlaw-recoil 1.6s ease-out 2;
+}
+.symbol.winning .portrait-preacher {
+  animation: preacher-reveal 2.8s ease-in-out 2;
+}
+.symbol.winning .portrait-medium {
+  animation: medium-drift 1.8s ease-in-out 3 alternate;
+}
+.symbol.winning .portrait-rider {
+  animation: rider-breathe 1.8s ease-in-out 3 alternate;
+}
+.symbol.winning .relic-art {
+  animation: relic-award 1.5s ease-in-out 3;
+}
+.symbol.wild:before,
+.symbol.scatter:before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: conic-gradient(
+    transparent,
+    #fdb76266,
+    transparent 35%,
+    #fa794222,
+    transparent 70%
+  );
+  animation: relic-aura 9s linear infinite;
+}
+.symbol.scatter:before {
+  background: conic-gradient(
+    transparent,
+    #df4d5680,
+    transparent 45%,
+    #922d4055,
+    transparent
+  );
+}
+.symbol.transmuted {
+  animation: transmutation 0.9s ease-out;
+}
+.reel.rolling {
+  overflow: hidden;
+}
+.rolling .symbol {
+  animation: machine-reel 0.13s linear infinite;
+  filter: blur(5px);
+  opacity: 0.7;
+}
+.sound-slider {
+  width: 130px;
+  accent-color: #ddb26b;
+}
+.setting output {
+  font-size: 11px;
+  color: #e4bd77;
+}
+@keyframes machine-reel {
+  from {
+    transform: translateY(-60%) scaleY(1.18);
+  }
+  to {
+    transform: translateY(60%) scaleY(1.18);
+  }
+}
+@keyframes medium-drift {
+  from {
+    transform: scale(1.025) translateY(1%);
+    filter: brightness(1.06) saturate(0.8);
+  }
+  to {
+    transform: scale(1.08) translateY(-2%);
+    filter: brightness(1.3) saturate(1.1);
+  }
+}
+@keyframes rider-breathe {
+  from {
+    transform: scale(1.02);
+    filter: brightness(1.05);
+  }
+  to {
+    transform: scale(1.075) rotate(0.8deg);
+    filter: brightness(1.32) saturate(1.25);
+  }
+}
+@keyframes outlaw-recoil {
+  0% {
+    transform: scale(1.12) rotate(-2deg);
+    filter: brightness(1.65);
+  }
+  18% {
+    transform: scale(1.04) rotate(1deg);
+  }
+  100% {
+    transform: scale(1.02);
+    filter: brightness(1.15);
+  }
+}
+@keyframes preacher-reveal {
+  0%,
+  100% {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+  40% {
+    transform: scale(1.1) translateY(-2%);
+    filter: brightness(1.5) sepia(0.2);
+  }
+}
+@keyframes relic-award {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12) rotate(-5deg);
+    filter: brightness(1.5);
+  }
+  70% {
+    transform: scale(1.06) rotate(3deg);
+  }
+}
+@keyframes relic-aura {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes transmutation {
+  0% {
+    filter: brightness(2);
+    box-shadow: inset 0 0 55px #92e8ff;
+  }
+  100% {
+    filter: none;
+  }
+}
+@media (max-width: 700px) {
+  .shell {
+    padding: 0 10px;
+  }
+  .topbar {
+    height: 54px;
+  }
+  .game {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .title-area {
+    margin: 12px 0 20px;
+  }
+  .title-area h1 {
+    font-size: 45px;
+  }
+  .symbol {
+    height: clamp(68px, 10.5svh, 97px);
+  }
+  .relic-art {
+    width: 64px;
+    height: 64px;
+  }
+  .locations {
+    height: 30px;
+  }
+  footer > span:first-child {
+    display: none;
+  }
+  .under-controls {
+    font-size: 7px;
+  }
+  .event-line {
+    height: 32px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .symbol,
+  .portrait-art,
+  .relic-art,
+  .symbol:before {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+.reduced-motion .symbol,
+.reduced-motion .portrait-art,
+.reduced-motion .relic-art,
+.reduced-motion .symbol:before {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}

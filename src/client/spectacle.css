@@ -1,0 +1,842 @@
+/* Mercy's End art pass: painted portraits, spectral brass and a cinematic depth stage. */
+#replay-banner {
+  background: #163747ed;
+  border: 1px solid #8ad0ed;
+  color: #cceaf4;
+  font-size: 8px;
+  letter-spacing: 1px;
+  padding: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+#replay-banner button {
+  font-size: 8px;
+  white-space: nowrap;
+  color: #f2d7a2;
+}
+.replay-mode .game-meta {
+  color: #9ee4f7;
+}
+:root {
+  --gold: #d2ad68;
+  --panel: #111a20;
+  color: #e9dfc6;
+  background: #050b12;
+}
+.vignette {
+  background:
+    linear-gradient(
+      180deg,
+      #03070e85,
+      transparent 26%,
+      #070a1030 68%,
+      #050a12eb 100%
+    ),
+    radial-gradient(ellipse at 50% 42%, transparent 50%, #02061045);
+}
+.night .vignette {
+  background:
+    linear-gradient(
+      180deg,
+      #03071280,
+      transparent 25%,
+      #05101a22 68%,
+      #040a14ed 100%
+    ),
+    radial-gradient(ellipse at 50% 42%, transparent 45%, #02091a60);
+}
+.topbar {
+  border-color: #bb926839;
+}
+.studio-mark {
+  border-color: #bc9d6a;
+}
+.studio {
+  color: #e8d4a5;
+}
+.studio b {
+  color: #c6b795;
+}
+.title-area {
+  margin: 24px 0 17px;
+}
+.title-area h1 {
+  font-size: clamp(44px, 5.4vw, 80px);
+  font-weight: 700;
+  letter-spacing: -3px;
+  background: linear-gradient(
+    #fff0c3 5%,
+    #d3ad62 42%,
+    #8d5e2e 48%,
+    #dfbd79 65%,
+    #f5dfac 83%,
+    #aa7438
+  );
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  filter: drop-shadow(0 3px 0 #382115) drop-shadow(0 0 14px #040914);
+  text-shadow: none;
+}
+.title-area h1 span {
+  color: inherit;
+}
+.eyebrow {
+  color: #e0ba78;
+  text-shadow: 0 1px 5px #000;
+  letter-spacing: 3.5px;
+}
+.subtitle {
+  color: #ddd2b1;
+  letter-spacing: 3px;
+  text-shadow: 0 2px 4px #000;
+}
+.town-caption {
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: #c7b394;
+  margin-top: 13px;
+  text-shadow: 0 1px 5px #000;
+}
+.town-caption span {
+  color: #b38b50;
+  margin: 0 10px;
+}
+.game {
+  max-width: 780px;
+}
+.game-meta {
+  font-size: 10px;
+  text-shadow: 0 2px 4px #000;
+}
+.game-meta button,
+.ways-label {
+  font-size: 9px;
+}
+.game-meta small {
+  font-size: 9px;
+}
+.cabinet {
+  background: linear-gradient(
+    100deg,
+    #573a22,
+    #172127 8%,
+    #0a131c 48%,
+    #283039 93%,
+    #573a22
+  );
+  border-color: #cca66a;
+  box-shadow:
+    0 0 0 3px #30251e,
+    0 0 0 5px #b395604a,
+    0 15px 55px #000c,
+    inset 0 0 20px #060a10;
+  padding: 8px 9px 0;
+}
+.cabinet:before,
+.cabinet:after {
+  content: "✦";
+  position: absolute;
+  top: 42%;
+  color: #e0b979;
+  font-size: 26px;
+  text-shadow: 0 0 6px #ddab4755;
+  z-index: 3;
+}
+.cabinet:before {
+  left: -15px;
+}
+.cabinet:after {
+  right: -15px;
+}
+.corner {
+  width: 25px;
+  height: 25px;
+  border-width: 4px;
+  border-color: #c79e61;
+}
+.locations {
+  gap: 3px;
+  margin-bottom: 8px;
+}
+.locations button {
+  font-size: 10px;
+  color: #ddc59e;
+  letter-spacing: 0.8px;
+  height: 30px;
+  text-shadow: 0 1px 3px #000;
+}
+.locations .awake {
+  color: #a9f0ff;
+  text-shadow: 0 0 12px #42bbff;
+}
+.locations .awake i {
+  background: #9beaff;
+  border-color: #a4ebff;
+  box-shadow: 0 0 12px #54cfff;
+}
+.reels {
+  gap: 5px;
+  padding: 4px;
+  background: #050d15;
+  border-color: #9e8154;
+}
+.reel {
+  gap: 4px;
+}
+.symbol {
+  height: 99px;
+  background: radial-gradient(ellipse at 50% 40%, #314f6488, #07121d 80%);
+  border: 1px solid #7293a53a;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px #0005;
+}
+.symbol:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 10px #02060a99;
+  pointer-events: none;
+}
+.portrait-art {
+  position: absolute;
+  inset: 0;
+  background-image: url("/art/ghost-portraits-v1.png");
+  background-size: 500% auto;
+  background-repeat: no-repeat;
+  filter: brightness(1.13) saturate(0.9);
+}
+.relic-art {
+  height: 96px;
+  width: 96px;
+  background-image: url("/art/haunted-relics-v1.png");
+  background-size: 300% 200%;
+  background-repeat: no-repeat;
+  filter: brightness(1.1);
+  mix-blend-mode: screen;
+}
+.symbol span {
+  bottom: 0;
+  padding: 7px 1px 4px;
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 7px;
+  letter-spacing: 0.6px;
+  color: #ead7a8;
+  background: linear-gradient(transparent, #050c13e8);
+  z-index: 2;
+  text-shadow: 0 1px 3px #000;
+}
+.symbol.wild,
+.symbol.scatter {
+  border-color: #bf965d99;
+  background: radial-gradient(ellipse, #5c3e2380, #081322 75%);
+}
+.symbol.dust {
+  background: radial-gradient(ellipse, #25394c77, #0b1723);
+}
+.symbol.dust span {
+  color: #aebecd;
+}
+.symbol.dust svg {
+  color: #a3c3d4 !important;
+  height: 65px;
+  filter: drop-shadow(0 0 6px #98e1ff66);
+}
+.symbol.winning {
+  border: 1px solid #ffe1a6;
+  box-shadow:
+    inset 0 0 18px #fcbd4766,
+    0 0 15px #f9bc4366;
+  z-index: 2;
+}
+.symbol.winning:after {
+  box-shadow: inset 0 0 18px #f9c45688;
+}
+.symbol.winning .portrait-art,
+.symbol.winning .relic-art {
+  filter: brightness(1.4) saturate(1.1);
+}
+.cabinet-bottom {
+  height: 28px;
+  color: #d3b783;
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+.event-line {
+  height: 46px;
+  background: linear-gradient(90deg, transparent, #060d16b8, transparent);
+  margin-top: 4px;
+}
+.event-line p {
+  font-family: Georgia, serif;
+  font-size: 12px;
+  color: #e5d6b4;
+  text-shadow: 0 1px 4px #000;
+}
+.event-mark {
+  color: #e0b574;
+}
+.controls {
+  background: linear-gradient(110deg, #192632f2, #08131ef8 60%, #27333bf2);
+  border-color: #b39765a6;
+  box-shadow: 0 5px 25px #000b;
+}
+.metric > span,
+.bet-control > span {
+  font-size: 9px;
+  color: #c6b797;
+}
+.metric strong {
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 24px;
+  color: #f0e0b4;
+}
+.bet-control strong {
+  color: #e6d4b0;
+}
+.spin-button {
+  background: linear-gradient(120deg, #ecce8d, #ba8746 50%, #dfbc75);
+  border: 1px solid #f9e2a0;
+  box-shadow:
+    inset 0 0 0 3px #9f753c66,
+    inset 0 0 16px #ffe4a244,
+    0 0 20px #d9a65f26;
+  height: 65px;
+  font-family: "Cinzel", Georgia, serif;
+  color: #291a10 !important;
+  font-size: 13px;
+  letter-spacing: 2px;
+}
+.spin-icon {
+  font-size: 34px;
+}
+.under-controls {
+  color: #c4b899;
+  text-shadow: 0 1px 5px #000;
+  font-size: 7px;
+}
+.night .symbol {
+  background: radial-gradient(ellipse, #19374b77, #07121d 85%);
+}
+.night .symbol.scatter {
+  background: radial-gradient(ellipse, #69283399, #07121d 85%);
+}
+.night .cabinet {
+  box-shadow:
+    0 0 0 3px #1c2731,
+    0 0 0 5px #9ac2d04a,
+    0 15px 60px #000c,
+    0 0 55px #43b4e51c;
+}
+.feature-strip {
+  margin: 21px auto;
+}
+.feature-strip b {
+  color: #e1cba2;
+  font-size: 10px;
+}
+.feature-strip p span {
+  color: #c3c1b2;
+  font-size: 9px;
+}
+.feature-icon {
+  color: #d1a968;
+}
+.lore-aside {
+  position: absolute;
+  width: 220px;
+  top: 550px;
+  pointer-events: auto;
+  text-shadow:
+    0 2px 8px #000,
+    0 0 20px #000;
+}
+.lore-aside.left {
+  left: 3%;
+}
+.lore-aside.right {
+  right: 3%;
+  text-align: right;
+}
+.lore-overline {
+  font-size: 8px;
+  letter-spacing: 1.8px;
+  color: #d8ad70;
+}
+.lore-aside h2 {
+  font-family: "Cinzel", Georgia, serif;
+  font-size: 25px;
+  line-height: 1.4;
+  color: #e8d8b6;
+  font-weight: 500;
+  margin: 13px 0;
+}
+.lore-aside p {
+  font-family: Georgia, serif;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #bcc7cc;
+}
+.lore-aside button {
+  font-size: 8px;
+  letter-spacing: 1.3px;
+  color: #dbba81;
+  border-bottom: 1px solid #b7945a66;
+  padding: 8px 0;
+}
+.legend-button {
+  color: #e7c78e;
+  border-color: #a68151;
+}
+.legend-hero {
+  background:
+    linear-gradient(0deg, #101b26, transparent),
+    url("/art/mercys-end-v1.png") center 40% / cover;
+  padding: 95px 20px 20px;
+  margin: -5px -12px 20px;
+}
+.legend-hero > span {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: #d9bc85;
+}
+.legend-hero h2 {
+  font-size: 29px;
+  text-shadow: 0 2px 5px #000;
+}
+.legend-hero p {
+  font-family: Georgia;
+  font-style: italic;
+  color: #d7e2e6;
+}
+.character-ledger {
+  display: grid;
+  gap: 15px;
+}
+.character-ledger article {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 20px;
+  border: 1px solid #8c8f8344;
+  background: #152432;
+  min-height: 125px;
+}
+.ledger-portrait {
+  background-image: url("/art/ghost-portraits-v1.png");
+  background-size: 500% auto;
+  min-height: 125px;
+}
+.character-ledger article > div:last-child {
+  padding: 18px 15px 12px 0;
+}
+.character-ledger span {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: #ccb789;
+}
+.character-ledger h3 {
+  font-family: "Cinzel", Georgia, serif;
+  margin: 8px 0;
+  font-size: 18px;
+  color: #e6c990;
+}
+.character-ledger p {
+  margin: 0;
+  font-size: 12px;
+}
+.location-story {
+  border-top: 1px solid #8c8f8344;
+  margin-top: 25px;
+  padding-top: 20px;
+}
+.location-story > span {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #afc6d2;
+}
+.location-story h3 {
+  font-size: 18px;
+  font-family: "Cinzel", Georgia, serif;
+  margin-top: 12px;
+}
+blockquote {
+  border-left: 2px solid #c6a76c;
+  padding: 8px 0 8px 20px;
+  margin: 20px 0;
+  font-family: Georgia, serif;
+  font-size: 21px;
+  font-style: italic;
+  color: #dfcaa2;
+}
+.curse-rule {
+  background: #27364566;
+  border: 1px solid #a18b5c55;
+  padding: 0 18px 10px;
+  margin-top: 25px;
+}
+.pay-symbol .portrait-art {
+  position: relative;
+  inset: auto;
+  width: 38px;
+  height: 48px;
+  flex-shrink: 0;
+}
+.pay-symbol .relic-art {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+.spectacle {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  background: radial-gradient(ellipse, #060e20aa, #020712cc);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  backdrop-filter: blur(3px);
+  animation: spectral-arrival 0.6s ease-out;
+}
+.spectacle:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/art/mercys-end-v1.png") center/cover;
+  opacity: 0.4;
+  mask-image: linear-gradient(transparent, #000, transparent);
+}
+.spectacle-card {
+  position: relative;
+  text-align: center;
+  max-width: 850px;
+  padding: 55px 30px;
+  background: radial-gradient(ellipse, #142f4488, transparent 70%);
+}
+.spectacle-card > span {
+  font-size: 10px;
+  letter-spacing: 5px;
+  color: #97d6ed;
+}
+.spectacle-card h2 {
+  font-family: "Cinzel", Georgia, serif;
+  font-size: clamp(35px, 6vw, 80px);
+  line-height: 1.2;
+  color: #f2d596;
+  text-shadow:
+    0 0 35px #79cfff44,
+    0 3px 3px #000;
+  margin: 23px 0;
+}
+.spectacle-card p {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  line-height: 1.6;
+  color: #d1e0e7;
+  text-shadow: 0 2px 5px #000;
+}
+#skip-spectacle {
+  pointer-events: auto;
+  position: relative;
+  border: 1px solid #bd9d65;
+  padding: 15px 25px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  background: #0e1b2b;
+}
+.haunted {
+  animation: haunting-glow 1.8s ease-out;
+}
+@keyframes haunting-glow {
+  0%,
+  100% {
+    filter: none;
+  }
+  35% {
+    filter: brightness(1.8) drop-shadow(0 0 12px #88e9ff);
+  }
+}
+@keyframes spectral-arrival {
+  from {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+dialog {
+  background: linear-gradient(130deg, #152633, #0c1621);
+  border-color: #b99b65;
+}
+dialog p {
+  color: #c5d0d5;
+}
+.stat-grid > div {
+  background: #1b3040;
+}
+footer {
+  color: #c1b698;
+  background: linear-gradient(90deg, transparent, #060d17aa, transparent);
+}
+.scene-fallback {
+  background: #07131d url("/art/mercys-end-noon-v1.png") center/cover fixed;
+}
+.scene-fallback.night {
+  background-image: url("/art/mercys-end-v1.png");
+}
+@media (max-width: 1320px) {
+  .lore-aside {
+    display: none;
+  }
+}
+@media (min-width: 1600px) {
+  .game {
+    max-width: 840px;
+  }
+  .symbol {
+    height: 105px;
+  }
+  .relic-art {
+    height: 103px;
+    width: 103px;
+  }
+  .lore-aside {
+    top: 565px;
+    width: 240px;
+  }
+  .lore-aside.left {
+    left: 4%;
+  }
+  .lore-aside.right {
+    right: 4%;
+  }
+}
+@media (max-width: 850px) {
+  .game {
+    max-width: 740px;
+  }
+  .top-actions {
+    gap: 10px;
+  }
+  .studio > span:last-child {
+    display: none;
+  }
+  .symbol {
+    height: 94px;
+  }
+  .relic-art {
+    height: 90px;
+    width: 90px;
+  }
+  .title-area h1 {
+    font-size: 61px;
+  }
+}
+@media (max-width: 650px) {
+  .shell {
+    padding: 0 12px;
+  }
+  .topbar {
+    height: 62px;
+  }
+  .top-actions {
+    gap: 5px;
+  }
+  .outline-button {
+    font-size: 6px;
+    padding: 9px 6px;
+  }
+  .demo-label {
+    font-size: 6px;
+  }
+  .title-area {
+    margin: 31px 0 23px;
+  }
+  .title-area h1 {
+    font-size: 46px;
+    letter-spacing: -2px;
+    margin: 14px 0 9px;
+  }
+  .town-caption {
+    font-size: 6px;
+    letter-spacing: 1.2px;
+    margin-top: 11px;
+  }
+  .town-caption span {
+    margin: 0 5px;
+  }
+  .subtitle {
+    font-size: 6px;
+    letter-spacing: 1.6px;
+  }
+  .eyebrow {
+    font-size: 6px;
+    letter-spacing: 1.8px;
+  }
+  .game-meta {
+    font-size: 7px;
+    height: 29px;
+  }
+  .game-meta button,
+  .ways-label {
+    font-size: 6px;
+  }
+  .game-meta small {
+    font-size: 6px;
+  }
+  .cabinet {
+    padding: 6px 5px 0;
+  }
+  .locations {
+    gap: 2px;
+    margin-bottom: 6px;
+  }
+  .locations button {
+    font-size: 7px;
+    letter-spacing: 0;
+    height: 28px;
+  }
+  .symbol {
+    height: 80px;
+  }
+  .symbol span {
+    font-size: 5px;
+    letter-spacing: 0;
+    padding-bottom: 4px;
+  }
+  .relic-art {
+    width: 65px;
+    height: 65px;
+  }
+  .portrait-art {
+    background-size: 500% auto;
+  }
+  .symbol.dust svg {
+    height: 47px;
+  }
+  .cabinet-bottom {
+    font-size: 5px;
+    letter-spacing: 0.5px;
+    height: 25px;
+  }
+  .corner {
+    height: 19px;
+    width: 19px;
+    border-width: 3px;
+  }
+  .cabinet:before,
+  .cabinet:after {
+    font-size: 20px;
+  }
+  .cabinet:before {
+    left: -11px;
+  }
+  .cabinet:after {
+    right: -11px;
+  }
+  .event-line {
+    height: 56px;
+    margin-top: 0;
+  }
+  .event-line p {
+    font-size: 10px;
+  }
+  .metric > span,
+  .bet-control > span {
+    font-size: 7px;
+  }
+  .metric strong {
+    font-size: 18px;
+  }
+  .spin-button {
+    font-size: 10px;
+    height: 59px;
+    letter-spacing: 0.8px;
+  }
+  .spin-icon {
+    font-size: 26px;
+  }
+  .under-controls {
+    font-size: 5px;
+  }
+  .feature-strip b {
+    font-size: 7px;
+    letter-spacing: 0;
+  }
+  .feature-strip p span {
+    font-size: 6px;
+  }
+  .feature-strip {
+    margin: 22px 0;
+  }
+  .legend-hero {
+    padding: 65px 12px 15px;
+  }
+  .legend-hero h2 {
+    font-size: 23px;
+  }
+  .character-ledger article {
+    grid-template-columns: 80px 1fr;
+    gap: 13px;
+  }
+  .character-ledger h3 {
+    font-size: 16px;
+  }
+  .character-ledger p {
+    font-size: 11px;
+  }
+  .spectacle-card {
+    padding: 35px 23px;
+  }
+  .spectacle-card h2 {
+    font-size: 40px;
+  }
+  .spectacle-card p {
+    font-size: 17px;
+  }
+  .spectacle-card > span {
+    font-size: 7px;
+    letter-spacing: 2.5px;
+  }
+  .pay-symbol .portrait-art {
+    width: 31px;
+    height: 37px;
+  }
+  .pay-symbol .relic-art {
+    width: 31px;
+    height: 31px;
+  }
+  .studio-mark {
+    height: 30px;
+    width: 30px;
+    font-size: 21px;
+  }
+}
+@media (max-width: 380px) {
+  .symbol {
+    height: 72px;
+  }
+  .relic-art {
+    height: 56px;
+    width: 56px;
+  }
+  .title-area h1 {
+    font-size: 40px;
+  }
+  .demo-label {
+    font-size: 5px;
+  }
+  .top-actions {
+    gap: 3px;
+  }
+  .icon-button {
+    width: 21px;
+  }
+}

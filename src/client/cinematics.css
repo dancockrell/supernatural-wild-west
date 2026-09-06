@@ -1,0 +1,731 @@
+.feature-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  --feature: #93dfff;
+}
+.spectacle > .spectral-rider {
+  left: 50%;
+  right: auto;
+  top: 0;
+  width: min(90vw, 1050px);
+  height: 76vh;
+  transform: translateX(-50%);
+  filter: none;
+  mix-blend-mode: normal;
+}
+.spectral-rider video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.spectral-rider.riding {
+  animation: rider-performance-reveal 10s linear both;
+}
+.spectacle[data-scene="ride"] .spectacle-card {
+  margin-top: 42vh;
+}
+@keyframes rider-performance-reveal {
+  0% {
+    opacity: 0;
+  }
+  8%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@media (max-width: 650px) {
+  .spectacle > .spectral-rider {
+    top: 2vh;
+    width: 100vw;
+    height: 55vh;
+  }
+  .spectacle[data-scene="ride"] .spectacle-card {
+    margin-top: 28vh;
+  }
+}
+.feature-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 15px 0;
+}
+.feature-gallery button {
+  padding: 12px 6px;
+  min-height: 44px;
+  font-size: 9px;
+}
+.moon-disc {
+  background-image: url("/art/haunted-relics-v1.png") !important;
+  background-size: 300% 200% !important;
+  background-position: 100% 100% !important;
+}
+.moon-disc:after {
+  display: none;
+}
+.spectacle {
+  --feature: #93dfff;
+}
+.spectacle[data-scene="noon"] {
+  --feature: #f5c779;
+  background: radial-gradient(ellipse at 50% 30%, #6f421950, #0c0b10ed);
+}
+.dawn-sun {
+  position: absolute;
+  left: 50%;
+  top: 28%;
+  width: 35vmin;
+  height: 35vmin;
+  border-radius: 50%;
+  background: #ffdea0;
+  box-shadow:
+    0 0 85px 30px #ffc16799,
+    0 0 180px 60px #c4783933;
+  animation: sun-return 3s ease-out both;
+}
+.dawn-horizon {
+  position: absolute;
+  inset: 42% 0 0;
+  background: linear-gradient(#b27b3044, transparent 55%);
+  animation: sun-sweep 2.5s ease-out both;
+}
+@keyframes sun-return {
+  from {
+    transform: translate(-50%, 25%) scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.85;
+  }
+}
+@keyframes sun-sweep {
+  from {
+    opacity: 0;
+    transform: scaleY(0.1);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+.reduced-motion .dawn-sun {
+  transform: translate(-50%, -50%);
+  opacity: 0.4;
+}
+.spectacle[data-scene] {
+  background: radial-gradient(ellipse at 50% 45%, #07132066, #01040cf0);
+  backdrop-filter: blur(5px);
+}
+.spectacle[data-scene]:after {
+  display: none;
+}
+.spectacle[data-scene] .spectacle-card {
+  margin-top: 17vh;
+  max-width: 920px;
+}
+.spectacle[data-scene] .spectacle-card h2 {
+  font-size: clamp(34px, 5.5vw, 78px);
+  letter-spacing: 1px;
+}
+.spectacle[data-scene] .spectacle-card p {
+  font:
+    500 13px "DM Sans",
+    sans-serif;
+  letter-spacing: 3px;
+}
+.spectacle[data-scene] #skip-spectacle {
+  background: #06101be8;
+}
+.spectacle[data-scene="witch"] {
+  --feature: #e65564;
+}
+.spectacle[data-scene="awaken"] {
+  --feature: #81e5e1;
+}
+.spectacle[data-scene="fortune"] {
+  --feature: #f5bc55;
+}
+.feature-stage {
+  --feature: inherit;
+}
+.feature-shockwave {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 24vmin;
+  height: 24vmin;
+  margin: -12vmin;
+  border: 3px solid var(--feature);
+  border-radius: 50%;
+  box-shadow:
+    0 0 45px var(--feature),
+    inset 0 0 40px var(--feature);
+  animation: feature-wave 1.7s 0.45s cubic-bezier(0.1, 0.65, 0.2, 1) both;
+}
+.feature-rays {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 0;
+  height: 0;
+}
+.speed-ray {
+  position: absolute;
+  height: 2px;
+  width: 50vw;
+  transform-origin: left;
+  transform: rotate(var(--angle));
+  background: linear-gradient(
+    90deg,
+    transparent 12%,
+    var(--feature),
+    transparent
+  );
+  animation: ray-flight 1.8s var(--delay) ease-out both;
+}
+.feature-cinders {
+  position: absolute;
+  inset: 0;
+}
+.feature-cinder {
+  position: absolute;
+  left: var(--x);
+  top: 110%;
+  width: var(--size);
+  height: calc(var(--size) * 2);
+  background: var(--feature);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--feature);
+  animation: cinder-flight 4s var(--delay) ease-out both;
+}
+.blood-eclipse {
+  position: absolute;
+  width: min(46vmin, 420px);
+  height: min(46vmin, 420px);
+  left: 50%;
+  top: 31%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-shadow:
+    0 0 60px #c7314b77,
+    0 0 160px #87123255;
+  animation: eclipse-rise 1.6s cubic-bezier(0.1, 0.8, 0.2, 1) both;
+  overflow: hidden;
+}
+.moon-disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 36% 25%,
+    #ff967d,
+    #b8233d 48%,
+    #360b1a 84%
+  );
+  box-shadow:
+    inset -18px -10px 40px #040711,
+    inset 0 0 35px #fa5641;
+}
+.moon-disc:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.65;
+  background:
+    radial-gradient(ellipse at 34% 42%, #270815 0 6%, transparent 8%),
+    radial-gradient(circle at 65% 25%, #300820 0 9%, transparent 12%),
+    radial-gradient(circle at 59% 62%, #44061e 0 13%, transparent 17%);
+}
+.moon-shadow {
+  position: absolute;
+  inset: -2%;
+  background: #020610;
+  border-radius: 50%;
+  box-shadow: 0 0 18px #030611;
+  animation: eclipse-uncover 3.4s ease-in-out both;
+}
+.ground-fissure {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #ff4867,
+    white,
+    #ff4867,
+    transparent
+  );
+  box-shadow: 0 0 24px #e83657;
+  animation: fissure-open 2s 0.5s both;
+}
+.curse-seal,
+.fortune-cylinder {
+  position: absolute;
+  width: 55vmin;
+  height: 55vmin;
+  left: 50%;
+  top: 32%;
+  fill: none;
+  stroke: var(--feature);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 12px var(--feature));
+  animation: seal-brand 3.7s cubic-bezier(0.12, 0.8, 0.2, 1) both;
+}
+.curse-seal path {
+  stroke-width: 1;
+  stroke-dasharray: 1500;
+  animation: seal-inscribe 1.5s ease-out both;
+}
+.summoned-face {
+  position: absolute;
+  left: 50%;
+  top: 32%;
+  width: 40vmin;
+  height: 43vmin;
+  transform: translate(-50%, -50%);
+  background: url("/art/ghost-portraits-v1.png") var(--face) 24% / 500% auto;
+  mask-image: radial-gradient(ellipse, #000 30%, transparent 72%);
+  animation: face-materialize 3.7s ease-out both;
+}
+.curse-chain {
+  position: absolute;
+  width: 130vw;
+  top: 38%;
+  left: -15vw;
+  display: flex;
+  justify-content: space-between;
+  transform: rotate(-16deg);
+}
+.curse-chain i {
+  flex-shrink: 0;
+  width: 10vw;
+  height: 3vw;
+  border: 6px solid #acbcb9;
+  border-radius: 40%;
+  box-shadow:
+    inset 0 0 5px #000,
+    0 3px 8px #000;
+  background: #15222733;
+}
+.chain-left {
+  clip-path: inset(0 50% 0 0);
+  animation: chain-break-left 1.9s ease-in both;
+}
+.chain-right {
+  clip-path: inset(0 0 0 50%);
+  animation: chain-break-right 1.9s ease-in both;
+}
+.ride-gate {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 51%;
+  background: repeating-linear-gradient(
+    90deg,
+    #03080fec 0 9%,
+    #537b8244 10%,
+    #050c17 11% 18%
+  );
+  border: 5px solid #405661;
+  box-shadow: 0 0 60px #81d7ff55;
+}
+.gate-left {
+  left: 0;
+  transform-origin: left;
+  animation: gate-left 1.35s cubic-bezier(0.25, 0.05, 0.2, 1) both;
+}
+.gate-right {
+  right: 0;
+  transform-origin: right;
+  animation: gate-right 1.35s cubic-bezier(0.25, 0.05, 0.2, 1) both;
+}
+.ride-horizon {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 42%;
+  height: 2px;
+  background: #c5edff;
+  box-shadow: 0 0 70px 16px #75bdff77;
+  animation: gate-light 1.6s both;
+}
+.fortune-cylinder {
+  stroke: #dca64e;
+  stroke-width: 9;
+  fill: #171923;
+  animation: cylinder-spin 2.4s cubic-bezier(0.1, 0.75, 0.2, 1) both;
+}
+.fortune-cylinder circle:not(:first-child):not(:nth-child(2)) {
+  fill: #030811;
+  stroke: #766042;
+  stroke-width: 6;
+}
+.fortune-halo {
+  position: absolute;
+  width: 65vmin;
+  height: 65vmin;
+  left: 50%;
+  top: 32%;
+  border-radius: 50%;
+  background: radial-gradient(transparent 40%, #ffcb5d33 52%, transparent 65%);
+  animation: fortune-bloom 3.8s both;
+}
+.spectacle[data-scene="fortune"] .spectacle-card p {
+  font-family: Cinzel, serif;
+  font-size: clamp(25px, 4vw, 54px);
+  color: #ffe3a1;
+  letter-spacing: 0;
+}
+@keyframes feature-wave {
+  from {
+    opacity: 0.8;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 0;
+    transform: scale(7);
+  }
+}
+@keyframes ray-flight {
+  from {
+    opacity: 0;
+    scale: 0.15;
+  }
+  18% {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 0;
+    scale: 1.7;
+  }
+}
+@keyframes cinder-flight {
+  from {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 0.8;
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--drift), -110vh) rotate(240deg);
+  }
+}
+@keyframes eclipse-rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -30%) scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+@keyframes eclipse-uncover {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(105%);
+  }
+}
+@keyframes fissure-open {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  45% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+@keyframes seal-brand {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.8) rotate(-80deg);
+  }
+  25% {
+    opacity: 0.85;
+  }
+  to {
+    opacity: 0.35;
+    transform: translate(-50%, -50%) scale(1) rotate(15deg);
+  }
+}
+@keyframes seal-inscribe {
+  from {
+    stroke-dashoffset: 1500;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes face-materialize {
+  from {
+    opacity: 0;
+    filter: blur(18px);
+    scale: 0.65;
+  }
+  35% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 0.6;
+    scale: 1.08;
+  }
+}
+@keyframes chain-break-left {
+  0%,
+  30% {
+    transform: rotate(-16deg) translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: rotate(-30deg) translateX(-65vw);
+    opacity: 0;
+  }
+}
+@keyframes chain-break-right {
+  0%,
+  30% {
+    transform: rotate(-16deg) translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: rotate(8deg) translateX(65vw);
+    opacity: 0;
+  }
+}
+@keyframes gate-left {
+  from {
+    transform: perspective(900px) rotateY(0);
+  }
+  to {
+    transform: perspective(900px) rotateY(-105deg);
+    opacity: 0;
+  }
+}
+@keyframes gate-right {
+  from {
+    transform: perspective(900px) rotateY(0);
+  }
+  to {
+    transform: perspective(900px) rotateY(105deg);
+    opacity: 0;
+  }
+}
+@keyframes gate-light {
+  from {
+    opacity: 0;
+    transform: scaleX(0.1);
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: scaleX(1.5);
+  }
+}
+@keyframes cylinder-spin {
+  from {
+    transform: translate(-50%, -50%) scale(0.35) rotate(-400deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1) rotate(0);
+    opacity: 0.65;
+  }
+}
+@keyframes fortune-bloom {
+  from {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.6);
+    opacity: 0;
+  }
+}
+@media (max-width: 650px) {
+  .spectacle[data-scene] .spectacle-card {
+    margin-top: 13vh;
+    padding: 25px 16px;
+  }
+  .spectacle[data-scene] .spectacle-card p {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .blood-eclipse {
+    width: 62vw;
+    height: 62vw;
+    top: 28%;
+  }
+  .curse-seal,
+  .fortune-cylinder {
+    width: 75vw;
+    height: 75vw;
+    top: 28%;
+  }
+  .summoned-face {
+    width: 65vw;
+    height: 65vw;
+    top: 28%;
+  }
+  .curse-chain i {
+    border-width: 3px;
+  }
+}
+.reduced-motion .feature-stage * {
+  animation: none !important;
+}
+.reduced-motion .feature-rays,
+.reduced-motion .feature-cinders,
+.reduced-motion .feature-shockwave,
+.reduced-motion .curse-chain,
+.reduced-motion .ride-gate {
+  display: none;
+}
+.reduced-motion .curse-seal,
+.reduced-motion .fortune-cylinder {
+  transform: translate(-50%, -50%);
+  opacity: 0.35;
+}
+.reduced-motion .moon-shadow {
+  transform: translateX(105%);
+}
+.spectral-rider video {
+  filter: none;
+  mask-image: radial-gradient(
+    ellipse at center,
+    #000 50%,
+    #000 64%,
+    transparent 78%
+  );
+}
+.feature-ghost {
+  position: absolute;
+  top: -2vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92vw, 1000px);
+  height: 68vh;
+  object-fit: contain;
+  z-index: 3;
+  mask-image: linear-gradient(transparent, #000 8%, #000 72%, transparent 98%);
+  animation: ghost-materialize 850ms ease-out both;
+}
+.spectacle.has-ghost .spectacle-card {
+  margin-top: 40vh;
+}
+.has-ghost .curse-seal,
+.has-ghost .fortune-cylinder {
+  filter: opacity(0.18);
+}
+.has-ghost .curse-chain {
+  filter: opacity(0.2);
+}
+@keyframes ghost-materialize {
+  from {
+    opacity: 0;
+    filter: brightness(2) blur(12px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+  }
+}
+@media (max-width: 650px) {
+  .feature-ghost {
+    top: 5vh;
+    height: 46vh;
+    width: 115vw;
+  }
+  .spectacle.has-ghost .spectacle-card {
+    margin-top: 28vh;
+  }
+}
+.reduced-motion .feature-ghost {
+  animation: none;
+}
+.unified-parlor .feature-ghost.parlor-feature-resident {
+  top: var(--performance-top);
+  height: var(--performance-height);
+  width: min(94vw, calc(var(--performance-height) * 1.2));
+  object-fit: cover;
+  object-position: center top;
+  mask-image: linear-gradient(#000 0 82%, transparent 100%);
+  filter: none;
+  animation: none;
+}
+.spectacle > .spectral-rider {
+  height: 64vh;
+}
+.spectacle[data-scene="ride"] .spectacle-card {
+  margin-top: 34vh;
+}
+@media (max-width: 650px) {
+  .spectacle > .spectral-rider {
+    top: 4vh;
+    height: 44vh;
+  }
+  .spectacle[data-scene="ride"] .spectacle-card {
+    margin-top: 27vh;
+  }
+}
+
+/* Ground-bound vapor belongs to the apparition, below the readable face. */
+.performance-fog {
+  position: absolute;
+  left: 12%;
+  width: 76%;
+  top: calc(var(--performance-top) + var(--performance-height) * 0.72);
+  height: min(15vh, 130px);
+  pointer-events: none;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse at 25% 55%, #72a7a82e, transparent 48%),
+    radial-gradient(ellipse at 65% 40%, #94bab426, transparent 52%),
+    radial-gradient(ellipse at 48% 70%, #6b9e9d30, transparent 45%);
+  filter: blur(16px);
+  animation: apparition-ground-fog 5.5s ease-out both;
+}
+@keyframes apparition-ground-fog {
+  0% {
+    opacity: 0;
+    transform: translateX(-3%) scaleX(0.94);
+  }
+  24% {
+    opacity: 0.7;
+  }
+  72% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(5%) scaleX(1.08);
+  }
+}
+.reduced-motion .performance-fog {
+  display: none;
+}

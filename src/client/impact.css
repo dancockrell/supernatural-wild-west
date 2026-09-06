@@ -1,0 +1,313 @@
+#impact-effects {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 7;
+  pointer-events: none;
+}
+.storm-wash {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 75% 0%, #adcfff, transparent 80%);
+  opacity: 0;
+}
+.storm-wash.struck {
+  animation: storm-light 0.95s ease-out;
+}
+.spectral-rider {
+  position: fixed;
+  right: -55vw;
+  top: 13vh;
+  width: min(75vw, 1000px);
+  z-index: 9;
+  pointer-events: none;
+  opacity: 0;
+  filter: drop-shadow(0 0 25px #5dbbff77);
+  will-change: transform, opacity;
+}
+.spectral-rider img {
+  width: 100%;
+  height: auto;
+}
+.spectacle > .spectral-rider {
+  z-index: 1;
+}
+.spectacle #skip-spectacle {
+  z-index: 3;
+}
+.spectacle-card {
+  background: radial-gradient(
+    ellipse,
+    #08121fd9,
+    #08121f88 45%,
+    transparent 72%
+  );
+}
+.spectral-rider.riding {
+  animation: ride-across 6s cubic-bezier(0.15, 0.55, 0.5, 1) both;
+}
+.cabinet {
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+.cabinet.is-spinning {
+  box-shadow:
+    0 0 0 3px #30251e,
+    0 0 0 5px #cba77066,
+    0 0 35px #a6d9e533,
+    0 12px 55px #000c;
+}
+.reel.reel-impact {
+  animation: reel-thud 0.48s cubic-bezier(0.18, 0.7, 0.26, 1);
+}
+.reel.anticipation {
+  box-shadow: inset 0 0 18px #80ddff88;
+  filter: brightness(1.35);
+}
+.cabinet.cabinet-impact {
+  animation: heavy-impact 0.6s ease-out;
+}
+.symbol.winning {
+  animation: winning-breathe 2.4s ease-in-out 2;
+}
+.symbol.matched {
+  border-color: #858f8a;
+}
+.symbol.winning .portrait-art {
+  animation: portrait-awakens 2s ease-out both;
+}
+.win-ribbon {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 43%;
+  transform: translate(-50%, -50%);
+  min-width: 230px;
+  text-align: center;
+  padding: 14px 35px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #0a1522f5 15%,
+    #102d3bf5 85%,
+    transparent
+  );
+  border-top: 1px solid #dfb666;
+  border-bottom: 1px solid #dfb666;
+  pointer-events: none;
+  box-shadow: 0 0 40px #020812bb;
+  animation: win-award 1.9s ease-out both;
+}
+.win-ribbon > span {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 4px;
+  color: #a9d8e9;
+  margin-bottom: 5px;
+}
+.win-ribbon strong {
+  font-family: "Cinzel", Georgia, serif;
+  color: #ffe0a0;
+  font-size: 38px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-shadow:
+    0 2px 1px #584226,
+    0 0 15px #dca75455;
+}
+.win-ribbon small {
+  font-size: 11px;
+}
+.night .title-area h1 {
+  filter: drop-shadow(0 3px 0 #382115) drop-shadow(0 0 19px #93cfff55);
+}
+.spectral-weather .vignette:after {
+  content: "";
+  position: absolute;
+  inset: 60% 0 0;
+  background: radial-gradient(ellipse at 15% 80%, #6db6e012, transparent 60%);
+  animation: mist-wander 18s ease-in-out infinite alternate;
+}
+.spectacle-card {
+  animation: reveal-copy 1.05s cubic-bezier(0.12, 0.72, 0.25, 1) both;
+  z-index: 2;
+}
+.spectacle {
+  overflow: hidden;
+}
+.spectacle:after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(
+    from 45deg at 50% 50%,
+    transparent,
+    #73c9f00a,
+    transparent,
+    #a9d5ff13,
+    transparent
+  );
+  pointer-events: none;
+  animation: spirit-rays 18s linear infinite;
+}
+.spectacle-card h2 {
+  background: none;
+  color: #f7dba1;
+  filter: drop-shadow(0 3px 0 #4b331e) drop-shadow(0 0 30px #75cfff55);
+}
+@keyframes reel-thud {
+  0% {
+    transform: translateY(-16px) rotateX(7deg);
+    filter: brightness(1.7);
+  }
+  35% {
+    transform: translateY(5px) rotateX(-3deg);
+  }
+  70% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes heavy-impact {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  18% {
+    transform: translateY(4px) scale(0.994);
+  }
+  42% {
+    transform: translateY(-3px) scale(1.005);
+  }
+  70% {
+    transform: translateY(1px);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes winning-breathe {
+  0%,
+  100% {
+    box-shadow: inset 0 0 10px #efb94944;
+  }
+  50% {
+    box-shadow:
+      inset 0 0 27px #ffd87588,
+      0 0 16px #c48c3655;
+  }
+}
+@keyframes portrait-awakens {
+  from {
+    transform: scale(1.08);
+    filter: brightness(1.5) saturate(1.15);
+  }
+  to {
+    transform: scale(1);
+    filter: brightness(1.2) saturate(1);
+  }
+}
+@keyframes win-award {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -35%) scale(0.75);
+  }
+  18%,
+  72% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -65%) scale(1.04);
+  }
+}
+@keyframes storm-light {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.19;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes ride-across {
+  0% {
+    opacity: 0;
+    transform: translateX(0) scale(0.8);
+  }
+  13% {
+    opacity: 0.9;
+  }
+  48% {
+    opacity: 0.88;
+    transform: translateX(-77vw) translateY(-2vh) scale(1.05);
+  }
+  82% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-160vw) translateY(4vh) scale(1.18);
+  }
+}
+@keyframes reveal-copy {
+  from {
+    opacity: 0;
+    transform: translateY(35px) scale(0.93);
+    filter: blur(7px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes mist-wander {
+  from {
+    transform: translateX(-5%);
+  }
+  to {
+    transform: translateX(10%);
+  }
+}
+@keyframes spirit-rays {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 650px) {
+  .spectral-rider {
+    width: 105vw;
+    right: -95vw;
+    top: 25vh;
+  }
+  .win-ribbon {
+    min-width: 150px;
+    padding: 10px 20px;
+  }
+  .win-ribbon strong {
+    font-size: 29px;
+  }
+  .win-ribbon > span {
+    font-size: 6px;
+    letter-spacing: 2px;
+  }
+  .cabinet:before,
+  .cabinet:after {
+    z-index: 4;
+  }
+}
+.reduced-motion .spectral-rider,
+.reduced-motion .storm-wash,
+.reduced-motion #impact-effects,
+.reduced-motion .win-ribbon {
+  display: none !important;
+}

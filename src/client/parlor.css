@@ -1,0 +1,169 @@
+.poker-table.player-play-space {
+  display:block; position:relative; min-height:130px; margin:18px 0 0;
+  padding:8px 12px; border:0; border-radius:0; background:none; box-shadow:none;
+}
+.player-play-space .poker-felt { padding:0; margin:0; background:none; border:0; box-shadow:none; }
+.player-play-space .player-seat { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.player-play-space .poker-cards { display:flex; justify-content:center; gap:10px; width:100%; }
+.player-play-space .poker-slot { flex:0 1 78px; width:78px; height:105px; min-width:0; }
+.player-play-space .poker-award { min-height:24px; width:100%; text-align:center; }
+.player-play-space .poker-award strong { display:inline; margin-left:12px; }
+@media(max-width:650px) {
+  .poker-table.player-play-space { min-height:100px; margin-top:10px; padding:4px; }
+  .player-play-space .poker-cards { gap:5px; }
+  .player-play-space .poker-slot { flex:0 1 54px; width:54px; height:72px; }
+}
+
+/* Review route while the five master-matched cast films are being assembled. */
+.unified-parlor .parlor-environment { position:absolute; inset:0 auto auto 0; width:100%; height:auto; z-index:0; }
+@media(min-width:0px) {
+  .unified-parlor body { min-height:60cqw; background:#100e0a; }
+  .unified-parlor .vignette { display:none; }
+  .unified-parlor .shell { width:100%; max-width:none; padding:0; margin:0; }
+  .unified-parlor .topbar { position:absolute; top:0; right:1cqw; height:3cqw; border:0; }
+  .unified-parlor .title-area { position:absolute; left:37.1cqw; top:3.1cqw; width:26.9cqw; height:6.2cqw; margin:0; padding:0; display:flex; align-items:center; justify-content:center; }
+  .unified-parlor .title-area h1 { font-size:3cqw; line-height:1; text-align:center; }
+  .unified-parlor .title-area h1 span { display:block; font-size:1.35cqw; letter-spacing:.2cqw; }
+  .unified-parlor .game { position:absolute; left:32.48cqw; top:11.48cqw; width:34.99cqw; max-width:none; margin:0; }
+  .unified-parlor .game-meta { position:absolute; top:-1.6cqw; width:100%; height:1.4cqw; min-height:0; background:none; border:0; padding:0; font-size:.65cqw; }
+  .unified-parlor .cabinet { width:100%; height:31.82cqw; padding:0; border:0; background:none; box-shadow:none; }
+  .unified-parlor .cabinet .corner,.unified-parlor .cabinet-bottom { display:none; }
+  .unified-parlor .locations { height:1.5cqw; min-height:0; padding:0; font-size:.6cqw; }
+  .unified-parlor .locations button { padding:0; font-size:.6cqw; }
+  .unified-parlor .reels { height:30.32cqw; padding:0; gap:.18cqw; background:#100e0b; border:0; }
+  .unified-parlor .reel { gap:.18cqw; }
+  .unified-parlor .symbol { height:auto; min-height:0; border-color:#7e654038; background:#101513; }
+  .unified-parlor .controls { position:absolute; top:33.49cqw; left:-.6cqw; width:36.78cqw; height:3.17cqw; min-height:0; margin:0; padding:0 .4cqw; border:0; background:transparent; box-shadow:none; gap:.2cqw; }
+  .unified-parlor .controls button { min-height:0; }
+  .unified-parlor .controls .metric strong { font-size:1.2cqw; }
+  .unified-parlor .controls span,.unified-parlor .controls small { font-size:.5cqw; }
+  .unified-parlor .controls #bet { font-size:.85cqw; }
+  .unified-parlor .controls .spin-button { height:3cqw; padding:.3cqw .9cqw; }
+  .unified-parlor .event-line { position:absolute; top:32cqw; height:1cqw; min-height:0; margin:0; font-size:.55cqw; width:100%; }
+  .unified-parlor .player-play-space { position:absolute; top:37.4cqw; width:100%; margin:0; padding:0; min-height:0; }
+  .unified-parlor .player-play-space .poker-slot { flex-basis:3cqw; width:3cqw; height:4.1cqw; }
+  .unified-parlor .under-controls { position:absolute; top:43cqw; width:100%; }
+  .unified-parlor .boundary-cast { display:none; }
+}
+.narrative-gambler { position:absolute; left:74cqw; top:29cqw; width:24cqw; aspect-ratio:4/3; z-index:1; pointer-events:none; }
+.narrative-gambler video,.narrative-gambler svg { position:absolute; inset:0; width:100%; height:100%; }
+.narrative-gambler video[hidden] { display:none; }
+.ghost-ritual-cards { opacity:0; }
+.ghost-ritual-cards.visible { opacity:.8; }
+.ghost-ritual-cards .ritual-card { opacity:0; }
+.ghost-ritual-cards .ritual-card.received { opacity:1; }
+
+@media(prefers-reduced-motion:reduce) { .ghost-ritual-cards,.ghost-ritual-cards .ritual-card { transition:none; } }
+@media(min-width:0px) {
+ .unified-parlor .game { min-width:0; }
+ .unified-parlor .cabinet::before,.unified-parlor .cabinet::after { display:none; }
+}
+@media(min-width:0px) {
+ .unified-parlor .boundary-cast { display:block; position:absolute; inset:0; height:56.28cqw; z-index:1; pointer-events:none; }
+ .unified-parlor .ghost-porch { position:absolute; bottom:auto; height:32cqw; width:18cqw; top:20cqw; filter:none; mask-image:none; }
+ .unified-parlor .ghost-porch.left { left:14cqw; right:auto; }
+ .unified-parlor .ghost-porch.right { left:65cqw; right:auto; top:19cqw; width:20cqw; height:35.55cqw; }
+ .unified-parlor .ghost-porch video { inset:0; width:100%; height:100%; object-fit:contain; object-position:center; filter:none; mask-image:none; transform:none; }
+}
+.parlor-exterior-residents { position:absolute; inset:0; height:56.28cqw; z-index:1; pointer-events:none; }
+.parlor-exterior-residents video { position:absolute; object-fit:contain; opacity:.65; mask-image:linear-gradient(#000 65%,transparent 98%); }
+.parlor-exterior-residents .condemned { left:7.2cqw; top:17.95cqw; width:11.7cqw; height:15.53cqw; }
+.parlor-exterior-residents .rider { left:67.5cqw; top:18.29cqw; width:21.5cqw; height:16.1cqw; }
+
+
+/* Measured registration against the 1672 × 941 reference, not video element margins. */
+@media(min-width:0px) {
+ .unified-parlor body { min-height:56.28cqw; }
+ .unified-parlor .title-area { left:37.44cqw; top:3.29cqw; width:25.96cqw; height:6.16cqw; }
+ .unified-parlor .title-area h1 { width:100%; font-size:3.9cqw; color:#d8d6be; text-shadow:0 2px #62533b,0 4px #241d14,2px 6px 2px #080805; }
+ .unified-parlor .title-area h1 span { font-size:1.95cqw; letter-spacing:.13cqw; }
+ .unified-parlor .game { top:11.36cqw; }
+ .unified-parlor .cabinet { height:32cqw; }
+ .unified-parlor .locations { position:absolute; top:-1.45cqw; width:100%; height:1.3cqw; }
+ .unified-parlor .game-meta { top:-2.85cqw; }
+ .unified-parlor .reels { height:32cqw; gap:.24cqw; background:#57432c; box-shadow:inset 0 0 8px #100b06; }
+ .unified-parlor .reel { gap:.24cqw; }
+ .unified-parlor .symbol { border-radius:1px; border:1px solid #8c714b; background:radial-gradient(ellipse at 50% 65%,#24352e,#141c19 65%,#0c100e); box-shadow:inset 0 3px 8px #0009; }
+ .unified-parlor .ghost-porch.left { left:12.5cqw; top:20.93cqw; width:25.6cqw; height:45.51cqw; }
+ .unified-parlor .boundary-cast { overflow:hidden; }
+ .unified-parlor .ghost-porch.left video { mask-image:url('/art/queen-ground-matte.svg'); mask-size:100% 100%; mask-repeat:no-repeat; }
+ .unified-parlor .ghost-porch.right video { mask-image:url('/art/medium-ground-matte.svg'); mask-size:100% 100%; mask-repeat:no-repeat; }
+ .unified-parlor .narrative-gambler { left:81cqw; top:33.5cqw; width:24cqw; height:18cqw; }
+ .unified-parlor .parlor-exterior-residents .rider { left:71.11cqw; top:19.2cqw; width:21.47cqw; height:16.09cqw; }
+ .unified-parlor .controls .spin-button { border-radius:50%; width:4.8cqw; height:4.8cqw; flex:0 0 4.8cqw; margin-top:-.7cqw; border:3px double #b99855; background:radial-gradient(ellipse at 38% 25%,#665237,#34251b 60%,#140f0a); box-shadow:0 0 0 3px #241a11,inset 0 0 0 2px #6f5434,0 4px 6px #0008; color:#f2cf86; }
+ .unified-parlor .controls #spin-label { font:700 1.15cqw 'Cinzel',serif; }
+ .unified-parlor .controls .spin-icon { display:none; }
+}
+@media(min-width:0px) {
+ .unified-parlor body { overflow-x:clip; }
+ .unified-parlor .reels { position:absolute; inset:0; width:100%; height:100%; }
+ .unified-parlor .controls .spin-button #spin-label { color:#f2cf86; }
+}
+@media(min-width:0px) {
+ .unified-parlor .shell { position:absolute; left:0; top:0; }
+}
+.parlor-foreground-fog { position:absolute; left:0; top:0; width:100%; height:auto; pointer-events:none; z-index:1; }
+.resident-fog { position:absolute; inset:0; pointer-events:none; z-index:1; }
+.resident-fog video { position:absolute; object-fit:contain; mask-image:linear-gradient(#000 80%,transparent 100%); }
+.resident-fog .left { left:12.5cqw; top:20.93cqw; width:25.6cqw; height:45.51cqw; }
+.resident-fog .right { left:65cqw; top:19cqw; width:20cqw; height:35.55cqw; }
+
+
+/* One authored coordinate system. Letterboxing preserves every spatial relationship. */
+.unified-parlor body { margin:0; min-height:100svh; overflow:hidden; background:#080b0c; }
+.unified-parlor #app { width:100vw; height:100svh; display:grid; place-items:center; overflow:hidden; }
+.parlor-stage { position:relative; width:min(100vw,177.6833svh); aspect-ratio:1672/941; container-type:inline-size; overflow:hidden; isolation:isolate; }
+.unified-parlor .parlor-stage .boundary-cast { display:block; }
+/* Painted metal lettering retains accessible text underneath. */
+.unified-parlor .title-area h1 { color:transparent; text-shadow:none; position:relative; }
+.unified-parlor .title-area h1 span { color:transparent; }
+.unified-parlor .title-area::after { content:''; position:absolute; left:-.72cqw; top:-2.08cqw; width:27.43cqw; height:9.84cqw; background:url('/art/parlor-title-v1/title.png') center/contain no-repeat; pointer-events:none; }
+.unified-parlor .game-meta { top:-1.85cqw; height:1cqw; }
+.unified-parlor .game-meta #phase { font-size:.75cqw; line-height:1; }
+.unified-parlor .locations { top:-.75cqw; height:.7cqw; min-height:0; margin:0; gap:.2cqw; }
+.unified-parlor .locations button { font-size:.5cqw; line-height:.7cqw; min-height:0; height:.7cqw; padding:0; }
+.unified-parlor .game-meta .phase-title { display:flex; align-items:center; gap:.45cqw; white-space:nowrap; }
+.unified-parlor .game-meta .phase-title small { display:inline; margin:0; font-size:.6cqw; line-height:1; }
+.unified-parlor .game-meta .phase-emblem { width:.9cqw; height:.9cqw; }
+
+/* The fixed stage must not inherit the legacy mobile two-row controls. */
+.unified-parlor .controls { grid-template-columns:minmax(0,1fr) minmax(0,.9fr) 8.4cqw minmax(0,.9fr) 1.6cqw; grid-template-rows:3.17cqw; }
+.unified-parlor .controls > * { grid-column:auto; grid-row:1; min-width:0; }
+.unified-parlor .controls { font-size:.8cqw; line-height:1.1; }
+.unified-parlor .controls .metric strong { display:block; line-height:1.1; }
+.unified-parlor .controls .metric,.unified-parlor .controls .bet-control { padding:0 .5cqw; }
+.unified-parlor .controls .metric > span,.unified-parlor .controls .bet-control > span { margin-bottom:.3cqw; letter-spacing:.08cqw; white-space:nowrap; }
+.unified-parlor .controls small { margin-left:.2cqw; }
+.unified-parlor .controls .bet-control > div { gap:.25cqw; }
+.unified-parlor .controls .bet-control button { width:1.1cqw; padding:0; font-size:1.15cqw; }
+.unified-parlor .controls .spin-cluster { align-items:center; align-self:center; height:3.17cqw; gap:.3cqw; }
+.unified-parlor .controls .spin-button { margin:-.7cqw 0 0; letter-spacing:.08cqw; }
+.unified-parlor .controls #autoplay { width:3.2cqw; height:3cqw; font-size:.6cqw; padding:0; border-radius:.2cqw; }
+.unified-parlor .controls .win.metric { display:block; height:auto; border-top:0; text-align:center; }
+.unified-parlor .controls .history-button { padding:0; height:2.5cqw; border-top:0; justify-content:center; font-size:1.2cqw; }
+.unified-parlor .controls .history-button span { display:none; }
+.unified-parlor .game-meta { letter-spacing:.07cqw; }
+.unified-parlor .game-meta > span:first-child { gap:.35cqw; min-width:0; }
+.unified-parlor #paytable { flex-shrink:0; font-size:.48cqw; letter-spacing:.04cqw; padding:0; }
+.unified-parlor #paytable span { margin-left:.2cqw; }
+.unified-parlor .player-play-space .poker-cards { gap:.6cqw; }
+/* Keep card art and ink inside the same scaled geometry as the hand. */
+.unified-parlor .player-play-space .poker-slot .playing-card { inset:0; }
+.unified-parlor .player-play-space .poker-slot .playing-card-ink b { font-size:1.45cqw; }
+.unified-parlor .player-play-space .poker-slot .playing-card-ink i { font-size:.8cqw; }
+.unified-parlor .player-play-space .poker-slot .playing-card-ink small { font-size:.45cqw; }
+.unified-parlor .player-play-space .player-seat { gap:.45cqw; }
+.unified-parlor .player-play-space .poker-award { min-height:1.4cqw; font-size:.65cqw; }
+
+/* Temporary hand-award apparitions retain substantial scale above player cards. */
+.unified-parlor .poker-table .poker-guests { display:block; inset:auto 0; top:-35.8cqw; height:31.4cqw; overflow:hidden; pointer-events:none; }
+.unified-parlor .poker-guests .poker-guest { top:0; bottom:auto; left:0; width:60%; height:100%; filter:none; }
+.unified-parlor .poker-guests .guest-1 { left:auto; right:0; }
+.unified-parlor .poker-guests .poker-guest:only-child { left:20%; }
+.unified-parlor .poker-guests .poker-guest video { object-fit:cover; object-position:center top; mask-image:linear-gradient(#000 0 70%,transparent 100%); }
+.unified-parlor .poker-guests .poker-guest.arrived { animation:none; opacity:1; }
+
+.unified-parlor .poker-table.player-play-space { overflow:visible; }
+
+.unified-parlor .poker-guests .poker-guest { transition: opacity 400ms ease; }
+.unified-parlor .poker-guests .poker-guest.arrived.departing { opacity: 0; }
