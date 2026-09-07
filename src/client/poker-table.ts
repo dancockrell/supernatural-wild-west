@@ -1,5 +1,5 @@
 import { cardFace } from "./card-face";
-import { handMotion, handChoreographyIndices } from "./poker-motion";
+import { handMotion, handChoreographyIndices, stageHandFrames } from "./poker-motion";
 import type { SpinResult } from "../engine/types";
 
 export class PokerTable {
@@ -131,7 +131,9 @@ export class PokerTable {
       await Promise.all(
         matching.map(
           (card, i) =>
-            card.animate(motion.frames(i, matching.length), {
+            card.animate(document.documentElement.classList.contains('unified-parlor')
+              ? stageHandFrames(motion.frames(i, matching.length), card.getBoundingClientRect().width)
+              : motion.frames(i, matching.length), {
               duration: motion.duration,
               delay: motion.delay(i),
               easing: "cubic-bezier(.22,.7,.3,1)",

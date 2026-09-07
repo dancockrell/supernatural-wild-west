@@ -40,8 +40,8 @@
   .unified-parlor .controls #bet { font-size:.85cqw; }
   .unified-parlor .controls .spin-button { height:3cqw; padding:.3cqw .9cqw; }
   .unified-parlor .event-line { position:absolute; top:32cqw; height:1cqw; min-height:0; margin:0; font-size:.55cqw; width:100%; }
-  .unified-parlor .player-play-space { position:absolute; top:37.4cqw; width:100%; margin:0; padding:0; min-height:0; }
-  .unified-parlor .player-play-space .poker-slot { flex-basis:3cqw; width:3cqw; height:4.1cqw; }
+  .unified-parlor .player-play-space { position:absolute; top:38.65cqw; width:100%; margin:0; padding:0; min-height:0; }
+  .unified-parlor .player-play-space .poker-slot { flex:0 0 4.6cqw; width:4.6cqw; height:5.04cqw; }
   .unified-parlor .under-controls { position:absolute; top:43cqw; width:100%; }
   .unified-parlor .boundary-cast { display:none; }
 }
@@ -150,11 +150,12 @@
 .unified-parlor .player-play-space .poker-cards { gap:.6cqw; }
 /* Keep card art and ink inside the same scaled geometry as the hand. */
 .unified-parlor .player-play-space .poker-slot .playing-card { inset:0; }
-.unified-parlor .player-play-space .poker-slot .playing-card-ink b { font-size:1.45cqw; }
-.unified-parlor .player-play-space .poker-slot .playing-card-ink i { font-size:.8cqw; }
+.unified-parlor .player-play-space .poker-slot .playing-card-ink b { font-size:1.75cqw; }
+.unified-parlor .player-play-space .poker-slot .playing-card-ink i { font-size:.95cqw; }
 .unified-parlor .player-play-space .poker-slot .playing-card-ink small { font-size:.45cqw; }
-.unified-parlor .player-play-space .player-seat { gap:.45cqw; }
-.unified-parlor .player-play-space .poker-award { min-height:1.4cqw; font-size:.65cqw; }
+.unified-parlor .player-play-space .player-seat { gap:.15cqw; padding:0; }
+.unified-parlor .player-play-space .poker-award { min-height:.8cqw; line-height:.8cqw; font-size:.6cqw; }
+.unified-parlor .player-play-space .poker-award strong { font-size:.7cqw; margin:0 0 0 .6cqw; }
 
 /* Temporary hand-award apparitions retain substantial scale above player cards. */
 .unified-parlor .poker-table .poker-guests { display:block; inset:auto 0; top:-35.8cqw; height:31.4cqw; overflow:hidden; pointer-events:none; }

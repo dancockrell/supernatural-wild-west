@@ -149,3 +149,9 @@ export function handChoreographyIndices(cards: readonly number[], rank: string):
   if(rank==='Full house') return [...groups.values()].sort((a,b)=>b.length-a.length).flat();
   return cards.map((_,index)=>index);
 }
+
+/** Keep award gestures proportional to foreground cards on the fixed parlor stage. */
+export function stageHandFrames(frames: Keyframe[], cardWidth: number): Keyframe[] {
+  const scale = cardWidth / 76.912 * .55;
+  return frames.map(frame => ({...frame, transform: String(frame.transform || '').replace(/(-?[\d.]+)px/g, (_, value) => `${Number(value) * scale}px`)}));
+}
