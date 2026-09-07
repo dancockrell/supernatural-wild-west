@@ -62,7 +62,7 @@
  .unified-parlor .boundary-cast { display:block; position:absolute; inset:0; height:56.28cqw; z-index:1; pointer-events:none; }
  .unified-parlor .ghost-porch { position:absolute; bottom:auto; height:32cqw; width:18cqw; top:20cqw; filter:none; mask-image:none; }
  .unified-parlor .ghost-porch.left { left:14cqw; right:auto; }
- .unified-parlor .ghost-porch.right { left:65cqw; right:auto; top:19cqw; width:20cqw; height:35.55cqw; }
+ .unified-parlor .ghost-porch.right { left:0cqw; right:auto; top:23cqw; width:18cqw; height:32cqw; }
  .unified-parlor .ghost-porch video { inset:0; width:100%; height:100%; object-fit:contain; object-position:center; filter:none; mask-image:none; transform:none; }
 }
 .parlor-exterior-residents { position:absolute; inset:0; height:56.28cqw; z-index:1; pointer-events:none; }
@@ -84,11 +84,11 @@
  .unified-parlor .reels { height:32cqw; gap:.24cqw; background:#57432c; box-shadow:inset 0 0 8px #100b06; }
  .unified-parlor .reel { gap:.24cqw; }
  .unified-parlor .symbol { border-radius:1px; border:1px solid #8c714b; background:radial-gradient(ellipse at 50% 65%,#24352e,#141c19 65%,#0c100e); box-shadow:inset 0 3px 8px #0009; }
- .unified-parlor .ghost-porch.left { left:12.5cqw; top:20.93cqw; width:25.6cqw; height:45.51cqw; }
+ .unified-parlor .ghost-porch.left { left:13cqw; top:22cqw; width:21cqw; height:37.33cqw; }
  .unified-parlor .boundary-cast { overflow:hidden; }
  .unified-parlor .ghost-porch.left video { mask-image:url('/art/queen-ground-matte.svg'); mask-size:100% 100%; mask-repeat:no-repeat; }
  .unified-parlor .ghost-porch.right video { mask-image:url('/art/medium-ground-matte.svg'); mask-size:100% 100%; mask-repeat:no-repeat; }
- .unified-parlor .narrative-gambler { left:80cqw; top:37cqw; width:22.25cqw; height:16.6875cqw; }
+ .unified-parlor .narrative-gambler { left:65cqw; top:26cqw; width:38cqw; height:28.5cqw; }
  .unified-parlor .parlor-exterior-residents .rider { left:71.11cqw; top:19.2cqw; width:21.47cqw; height:16.09cqw; }
  .unified-parlor .controls .spin-button { border-radius:50%; width:4.8cqw; height:4.8cqw; flex:0 0 4.8cqw; margin-top:-.7cqw; border:3px double #b99855; background:radial-gradient(ellipse at 38% 25%,#665237,#34251b 60%,#140f0a); box-shadow:0 0 0 3px #241a11,inset 0 0 0 2px #6f5434,0 4px 6px #0008; color:#f2cf86; }
  .unified-parlor .controls #spin-label { font:700 1.15cqw 'Cinzel',serif; }
@@ -105,8 +105,8 @@
 .parlor-foreground-fog { position:absolute; left:0; top:0; width:100%; height:auto; pointer-events:none; z-index:1; }
 .resident-fog { position:absolute; inset:0; pointer-events:none; z-index:1; }
 .resident-fog video { position:absolute; object-fit:contain; mask-image:linear-gradient(#000 80%,transparent 100%); }
-.resident-fog .left { left:12.5cqw; top:20.93cqw; width:25.6cqw; height:45.51cqw; }
-.resident-fog .right { left:65cqw; top:19cqw; width:20cqw; height:35.55cqw; }
+.resident-fog .left { left:13cqw; top:22cqw; width:21cqw; height:37.33cqw; }
+.resident-fog .right { left:0cqw; top:23cqw; width:18cqw; height:32cqw; }
 
 
 /* One authored coordinate system. Letterboxing preserves every spatial relationship. */
@@ -167,4 +167,5 @@
 
 .unified-parlor .poker-guests .poker-guest { transition: opacity 400ms ease; }
 .unified-parlor .poker-guests .poker-guest.arrived.departing { opacity: 0; }
+
 
