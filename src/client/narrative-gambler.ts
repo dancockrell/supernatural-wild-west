@@ -41,12 +41,14 @@ export class NarrativeGambler {
     contact.classList.add('gambler-contact-shadow');
     // Foot positions come from the same authored silhouette used in video extraction.
     // This lies behind the table, above the floor/dress, with no actor-wide dark halo.
-    contact.innerHTML = `<defs><filter id="gambler-contact-soften" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="5"/></filter></defs>
-      <g fill="#100c09" filter="url(#gambler-contact-soften)">
-        <path d="M210 576 L537 672 L786 606 L767 650 L534 739 L120 674 L119 629Z" opacity=".46"/>
-        <ellipse cx="221" cy="589" rx="39" ry="10" transform="rotate(17 221 589)" opacity=".72"/>
-        <ellipse cx="552" cy="692" rx="47" ry="11" transform="rotate(-8 552 692)" opacity=".72"/>
-        <ellipse cx="787" cy="616" rx="25" ry="8" transform="rotate(-18 787 616)" opacity=".65"/>
+    contact.innerHTML = `<defs><filter id="gambler-contact-soften" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="12"/></filter><filter id="gambler-foot-soften" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="2"/></filter></defs>
+      <g fill="#080b0d">
+        <path d="M210 500 L800 540 L805 640 L767 650 L534 739 L120 674 L119 629Z" opacity=".84" filter="url(#gambler-contact-soften)"/>
+        <g filter="url(#gambler-foot-soften)" opacity=".94">
+          <ellipse cx="221" cy="589" rx="39" ry="10" transform="rotate(17 221 589)"/>
+          <ellipse cx="552" cy="692" rx="47" ry="11" transform="rotate(-8 552 692)"/>
+          <ellipse cx="787" cy="616" rx="25" ry="8" transform="rotate(-18 787 616)"/>
+        </g>
       </g>`;
     this.cards = document.createElementNS('http://www.w3.org/2000/svg','svg');
     this.cards.setAttribute('viewBox','0 0 960 720');

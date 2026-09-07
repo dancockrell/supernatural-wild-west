@@ -39,13 +39,13 @@ export function createParlorLight(): SVGSVGElement {
     <ellipse cx="1195" cy="738" rx="195" ry="132"/>
   </g>`;
   // Boot contacts measured from the admitted 432x768 alpha in the fixed stage.
-  light.insertAdjacentHTML('beforeend', `<defs><filter id="resident-shadow-soft"><feGaussianBlur stdDeviation="5"/></filter><filter id="resident-contact-soft"><feGaussianBlur stdDeviation="2"/></filter></defs>
+  light.insertAdjacentHTML('beforeend', `<defs><filter id="resident-shadow-soft"><feGaussianBlur stdDeviation="12"/></filter><filter id="resident-contact-soft"><feGaussianBlur stdDeviation="2"/></filter></defs>
     <g class="resident-ground-shadows" fill="#080b0d">
-      <g filter="url(#resident-shadow-soft)" opacity=".24">
+      <g filter="url(#resident-shadow-soft)" opacity=".72">
         <path d="M117 887Q158 880 205 875L156 934Q107 950 58 941Z"/>
         <path d="M327 867Q360 864 378 888L441 905 389 948 310 941 263 918Z"/>
       </g>
-      <g filter="url(#resident-contact-soft)" opacity=".38">
+      <g filter="url(#resident-contact-soft)" opacity=".88">
         <ellipse cx="196" cy="884" rx="22" ry="5"/><ellipse cx="129" cy="896" rx="24" ry="6"/>
         <ellipse cx="341" cy="874" rx="23" ry="6"/><ellipse cx="427" cy="913" rx="21" ry="6"/>
       </g>
