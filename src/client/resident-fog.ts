@@ -16,6 +16,7 @@ export class ResidentFog {
       clip.poster = source.replace(/\.(webm|mp4)$/, '.png');
       clip.muted = true;
       clip.loop = true;
+      clip.playbackRate = .72;
       clip.playsInline = true;
       clip.preload = 'auto';
       clip.addEventListener('loadedmetadata', () => {

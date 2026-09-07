@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
 test('resident rim treatment preserves full-stage playback and transition filter',async({page})=>{
  await page.setViewportSize({width:3840,height:2160});await page.goto('/?parlor=1');
+ await expect.poll(()=>page.locator('.resident-fog video').first().evaluate((v:HTMLVideoElement)=>v.playbackRate)).toBe(.72);
  const video=page.locator('.ghost-porch.left video');
  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.5);
  expect(await video.evaluate(v=>getComputedStyle(v).filter)).toContain('resident-soft-rim');

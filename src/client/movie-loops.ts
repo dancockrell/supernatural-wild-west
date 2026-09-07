@@ -17,6 +17,8 @@ export function movie(key: MovieKey, offset = 0, source: string = MOVIES[key]) {
   video.playsInline = true;
   video.preload = "auto";
   video.dataset.movie = key;
+  // Slow the baked vapor only in the repeating reel portrait.
+  if (key === 'preacher') video.playbackRate = .8;
   video.setAttribute("aria-hidden", "true");
   video.addEventListener(
     "loadedmetadata",
@@ -112,4 +114,3 @@ export class MovieSymbols {
     }
   };
 }
-

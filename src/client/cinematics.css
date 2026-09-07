@@ -844,3 +844,5 @@
 .hand-marquee[data-result='unpaid'] .hand-marquee-name { color:#d4dfda; font-size:2.15cqw; }
 @media(prefers-reduced-motion:reduce) { .hand-marquee,.hand-marquee-payout { transition:none!important; transform:none!important; } }
 .unified-parlor .player-play-space:has(.poker-guest video) .poker-award { visibility:hidden; }
+
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="full-house"] .authored-hand-v3 video { filter:url(#resident-soft-rim); }

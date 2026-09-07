@@ -1,6 +1,8 @@
 # Presentation continuity review — 2026-09-07
 
-The women have no added aura. Separate smoke uses the scene fog color, and selective cool-spill removal suppresses the baked purple/cyan contour strands without desaturating warm skin, burgundy clothing or lantern light. Held transition frames retain the same treatment. Independent before/after review confirms the broad bright filaments are removed; faint ghost texture remains within the lower forms.
+The women retain rich skin and clothing colors. Cool-spill suppression now also compresses pale light embedded inside the silhouette; a faint, blurred contribution in the scene fog color replaces part of that harsh light. Separate native fog drifts at 0.72 speed. The same treatment covers the preacher portrait, church appearance and Full House film; only the repeating portrait slows to 0.8, leaving event actions and sound timing intact. Held transition frames inherit the filter.
+
+Same-frame primary and alternate idle review found a modest improvement in face-to-arm balance without returning purple or a hard halo. Broad pale bands remain in the admitted source footage, so this is an incremental repair, not complete relighting or newly authored skin-emission animation.
 
 Ten distinct hand performances now play their complete native eight-to-ten-second films over a large stage above the player cards and controls. Each has its own score and action effects. The gallery works before any wager, and controls recover after native completion. Hidden tabs and reduced motion cancel presentation and scores without reopening queued events.
 

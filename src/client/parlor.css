@@ -199,3 +199,7 @@
 
 .unified-parlor canvas[data-movie='queen'],
 .unified-parlor canvas[data-movie='medium'] { filter:url(#resident-soft-rim); }
+
+/* Diffuse the baked cyan contour into the same low fog as the residents. */
+.unified-parlor canvas[data-movie="preacher"],
+.unified-parlor .ghost-sprite[data-ghost="preacher-book"] { filter:url(#resident-soft-rim); }
