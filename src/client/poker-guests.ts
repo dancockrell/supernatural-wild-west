@@ -49,13 +49,14 @@ export class PokerGuests {
   private reduced=false;
   private disposed=false;
   private pendingRank?:string;
+  private pendingAmount?:number;
   private timer?:ReturnType<typeof setTimeout>;
   private waiters=new Set<()=>void>();
   private sounding?:HandPlayback;
   constructor(host:HTMLElement,private cue:(sound:HandCue,detail?:number)=>void,
     private playback:(event:HandPlayback)=>void=()=>{},private changed:()=>void=()=>{}) {
     this.stage.className='poker-guests';this.stage.setAttribute('aria-hidden','true');host.append(this.stage);
-    host.addEventListener('hand-award',e=>this.play((e as CustomEvent<string>).detail),{signal:this.events.signal});
+    host.addEventListener('hand-award',e=>this.play((e as CustomEvent<string>).detail,Number(host.querySelector<HTMLElement>('.poker-award')?.dataset.amount || 0)),{signal:this.events.signal});
     host.addEventListener('hand-reset',()=>this.stop(),{signal:this.events.signal});
     document.addEventListener('visibilitychange',()=>{if(document.hidden)this.stop();},{signal:this.events.signal});
   }
@@ -69,15 +70,15 @@ export class PokerGuests {
     this.stage.replaceChildren();this.stage.classList.remove('large-hand-stage');this.stage.style.removeProperty('--hand-rise');delete this.stage.dataset.reaction;delete this.stage.dataset.performance;for(const side of ['left','center','right','water'])this.stage.style.removeProperty(`--hand-${side}`);
   }
   private settle(){for(const resolve of this.waiters)resolve();this.waiters.clear();this.changed();}
-  stop(){this.pendingRank=undefined;this.clearCurrent();this.settle();}
+  stop(){this.pendingRank=undefined;this.pendingAmount=undefined;this.clearCurrent();this.settle();}
   private finish(){
-    const next=this.pendingRank;this.pendingRank=undefined;this.clearCurrent();
-    if(next && !this.disposed && !this.reduced && !document.hidden)this.play(next);
+    const next=this.pendingRank,amount=this.pendingAmount;this.pendingRank=undefined;this.pendingAmount=undefined;this.clearCurrent();
+    if(next && !this.disposed && !this.reduced && !document.hidden)this.play(next,amount);
     if(!this.active)this.settle();
   }
-  play(rank:string){
+  play(rank:string,amount?:number){
     const definition=HAND_PERFORMANCES[rank];if(!definition)return;
-    if(this.active&&!this.reduced&&!document.hidden){this.pendingRank=rank;return;}
+    if(this.active&&!this.reduced&&!document.hidden){this.pendingRank=rank;this.pendingAmount=amount;return;}
     this.clearCurrent();
     if(this.disposed||this.reduced||document.hidden||!document.documentElement.classList.contains('unified-parlor')){this.settle();return;}
     const authored=ADMITTED_V3_HANDS.has(definition.id);
@@ -88,6 +89,12 @@ export class PokerGuests {
     // A stalled decoder can fail, but a healthy long performance has no fixed cutoff.
     const armWatchdog=()=>{clearTimeout(this.timer);this.timer=setTimeout(()=>this.finish(),15000);};
     armWatchdog();
+    const title=document.createElement('div');title.className='hand-marquee';
+    title.dataset.result=amount===undefined?'preview':amount>0?'paid':'unpaid';
+    const name=document.createElement('strong');name.className='hand-marquee-name';name.textContent=rank;
+    const reward=document.createElement('span');reward.className='hand-marquee-payout';
+    reward.textContent=amount===undefined?'PERFORMANCE PREVIEW':amount>0?`${(amount/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})} CR`:'NO PAYOUT · NEXT HAND AWAITS';
+    title.append(name,reward);this.stage.append(title);
     clips.forEach((clip,index)=>{
       const seat=document.createElement('div');seat.className=`poker-guest guest-${index}`;seat.dataset.cast=clip;
       const video=authored?document.createElement('video'):ghostSprite(clip as GhostClip);
@@ -148,6 +155,7 @@ export class PokerGuests {
       video.addEventListener('waiting',pauseScore,{signal});video.addEventListener('pause',pauseScore,{signal});
       const updateNativeFrame=()=>{
         if(signal.aborted)return;
+        if(index===0){title.classList.toggle('revealed',video.currentTime>=.3);title.classList.toggle('paid-reveal',video.currentTime>=1);title.classList.toggle('leaving',video.duration-video.currentTime<.45);}
         if(video.currentTime>lastProgress){lastProgress=video.currentTime;armWatchdog();}
         if(this.sounding&&index===0)this.sounding.currentTime=video.currentTime;
         if(authored&&index===0&&Number.isFinite(video.duration))this.stage.style.setProperty('--hand-rise',String(Math.sin(Math.PI*Math.min(1,video.currentTime/video.duration))));

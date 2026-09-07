@@ -131,6 +131,7 @@ export class PokerTable {
     if (!hand.complete) return;
     this.content.querySelector(".poker-award")!.innerHTML =
       `${hand.rank}${hand.amount ? `<strong>${(hand.amount / 100).toFixed(2)} CR</strong>` : ""}`;
+    this.content.querySelector<HTMLElement>(".poker-award")!.dataset.amount = String(hand.amount);
     const matching = handChoreographyIndices(hand.cards, hand.rank).map(i => targets[i]);
     const motion = handMotion(hand.rank);
     this.table.dataset.hand = motion.name;

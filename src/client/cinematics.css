@@ -825,3 +825,22 @@
   transform:translateY(calc(var(--hand-water,0) * -1.1cqw)) scaleX(calc(.9 + var(--hand-water,0) * .1));
   filter:blur(.10cqw); pointer-events:none;
 }
+
+/* A theatrical lower-third: native-time reveal, readable amounts, no cover over controls. */
+.unified-parlor .large-hand-stage .hand-marquee {
+ position:absolute; z-index:5; left:5%; right:5%; bottom:.65cqw;
+ display:flex; flex-direction:column; align-items:center; gap:.25cqw;
+ padding:.3cqw 1cqw; text-align:center; pointer-events:none;
+ background:radial-gradient(ellipse at 50% 70%,#080d10ed 12%,#080d10bd 44%,transparent 73%);
+ color:#f6e6bc; text-shadow:0 .12cqw .24cqw #000,0 0 .8cqw #000;
+ opacity:0; transform:translateY(.6cqw); transition:opacity .35s ease,transform .55s cubic-bezier(.2,.8,.2,1);
+}
+.unified-parlor .large-hand-stage .hand-marquee.revealed { opacity:1; transform:translateY(0); }
+.unified-parlor .large-hand-stage .hand-marquee.leaving { opacity:0; transform:translateY(-.3cqw); }
+.hand-marquee-name { font-family:'Cinzel',serif; margin:0; font-size:2.3cqw; line-height:1.05; font-weight:700; letter-spacing:.06cqw; text-transform:uppercase; }
+.hand-marquee-payout { font-family:'Cinzel',serif; font-weight:700; font-variant-numeric:tabular-nums; margin:0; font-size:2cqw; line-height:1.05; letter-spacing:.025cqw; color:#ffdc86; opacity:0; transform:translateY(.4cqw) scale(.9); transition:opacity .25s,transform .55s cubic-bezier(.15,1.5,.45,1); }
+.paid-reveal .hand-marquee-payout { opacity:1; transform:none; }
+.hand-marquee[data-result='preview'] .hand-marquee-payout,.hand-marquee[data-result='unpaid'] .hand-marquee-payout { font-family:'DM Sans',sans-serif; font-size:.75cqw; font-weight:500; letter-spacing:.13cqw; color:#c4d1cc; }
+.hand-marquee[data-result='unpaid'] .hand-marquee-name { color:#d4dfda; font-size:2.15cqw; }
+@media(prefers-reduced-motion:reduce) { .hand-marquee,.hand-marquee-payout { transition:none!important; transform:none!important; } }
+.unified-parlor .player-play-space:has(.poker-guest video) .poker-award { visibility:hidden; }
