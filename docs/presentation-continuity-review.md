@@ -1,5 +1,7 @@
 # Presentation continuity review — 2026-09-07
 
+High Noon now uses registered architectural lighting: brighter window skies, consistently down-left dust shafts, softly bounded floor sunlight interrupted by railing shadows, and warm reflected lantern light. Window masks protect the carved capitals. Daytime environment contrast is lifted without changing character filters; the left floor repair shares that adjustment to retain its blend. Night crossfades to restrained cool window light. The light sits behind residents and controls, uses the existing fixed stage, and pauses its slow shaft modulation for hidden pages or reduced motion. No new media was generated. Native 4K review covers noon/night, character playback and reduced motion in parlor-lighting.spec.ts.
+
 The women retain rich skin and clothing colors. Cool-spill suppression now also compresses pale light embedded inside the silhouette; a faint, blurred contribution in the scene fog color replaces part of that harsh light. Separate native fog drifts at 0.72 speed. The same treatment covers the preacher portrait, church appearance and Full House film; only the repeating portrait slows to 0.8, leaving event actions and sound timing intact. Held transition frames inherit the filter.
 
 Same-frame primary and alternate idle review found a modest improvement in face-to-arm balance without returning purple or a hard halo. Broad pale bands remain in the admitted source footage, so this is an incremental repair, not complete relighting or newly authored skin-emission animation.

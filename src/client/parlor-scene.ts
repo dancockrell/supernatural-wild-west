@@ -1,6 +1,7 @@
 import { ExteriorResidents } from './exterior-residents';
 import { NarrativeGambler } from './narrative-gambler';
 import { ResidentFog } from './resident-fog';
+import { createParlorLight } from './parlor-light';
 /** Geometry-locked films: live overlays share the source image coordinates. */
 export class ParlorScene {
   private movies: HTMLVideoElement[] = [];
@@ -8,6 +9,7 @@ export class ParlorScene {
   private disposed = false;
   private fog = document.createElement('video');
   private night = false;
+  private light = createParlorLight();
   private shown = 0;
   private phaseAnimation?: Animation;
   private incoming?: number;
@@ -29,6 +31,7 @@ export class ParlorScene {
     floorRepair.src='/art/parlor-clear-left-floor.png';
     floorRepair.alt='';
     canvas.before(floorRepair);
+    floorRepair.after(this.light);
     canvas.remove();
     document.addEventListener('visibilitychange',this.sync);
     this.exterior=new ExteriorResidents(); this.gambler=new NarrativeGambler(sound);
@@ -45,6 +48,7 @@ export class ParlorScene {
   }
   private sync=()=>{
     if(this.disposed) return;
+    this.light.classList.toggle('light-paused',document.hidden||this.reduced);
     if(document.hidden||this.reduced) this.fog.pause(); else void this.fog.play().catch(()=>{});
     const target = Number(this.night);
     if (document.hidden || this.reduced) {
@@ -86,10 +90,9 @@ export class ParlorScene {
     this.phaseAnimation?.cancel();
     document.removeEventListener('visibilitychange',this.sync);
     this.gambler.dispose(); this.exterior.dispose(); this.residentFog.dispose();
+    this.light.remove();
     for(const v of [this.fog,...this.movies]) {v.removeEventListener('loadeddata',this.sync);v.pause();v.removeAttribute('src');v.load();v.remove();}
   }
 }
-
-
 
 

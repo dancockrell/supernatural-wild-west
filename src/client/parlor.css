@@ -16,6 +16,20 @@
 
 /* Review route while the five master-matched cast films are being assembled. */
 .unified-parlor .parlor-environment { position:absolute; inset:0 auto auto 0; width:100%; height:auto; z-index:0; }
+.parlor-light { position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+.parlor-environment[src$="/environment-color.mp4"],
+body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); }
+.parlor-light .daylight { opacity:1; transition:opacity 1200ms ease; mix-blend-mode:screen; }
+.night .parlor-light .daylight { opacity:0; }
+.parlor-light .moonlight { opacity:0; mix-blend-mode:screen; transition:opacity 1200ms ease; }
+.night .parlor-light .moonlight { opacity:1; }
+.parlor-light.light-paused .daylight-shafts { animation-play-state:paused; }
+.parlor-light.light-paused g { transition:none; }
+.parlor-light .interior-bounce { opacity:.75; mix-blend-mode:screen; transition:opacity 1200ms ease; }
+.night .parlor-light .interior-bounce { opacity:1; }
+.parlor-light .daylight-shafts { animation:daylight-breath 23s ease-in-out infinite alternate; }
+@keyframes daylight-breath { from {opacity:.65} to {opacity:1} }
+@media(prefers-reduced-motion:reduce) { .parlor-light .daylight-shafts {animation:none} .parlor-light g {transition:none} }
 @media(min-width:0px) {
   .unified-parlor body { min-height:60cqw; background:#100e0a; }
   .unified-parlor .vignette { display:none; }
