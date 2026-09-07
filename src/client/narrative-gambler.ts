@@ -94,7 +94,14 @@ export class NarrativeGambler {
     }, {signal:this.events.signal});
     for(const index of [1,3,4]) this.clips[index].addEventListener('ended', () => {
       if(!this.disposed && !this.reduced && !document.hidden && this.active === index) {
-        this.switchTo(index===1 && this.clips[4].readyState>=2 ? 4 : 0);
+        // A result arriving during the deal belongs to this performance. Resolve it
+        // at its natural boundary instead of playing a loss and queuing it again.
+        const result = index === 1 && this.pendingHand?.complete ? this.pendingHand : undefined;
+        const reaction = result ? (result.paid ? 3 : 4) : 4;
+        if(index === 1 && this.clips[reaction].readyState >= 2) {
+          if(result) this.pendingHand = undefined;
+          this.switchTo(reaction);
+        } else this.switchTo(0);
       }
     }, {signal:this.events.signal});
     document.addEventListener('visibilitychange',this.sync,{signal:this.events.signal});

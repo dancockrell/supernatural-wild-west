@@ -2,7 +2,7 @@
 
 High Noon now uses registered architectural lighting: brighter window skies, consistently down-left dust shafts, softly bounded floor sunlight interrupted by railing shadows, and warm reflected lantern light. Window masks protect the carved capitals. Daytime environment contrast is lifted without changing character filters; the left floor repair shares that adjustment to retain its blend. Night crossfades to restrained cool window light. The light sits behind residents and controls, uses the existing fixed stage, and pauses its slow shaft modulation for hidden pages or reduced motion. No new media was generated. Native 4K review covers noon/night, character playback and reduced motion in parlor-lighting.spec.ts.
 
-The women retain rich skin and clothing colors. Cool-spill suppression now also compresses pale light embedded inside the silhouette; a faint, blurred contribution in the scene fog color replaces part of that harsh light. Separate native fog drifts at 0.72 speed, now at 25% opacity so it does not blanket the women's clothing and legs. Native brazier smoke remains intact. The same rim treatment covers the preacher portrait, church appearance and Full House film; only the repeating portrait slows to 0.8, leaving event actions and sound timing intact. Held transition frames inherit the filter.
+The women retain rich skin and clothing colors. Cool-spill suppression is retained, while pale contour light is corrected through a feathered silhouette band. The contour mask no longer selects the whole interior, and its additional synthetic vapor halo has been removed. Separate native fog drifts at 0.72 speed, now at 25% opacity so it does not blanket the women's clothing and legs. Native brazier smoke remains intact. The same rim treatment covers the preacher portrait, church appearance and Full House film; only the repeating portrait slows to 0.8, leaving event actions and sound timing intact. Held transition frames inherit the filter.
 
 Same-frame primary and alternate idle review found a modest improvement in face-to-arm balance without returning purple or a hard halo. Broad pale bands remain in the admitted source footage, so this is an incremental repair, not complete relighting or newly authored skin-emission animation.
 
@@ -12,7 +12,11 @@ The exterior condemned and mounted ghosts now use a dedicated narrow fringe blen
 
 Ten distinct hand performances now play their complete native eight-to-ten-second films over a large stage above the player cards and controls. Each has its own score and action effects. The gallery works before any wager, and controls recover after native completion. Hidden tabs and reduced motion cancel presentation and scores without reopening queued events.
 
+Hand names and exact payout captions now enter and settle on the native film clock. Paid completions get one restrained gold rule and sheen; preview and unpaid captions do not. Pauses hold the typography and seeks reconstruct it without a second animation clock.
+
 The High Card performance now shows the gambler's fixed busted royal (A/K/Q/J of spades and 2 of hearts) on the felt from 0.5 seconds, dissolving at 4.8 seconds into a rising two-second cloud. Its overlay follows the decoded film clock and native display size. The normal desk uses the same fog when an old hand clears for the next deal; hidden/reduced-motion settling leaves no residual cloud. Cards remain fictional presentation, independent of the actual evaluated player hand.
+
+When a completed hand arrives during the gambler's receive film, he now reacts directly at its natural boundary: notice for a paid result, loss for an unpaid result. The consumed result cannot produce a duplicate loss after an idle. An undecoded reaction remains queued while idle plays.
 
 The gambler's new native loss film shares the receive table's geometry and material. The old affine correction is removed. Whole-body alpha and dense masks through both fast hand transitions replace inappropriate pose-specific cuts. A stable lower table plate retains continuity between the films. Independent review passed every frame of the repaired transitions.
 

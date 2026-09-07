@@ -160,7 +160,25 @@ export class PokerGuests {
       const updateNativeFrame=()=>{
         if(ghostHand)drawGhostHand(ghostHand,video.currentTime);
         if(signal.aborted)return;
-        if(index===0){title.classList.toggle('revealed',video.currentTime>=.3);title.classList.toggle('paid-reveal',video.currentTime>=1);title.classList.toggle('leaving',video.duration-video.currentTime<.45);}
+        if(index===0){
+          const t=video.currentTime;
+          const ramp=(start:number,length:number)=>Math.max(0,Math.min(1,(t-start)/length));
+          const ease=(x:number)=>1-Math.pow(1-x,3);
+          const entry=ease(ramp(.3,.6)),paid=ease(ramp(1,.55));
+          const exit=Number.isFinite(video.duration)?ease(ramp(video.duration-.45,.45)):0;
+          // Film time owns typography as well as the acting: a paused or sought
+          // frame holds the exact award and reconstructs its brief flourish.
+          title.style.setProperty('--title-opacity',String(entry*(1-exit)));
+          title.style.setProperty('--title-y',`${(1-entry)*.6-exit*.3}cqw`);
+          title.style.setProperty('--payout-opacity',String(paid));
+          title.style.setProperty('--payout-y',`${(1-paid)*.4}cqw`);
+          const stamp=amount!==undefined&&amount>0 ? Math.sin(Math.PI*ramp(1,.8))*.065 : 0;
+          title.style.setProperty('--payout-scale',String(.94+.06*paid+stamp));
+          title.style.setProperty('--rule-reveal',String(ease(ramp(1.15,.9))));
+          title.style.setProperty('--award-sheen-x',`${-35+170*ramp(1.5,1.05)}%`);
+          title.style.setProperty('--award-sheen-opacity',String(Math.sin(Math.PI*ramp(1.5,1.05))*.65));
+          title.classList.toggle('revealed',t>=.3);title.classList.toggle('paid-reveal',t>=1);title.classList.toggle('leaving',video.duration-t<.45);
+        }
         if(video.currentTime>lastProgress){lastProgress=video.currentTime;armWatchdog();}
         if(this.sounding&&index===0)this.sounding.currentTime=video.currentTime;
         if(authored&&index===0&&Number.isFinite(video.duration))this.stage.style.setProperty('--hand-rise',String(Math.sin(Math.PI*Math.min(1,video.currentTime/video.duration))));

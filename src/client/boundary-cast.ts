@@ -10,7 +10,7 @@ export class BoundaryCast {
   constructor(shell: Element, sound: (cue: 'lantern' | 'breath') => void) {
     this.host.className = 'boundary-cast';
     this.host.setAttribute('aria-hidden', 'true');
-    // Keep admitted spill removal, then soften pale edge light and lift front midtones.
+    // Keep admitted spill removal, then soften only the pale silhouette light.
     this.host.insertAdjacentHTML('beforeend', `<svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs><filter id="resident-soft-rim" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
       <feMorphology in="SourceAlpha" operator="erode" radius=".012 .006" result="interior"/>
       <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -5 -5 10 0 -.25" result="rim"/>
@@ -19,7 +19,8 @@ export class BoundaryCast {
       <feComposite in="SourceGraphic" in2="rim" operator="out" result="body"/>
       <feComposite in="body" in2="softRim" operator="arithmetic" k2="1" k3="1" result="clean"/>
       <feComposite in="SourceAlpha" in2="interior" operator="out" result="rawEdge"/>
-      <feComponentTransfer in="rawEdge" result="edge"><feFuncA type="linear" slope="4" intercept=".55"/></feComponentTransfer>
+      <feGaussianBlur in="rawEdge" stdDeviation=".0015 .00075" result="featheredEdge"/>
+      <feComponentTransfer in="featheredEdge" result="edge"><feFuncA type="linear" slope="4" intercept="0"/></feComponentTransfer>
       <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2 3 0 -1" result="coldLight"/>
       <feComposite in="coldLight" in2="edge" operator="in" result="litEdge"/>
       <feComponentTransfer in="clean" result="edgeShade"><feFuncR type="linear" slope=".55"/><feFuncG type="linear" slope=".55"/><feFuncB type="linear" slope=".55"/></feComponentTransfer>
@@ -27,10 +28,7 @@ export class BoundaryCast {
       <feComposite in="clean" in2="litEdge" operator="out" result="face"/>
       <feComposite in="face" in2="softEdge" operator="arithmetic" k2="1" k3="1" result="balanced"/>
       <feComponentTransfer in="balanced" result="litBody"><feFuncR type="table" tableValues="0 .112 .221 .321 .419 .514 .607 .704 .801 .9 1"/><feFuncG type="table" tableValues="0 .112 .221 .321 .419 .514 .607 .704 .801 .9 1"/><feFuncB type="table" tableValues="0 .112 .221 .321 .419 .514 .607 .704 .801 .9 1"/></feComponentTransfer>
-      <feComposite in="SourceGraphic" in2="litEdge" operator="in" result="lightSource"/>
-      <feColorMatrix in="lightSource" type="matrix" values="0 0 0 0 .678 0 0 0 0 .765 0 0 0 0 .737 0 0 0 .13 0" result="vapor"/>
-      <feGaussianBlur in="vapor" stdDeviation=".008 .004" result="softVapor"/>
-      <feMerge><feMergeNode in="softVapor"/><feMergeNode in="litBody"/></feMerge>
+      <feMerge><feMergeNode in="litBody"/></feMerge>
     </filter><filter id="mounted-fog-light" color-interpolation-filters="sRGB">
       <feColorMatrix type="saturate" values=".35"/>
       <feComponentTransfer><feFuncR type="linear" slope=".85"/><feFuncG type="linear" slope=".85"/><feFuncB type="linear" slope=".82"/></feComponentTransfer>

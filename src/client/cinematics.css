@@ -895,3 +895,29 @@
 
 /* The horse body itself is blue: preserve its alpha rather than treating it as spill. */
 .unified-parlor .feature-ghost.rare-mounted-performance { filter:url(#mounted-fog-light); }
+
+/* The award settles once, with the film. Pauses and seeks never leave a second
+   CSS timeline running across the character's held frame. */
+.unified-parlor .large-hand-stage .hand-marquee,
+.unified-parlor .large-hand-stage .hand-marquee.revealed,
+.unified-parlor .large-hand-stage .hand-marquee.leaving {
+ opacity:var(--title-opacity,0); transform:translateY(var(--title-y,.6cqw)); transition:none;
+}
+.unified-parlor .large-hand-stage .hand-marquee-payout {
+ position:relative; isolation:isolate; overflow:hidden; padding:.06cqw .4cqw;
+ opacity:var(--payout-opacity,0); transform:translateY(var(--payout-y,.4cqw)) scale(var(--payout-scale,.94)); transition:none;
+}
+.unified-parlor .large-hand-stage .hand-marquee[data-result='paid']::after {
+ content:''; position:absolute; left:28%; right:28%; bottom:.18cqw; height:.055cqw;
+ background:linear-gradient(90deg,transparent,#b17d38 18%,#ffe4a0 50%,#b17d38 82%,transparent);
+ opacity:.8; transform:scaleX(var(--rule-reveal,0)); transform-origin:center;
+}
+.unified-parlor .large-hand-stage .hand-marquee[data-result='paid'] .hand-marquee-payout::after {
+ content:''; position:absolute; inset:0; width:28%; left:var(--award-sheen-x,-35%); pointer-events:none;
+ background:linear-gradient(105deg,transparent,#fff1bf55,transparent);
+ opacity:var(--award-sheen-opacity,0); transform:skewX(-15deg); mix-blend-mode:screen;
+}
+@media(prefers-reduced-motion:reduce) {
+ .unified-parlor .large-hand-stage .hand-marquee[data-result='paid']::after,
+ .unified-parlor .large-hand-stage .hand-marquee-payout::after { display:none; }
+}

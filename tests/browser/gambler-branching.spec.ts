@@ -50,4 +50,34 @@ test('hand arrivals coalesce, resolutions take priority and hidden tabs clear re
  expect(result.pendingResolution).toBe('notice.webm');
 });
 
+test('a hand resolving during the deal reacts at the native boundary without a duplicate loss',async({page})=>{
+ await page.setContent('<main></main>');
+ const source=readFileSync('src/client/ghost-hand.ts','utf8').replace(/export /g,'')+'\n'+readFileSync('src/client/narrative-gambler.ts','utf8').replace(/^import .*$/gm,'').replace('export class','class');
+ await page.addScriptTag({content:ts.transpileModule(source+'\nObject.assign(window,{NarrativeGambler});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ const results=await page.evaluate(()=>{
+  Object.defineProperty(HTMLMediaElement.prototype,'readyState',{configurable:true,get:()=>4});
+  Object.defineProperty(HTMLMediaElement.prototype,'seeking',{configurable:true,get:()=>false});
+  HTMLMediaElement.prototype.play=function(){return Promise.resolve();};
+  HTMLMediaElement.prototype.pause=function(){};
+  HTMLMediaElement.prototype.load=function(){};
+  return [true,false].map(paid=>{
+   const g=new (window as any).NarrativeGambler();
+   const current=()=>document.querySelector<HTMLVideoElement>('.narrative-gambler video:not([hidden])')!;
+   const name=()=>current().dataset.performance;
+   const finish=()=>{current().dispatchEvent(new Event('ended'));return name();};
+   g.noticeHand(false,false);
+   const deal=finish();
+   g.noticeHand(true,paid);
+   const uninterrupted=name();
+   const reaction=finish();
+   const queued=g.pendingHand;
+   const returned=finish();
+   const nextIdle=finish();
+   g.dispose();
+   return {paid,deal,uninterrupted,reaction,queued,returned,nextIdle};
+  });
+ });
+ expect(results).toEqual([true,false].map(paid=>({paid,deal:'receive',uninterrupted:'receive',reaction:paid?'notice':'loss',queued:undefined,returned:'idle',nextIdle:'brim'})));
+});
+
 
