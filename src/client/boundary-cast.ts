@@ -35,6 +35,19 @@ export class BoundaryCast {
       <feColorMatrix type="saturate" values=".35"/>
       <feComponentTransfer><feFuncR type="linear" slope=".85"/><feFuncG type="linear" slope=".85"/><feFuncB type="linear" slope=".82"/></feComponentTransfer>
     </filter><filter id="resident-fog-color" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 .678 0 0 0 0 .765 0 0 0 0 .737 0 0 0 1 0"/></filter></defs></svg>`);
+    // Quiet the baked cold veil below the hands, preserving the brazier and face.
+    const quietMedium=this.host.querySelector('#resident-soft-rim')!.cloneNode(true) as SVGElement;
+    quietMedium.id='medium-quiet-mist';
+    quietMedium.querySelector('feMerge')!.setAttribute('result','standard');
+    quietMedium.insertAdjacentHTML('beforeend', `<feFlood x="0" y=".44" width="1" height=".56" flood-color="white" result="lowerBody"/>
+      <feGaussianBlur in="lowerBody" stdDeviation=".025" result="lowerFade"/>
+      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2 3 0 -.5" result="bodyCold"/>
+      <feComposite in="bodyCold" in2="lowerFade" operator="in" result="bodyMist"/>
+      <feComponentTransfer in="standard" result="quiet"><feFuncR type="linear" slope=".65"/><feFuncG type="linear" slope=".65"/><feFuncB type="linear" slope=".65"/></feComponentTransfer>
+      <feComposite in="quiet" in2="bodyMist" operator="in" result="quietMist"/>
+      <feComposite in="standard" in2="bodyMist" operator="out" result="unaffected"/>
+      <feComposite in="unaffected" in2="quietMist" operator="arithmetic" k2="1" k3="1"/>`);
+    this.host.querySelector('defs')!.append(quietMedium);
     const parlor = new URLSearchParams(location.search).has('parlor');
     for (const [key, side, offset] of [['queen','left',.35],['medium','right',2.1]] as const) {
       const slot = document.createElement('div');
