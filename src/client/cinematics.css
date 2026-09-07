@@ -730,7 +730,7 @@
   display: none;
 }
 .unified-parlor .feature-ghost.authored-feature {
-  height: min(850px, var(--performance-height));
+  height: min(1600px, var(--performance-height));
   width: auto;
   max-width: 94vw;
   object-fit: contain;

@@ -91,8 +91,8 @@ export class FeatureCinematics {
         spirit.poster = spirit.src.replace(/\.webm$/, '.png');
         spirit.classList.add("parlor-feature-resident");
       }
-      if (kind === 'awaken' && location === 3) {
-        const performance = 'mine';
+      if (kind === 'awaken' && [1,2,3].includes(location)) {
+        const performance = ['','saloon','jail','mine'][location];
         spirit.src = `/video/feature-performances-v2/${performance}.webm`;
         spirit.poster = spirit.src.replace('.webm', '.png');
         spirit.classList.add('authored-feature');
@@ -102,7 +102,11 @@ export class FeatureCinematics {
         number,
         "chain" | "chain-snap" | "chain-link" | "breath" | "lantern" | "pages",
       ][] =
-        parlorResident
+        kind === 'awaken' && location === 2
+          ? [[3.4, "chain"], [4.9, "chain-snap"], [5.2, "chain-link"], [5.8, "chain-link"]]
+          : kind === 'awaken' && location === 1
+          ? [[3.7, "breath"]]
+          : parlorResident
           ? clip === "queen-lantern" ? [[.65, "lantern"]] : [[.65, "breath"]]
           : clip === "gunslinger-chains"
           ? [
@@ -170,4 +174,3 @@ export class FeatureCinematics {
     document.removeEventListener("visibilitychange", this.syncPlayback);
   }
 }
-

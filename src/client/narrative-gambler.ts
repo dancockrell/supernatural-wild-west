@@ -5,7 +5,9 @@ export class NarrativeGambler {
   private clips = ['idle','receive','idle','notice','loss','brim','knuckle'].map(name => {
     const v = document.createElement('video');
     const family = 'parlor-gambler-hair-v1';
-    v.src = name === 'brim' || name === 'knuckle'
+    v.src = name === 'receive'
+      ? '/video/parlor-gambler-native-v2/receive.webm'
+      : name === 'brim' || name === 'knuckle'
       ? `/video/parlor-idles-v2/gambler-${name}.webm`
       : `/video/${family}/${name}.webm`;
     v.poster = v.src.replace('.webm', '.png');

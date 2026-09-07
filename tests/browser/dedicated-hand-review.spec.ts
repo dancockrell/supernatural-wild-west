@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-for(const [rank,name] of [['Pair','pair'],['Full house','full-house']] as const){
+for(const [rank,name] of [['Pair','pair'],['Two pair','two-pair'],['Full house','full-house']] as const){
  test(`${rank} uses a distinct native performance`,async({page})=>{
   await page.setViewportSize({width:3840,height:2160});
   await page.goto('/?parlor=1');
@@ -12,7 +12,7 @@ for(const [rank,name] of [['Pair','pair'],['Full house','full-house']] as const)
   const size=await video.evaluate((v:HTMLVideoElement)=>({native:v.videoHeight,display:v.getBoundingClientRect().height,frames:v.getVideoPlaybackQuality().totalVideoFrames}));
   expect(size.native).toBeGreaterThanOrEqual(size.display);expect(size.frames).toBeGreaterThan(8);
   const duration=await video.evaluate((v:HTMLVideoElement)=>v.duration);
-  expect(duration).toBeGreaterThanOrEqual(rank==='Pair'?5:6);
+  expect(duration).toBeGreaterThanOrEqual(rank==='Full house'?6:5);
   const before=await video.evaluate((v:HTMLVideoElement)=>({t:v.currentTime,total:v.getVideoPlaybackQuality().totalVideoFrames,dropped:v.getVideoPlaybackQuality().droppedVideoFrames}));
   await page.waitForTimeout(1800);
   const after=await video.evaluate((v:HTMLVideoElement)=>({t:v.currentTime,total:v.getVideoPlaybackQuality().totalVideoFrames,dropped:v.getVideoPlaybackQuality().droppedVideoFrames}));

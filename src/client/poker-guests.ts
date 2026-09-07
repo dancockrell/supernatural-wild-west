@@ -65,7 +65,7 @@ export class PokerGuests {
       return;
     const casts: Record<string, GhostClip[]> = {
       Pair: ["queen-lantern"],
-      "Two pair": ["queen-lantern", "medium-seance"],
+      "Two pair": ["medium-seance"],
       "Three of a kind": ["medium-seance"],
       Straight: ["preacher-book"],
       Flush: ["medium-seance"],
@@ -93,7 +93,7 @@ export class PokerGuests {
         seat.classList.add("resident-guest");
       }
       const dedicated: Record<string, string> = {
-        Pair: 'pair', 'Full house': 'full-house',
+        Pair: 'pair', 'Two pair': 'two-pair', 'Full house': 'full-house',
       };
       if (dedicated[rank]) {
         video.src = `/video/hand-performances-v2/${dedicated[rank]}.webm`;

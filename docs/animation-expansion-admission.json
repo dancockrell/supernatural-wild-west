@@ -245,5 +245,81 @@
       "assembled 3840x2160 Chrome NVIDIA GPU review",
       "native segment completion"
     ]
+  },
+  "saloon": {
+    "sourceCreation": "s76C9VVl8e",
+    "sourceModel": "kling-30",
+    "sourceResolution": "4K vendor tier; actual native dimensions checked before export",
+    "output": [
+      1442,
+      1600
+    ],
+    "durationSeconds": 7.042,
+    "fps": 24,
+    "sha256": "a36badd49d73400e1962fb23eaba77822796f10034e8e93008ba8efb666fce5e",
+    "repair": "Source-color plume recovery inside soft local envelope",
+    "gates": [
+      "Independent source review",
+      "decoded alpha and native detail critic",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native duration and completion"
+    ]
+  },
+  "jail": {
+    "sourceCreation": "w42Fujv7EI",
+    "sourceModel": "kling-30",
+    "sourceResolution": "4K vendor tier; actual native dimensions checked before export",
+    "output": [
+      1600,
+      1600
+    ],
+    "durationSeconds": 7.042,
+    "fps": 24,
+    "sha256": "f3f7340fe8712c381ae392cc5ba224a4cdac844ee26cbf776ae20581ed90bd7b",
+    "repair": "Every-frame matte; no transferred hat protection",
+    "gates": [
+      "Independent source review",
+      "decoded alpha and native detail critic",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native duration and completion"
+    ]
+  },
+  "two-pair": {
+    "sourceCreation": "aFrT0rkfSh",
+    "sourceModel": "kling-30",
+    "sourceResolution": "4K vendor tier; actual native dimensions checked before export",
+    "output": [
+      1442,
+      1600
+    ],
+    "durationSeconds": 5.042,
+    "fps": 24,
+    "sha256": "a93159ac7d3a194cc7c53dcc741416f99bb1af70c6f7b80acfcd90e47e86e9b9",
+    "repair": "Lower fade begins below deep-bow supporting fingers",
+    "gates": [
+      "Independent source review",
+      "decoded alpha and native detail critic",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native duration and completion"
+    ]
+  },
+  "gambler-receive": {
+    "sourceCreation": "u5sDoflQLD",
+    "sourceModel": "kling-30",
+    "sourceResolution": "4K vendor tier; actual native dimensions checked before export",
+    "output": [
+      1920,
+      1440
+    ],
+    "durationSeconds": 7.042,
+    "fps": 24,
+    "sha256": "a94e5ddd5a46dc9667465beb9d7d56b326189d55e1d560c952ed15d3323f1aaa",
+    "repair": "Native RGB with local removal of stale arm and hair matte",
+    "gates": [
+      "Independent source review",
+      "decoded alpha and native detail critic",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native duration and completion"
+    ]
   }
 }

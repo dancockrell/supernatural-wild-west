@@ -10,6 +10,10 @@ The four new or upgraded female idles retain 1440-pixel native RGB height. Queen
 
 Dedicated Pair (5.042 seconds), Full House (6.042 seconds) and Mine (7.042 seconds) performances use native source RGB and real refined alpha at 1442x1600. The critic reviewed gestures, prop contact, moving edges and native details over contrasting backgrounds. Assembled 4K browser checks verify pixel density and native completion; Pair and Full House also verify continuous playback and dropped-frame proportion.
 
+Parallel source and extraction reviews added dedicated Saloon (7.042 seconds), Jail (7.042 seconds), Two Pair (5.042 seconds), and skeleton receiving (7.042 seconds). Saloon preserves its detached colored smoke during the offering; Jail uses every-frame masks without a stale hat-protection polygon; Two Pair keeps the supporting fingers above its lower fade. The skeleton receive uses native 1920x1440 RGB, with stale arm/hair backing removed. The source vendor's 4K label is not taken as proof of 3840-pixel width: actual source dimensions are checked before export.
+
+Authored feature height now follows the stage up to the admitted 1600-pixel limit, replacing the obsolete 850-pixel cap. The assembled character, prop and control bounds were reviewed again at 3840x2160. A distinct Two Pair bow replaces the previously reused two-character overlay.
+
 Admission dimensions, duration, source identifiers and hashes are in animation-expansion-admission.json. The shipping inventory is runtime-assets.json. No signed source URLs belong in this repository.
 
 ## Timing and card choreography
@@ -28,6 +32,6 @@ The skeleton receives one fixed ghost card for each actual player-card arrival. 
 
 ## Still unfinished
 
-The remaining seven dedicated hand performances have completed generation at five to eight seconds, but have not been admitted. Most long feature and higher-resolution skeleton sources are also still awaiting extraction and native-stage review. Some older resident and reaction clips remain lower-resolution or shorter than the new target; this build does not claim that every animation has been replaced. The new skeleton loss source requires stronger acting. Church and rider sources require edge-clipping review. Broader theatrical effects and listening-based sound-mix review remain outstanding.
+Five further dedicated hand sources pass the source gate but still need extraction and admission. Royal Flush and Church require reframed sources because their physical hat crowns are cropped. The proposed skeleton loss source is rejected for nearly static acting. Brim, knuckle and notice sources pass acting review but still need higher-resolution extraction. The rider's suspected tail clipping was cleared in native pixels; its action is a prance and settle. Graveyard, fortune, witch and ride event exports remain outstanding. Some older resident and reaction clips remain lower-resolution or shorter than the new target; this build does not claim that every animation has been replaced. Broader theatrical effects and listening-based sound-mix review remain outstanding.
 
 Keep unapproved source experiments out of the shipping inventory. Do not pad short clips by repeated playback or count reused clips as new performances.
