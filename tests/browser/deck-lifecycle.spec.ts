@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import ts from 'typescript';
 test('quiet arrivals and tab return preserve fixed hand prefixes',async({page})=>{
  await page.setContent('<main></main>');
- const source=readFileSync('src/client/narrative-gambler.ts','utf8').replace('export class','class');
+ const source=readFileSync('src/client/ghost-hand.ts','utf8').replace(/export /g,'')+'\n'+readFileSync('src/client/narrative-gambler.ts','utf8').replace(/^import .*$/gm,'').replace('export class','class');
  await page.addScriptTag({content:ts.transpileModule(source+';Object.assign(window,{NarrativeGambler});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
  const result=await page.evaluate(()=>{
   HTMLMediaElement.prototype.play=function(){return Promise.resolve()};HTMLMediaElement.prototype.pause=function(){};HTMLMediaElement.prototype.load=function(){};
@@ -12,15 +12,18 @@ test('quiet arrivals and tab return preserve fixed hand prefixes',async({page})=
   const prefix=()=>[...document.querySelectorAll('.ritual-card')].map(c=>Number((c as HTMLElement).style.opacity)>0?c.textContent?.replace(/\s/g,''):null).filter(Boolean);
   const counts:number[]=[];
   for(let i=0;i<5;i++){g.noticeCard(`live:${i}`,i);const starts=[...g.cardStarts];g.noticeCard(`live:${i}`,i);if(JSON.stringify(starts)!==JSON.stringify(g.cardStarts))throw Error('duplicate changed starts');now+=3000;g.drawHand((now-g.ritualStarted)/1000);counts.push(prefix().length);}
-  g.noticeCard('next:0',0);now+=3000;g.drawHand((now-g.ritualStarted)/1000);
+  g.noticeCard('next:0',0);g.drawHand(.3);
+  const fogAtClear=g.cards.querySelectorAll('.desk-hand-fog ellipse').length;
+  now+=3000;g.drawHand((now-g.ritualStarted)/1000);
+  const fogSettled=g.cards.querySelectorAll('.desk-hand-fog ellipse').length;
   Object.defineProperty(document,'hidden',{configurable:true,value:true});document.dispatchEvent(new Event('visibilitychange'));
   const beforeQuiet=cues.length;g.noticeCard('next:1',1,false);const hiddenOpacity=g.cards.style.opacity;
   Object.defineProperty(document,'hidden',{configurable:true,value:false});document.dispatchEvent(new Event('visibilitychange'));const resumed=prefix();
   g.setReduced(true);g.noticeCard('next:2',2,false);g.setReduced(false);const reduced=prefix();
   const quiet=cues.length===beforeQuiet;
-  g.dispose();return {counts,hiddenOpacity,resumed,reduced,quiet};
+  g.dispose();return {counts,hiddenOpacity,resumed,reduced,quiet,fogAtClear,fogSettled};
  });
- expect(result).toEqual({counts:[1,2,3,4,5],hiddenOpacity:'0',resumed:['A♠A','K♠K'],reduced:['A♠A','K♠K','Q♠Q'],quiet:true});
+ expect(result).toEqual({counts:[1,2,3,4,5],hiddenOpacity:'0',resumed:['A♠A','K♠K'],reduced:['A♠A','K♠K','Q♠Q'],quiet:true,fogAtClear:45,fogSettled:0});
 });
 test('cancelled player flights cannot notify the ghost and feature score owns foley priority',async({page})=>{
  await page.setContent('<div class="cabinet"></div><div class="controls"></div><div class="symbol"></div>');

@@ -857,6 +857,7 @@
  transform:translateX(-50%); color:#e4bd77; isolation:isolate;
  animation:glyph-arrival 7.2s ease both;
 }
+.busted-royal { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); pointer-events:none; overflow:visible; }
 .rare-glyph svg { width:100%; height:100%; overflow:visible; fill:none; stroke:currentColor; stroke-width:2; filter:drop-shadow(0 0 5px #b77b3855); }
 .rare-glyph .glyph-ring { opacity:.65; stroke-width:1.4; animation:glyph-engrave 2.4s ease both; }
 .glyph-numerals { fill:#ebd7ab; stroke:none; font:26px Cinzel,serif; text-anchor:middle; }

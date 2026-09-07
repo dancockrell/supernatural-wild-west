@@ -1,3 +1,4 @@
+import { ghostHandFog } from './ghost-hand';
 /** A quiet independent ritual, never an opponent or a gate on the spin lifecycle. */
 export class NarrativeGambler {
   private host = document.createElement('aside');
@@ -63,6 +64,7 @@ export class NarrativeGambler {
       </g>`;
     }).join('')}</g>`;
     this.cards.classList.add('ghost-ritual-cards');
+    this.cards.insertAdjacentHTML('beforeend','<g class="desk-hand-fog"/>');
     this.clips.forEach((clip, index) => clip.hidden = index !== 0);
     // Keep the felt, front panel, and feet identical across independently generated films.
     // The plate begins below every reviewed hand silhouette; it contains no frozen fingers.
@@ -159,6 +161,7 @@ export class NarrativeGambler {
       }
     });
     this.cards.querySelector('.ritual-trails')!.innerHTML=trails.join('');
+    this.cards.querySelector('.desk-hand-fog')!.innerHTML=this.hadHand?ghostHandFog(time,this.oldCardCount):'';
     if(time>=.65&&!this.ritualSounds.has(0)){this.ritualSounds.add(0);if(foley && time-.65<.15)this.sound('ghost-deck',0);}
   }
   private switchTo(index:number) {

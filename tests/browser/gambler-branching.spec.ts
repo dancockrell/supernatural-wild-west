@@ -4,7 +4,7 @@ import ts from 'typescript';
 
 test('hand arrivals coalesce, resolutions take priority and hidden tabs clear reactions',async({page})=>{
  await page.setContent('<main></main>');
- const source=readFileSync('src/client/narrative-gambler.ts','utf8').replace('export class','class');
+ const source=readFileSync('src/client/ghost-hand.ts','utf8').replace(/export /g,'')+'\n'+readFileSync('src/client/narrative-gambler.ts','utf8').replace(/^import .*$/gm,'').replace('export class','class');
  await page.addScriptTag({content:ts.transpileModule(source+'\nObject.assign(window,{NarrativeGambler});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
  const result=await page.evaluate(()=>{
   Object.defineProperty(HTMLMediaElement.prototype,'readyState',{configurable:true,get:()=>4});

@@ -1,5 +1,6 @@
 import { ghostSprite, type GhostClip } from "./ghost-sprite";
 import { parlorResidentMedia } from "./resident-media";
+import { createGhostHand, drawGhostHand } from './ghost-hand';
 
 type HandCue = 'breath'|'lantern'|'pages'|'book-close'|'brazier'|'cloth'|'chain-link'|'earth'|'table-knock'|'cartridge'|'ghost-chime';
 type HandBeat = {at:number;cue:HandCue;detail?:number};
@@ -109,6 +110,8 @@ export class PokerGuests {
       }
       video.poster=video.src.replace(/\.webm$/,'.png');video.preload='auto';video.muted=true;video.playsInline=true;video.loop=false;
       video.playbackRate=1;seat.append(video);this.stage.append(seat);
+      const ghostHand=authored&&definition.id==='high-card'?createGhostHand():undefined;
+      if(ghostHand){seat.append(ghostHand);drawGhostHand(ghostHand,0);}
       let sounded=false,accepted=!authored,lastProgress=-1;const beatSeen=new Set<number>();
       let frameRequest:number|undefined,frameUsesVideo=false;
       const cancelFrame=()=>{
@@ -129,6 +132,7 @@ export class PokerGuests {
         const box=seat.getBoundingClientRect();
         const scale=Math.min(1/(window.devicePixelRatio||1),box.width/video.videoWidth,box.height/video.videoHeight);
         video.style.width=`${video.videoWidth*scale}px`;video.style.height=`${video.videoHeight*scale}px`;
+        if(ghostHand){ghostHand.style.width=video.style.width;ghostHand.style.height=video.style.height;}
       };
       const validate=()=>{
         if(signal.aborted)return;
@@ -154,6 +158,7 @@ export class PokerGuests {
       const pauseScore=()=>{cancelFrame();if(!signal.aborted&&index===0)this.silence();};
       video.addEventListener('waiting',pauseScore,{signal});video.addEventListener('pause',pauseScore,{signal});
       const updateNativeFrame=()=>{
+        if(ghostHand)drawGhostHand(ghostHand,video.currentTime);
         if(signal.aborted)return;
         if(index===0){title.classList.toggle('revealed',video.currentTime>=.3);title.classList.toggle('paid-reveal',video.currentTime>=1);title.classList.toggle('leaving',video.duration-video.currentTime<.45);}
         if(video.currentTime>lastProgress){lastProgress=video.currentTime;armWatchdog();}
