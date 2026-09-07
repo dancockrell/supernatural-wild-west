@@ -24,6 +24,11 @@ export class ParlorScene {
       v.addEventListener('loadeddata', this.sync);
       v.setAttribute('aria-hidden','true'); canvas.before(v); this.movies.push(v);
     }
+    const floorRepair=document.createElement('img');
+    floorRepair.className='parlor-floor-repair';
+    floorRepair.src='/art/parlor-clear-left-floor.png';
+    floorRepair.alt='';
+    canvas.before(floorRepair);
     canvas.remove();
     document.addEventListener('visibilitychange',this.sync);
     this.exterior=new ExteriorResidents(); this.gambler=new NarrativeGambler();
