@@ -7,6 +7,7 @@ import { CONFIG as LEGACY_CONFIG } from "../engine/legacy/config-v1";
 import { CONFIG as POKER120_CONFIG } from "../engine/legacy/config-v120";
 import { PokerTable } from "./poker-table";
 import { PokerGuests } from "./poker-guests";
+import { parlorResidentMedia } from "./resident-media";
 import { POKER_PAYS } from "../engine/poker";
 import { installQuickControls } from "./quick-controls";
 import "./style.css";
@@ -280,6 +281,7 @@ document.addEventListener("visibilitychange", () => {
     else audio.resume();
 });
 function openModal(html: string, kicker = "HOW TO PLAY") {
+  modal.querySelectorAll('video').forEach(v => v.pause());
   if (autoplay.active) autoplay.stop();
   focusBefore = document.activeElement as HTMLElement;
   el("dialog-kicker").textContent = kicker;
@@ -287,7 +289,11 @@ function openModal(html: string, kicker = "HOW TO PLAY") {
   if (!modal.open) modal.showModal();
 }
 el("close-modal").onclick = () => modal.close();
-modal.addEventListener("close", () => focusBefore?.focus());
+modal.addEventListener("close", () => {
+  previewRequest++;
+  modal.querySelectorAll('video').forEach(v => v.pause());
+  focusBefore?.focus();
+});
 modal.addEventListener("click", (e) => {
   if (e.target === modal) {
     const r = modal.getBoundingClientRect();
@@ -516,6 +522,7 @@ function animate(result: SpinResult) {
   });
 }
 async function spin(automatic = false): Promise<SpinResult | undefined> {
+  previewRequest++;
   if (!automatic && autoplay.active) {
     autoplay.stop();
     return;
@@ -742,6 +749,10 @@ el("help").onclick = () =>
   openModal(
     `<h2>How to play</h2><p>Choose your wager and spin. Match the same symbol across at least three consecutive reels from the left. Every matching position creates another winning way. Only the longest run for each symbol pays.</p><div class="help-grid"><article><h3>01 / High Noon</h3><p>A sun-scorched frontier. Two Blood Moon scatters start six Witching Hour spins and awaken one location.</p></article><article><h3>02 / Witching Hour</h3><p>Awakened locations modify their own reels. Two moons refresh the six-spin timer. Each active spin can awaken another location.</p></article><article><h3>03 / Ride of the Damned</h3><p>Three or more moons award eight free spins, inherit awakened locations and add another. Two moons during the ride add two spins and awaken another place, up to 32 total awarded spins.</p></article><article><h3>04 / Hellfire Brand</h3><p>Wilds substitute for regular symbols. Blood Moons trigger features and do not pay ways. An all-wild run without any matching natural symbol does not pay that symbol.</p></article></div><h3>Your poker hand</h3><p>When playing cards land, one visible card joins your hand. Collect five across spins to complete it; free spins can add cards too. A completed hand pays when it ranks above A♠ K♠ Q♠ J♠ 2♥, then a new hand begins. A tie or lower hand adds no poker award. Matching symbols and Gold Mines can pay on any spin, independently of your poker hand.</p><p>The wager stays locked while your poker hand is building, throughout Witching Hour and during free spins. Each paid spin and all free spins it triggers share a 10,000× award ceiling. Quick stop only shortens the animation of an already resolved outcome.</p><p class="fine">All amounts use demo credits. Base hit rate measures paid spins with a positive immediate payout. Math Lab reports actual simulation results, including free-spin returns.</p>`,
   );
+el("help").addEventListener('click', () => {
+  el('modal-body').insertAdjacentHTML('afterbegin', '<button id="rare-animation-gallery" class="action-button">Review rare animations</button>');
+  el('rare-animation-gallery').onclick = showAnimationPreview;
+});
 el("paytable").onclick = () => {
   const payConfig =
     state?.configVersion === "dd-1.1.0"
@@ -825,12 +836,15 @@ function download(name: string, data: unknown) {
   setTimeout(() => URL.revokeObjectURL(u), 1000);
 }
 let worker: Worker | undefined;
+let previewRequest = 0;
 async function startShowcase(feature = "ride") {
   if (busy || !state) return;
+  const request = ++previewRequest;
   try {
     const response = await fetch("/api/feature-gallery");
     if (!response.ok) throw new Error("Preview unavailable");
     const result = (await response.json()).examples[feature] as SpinResult;
+    if (request !== previewRequest || busy || !modal.open) return;
     if (!result) throw new Error("Preview unavailable");
     modal.close();
     dismissSpectacle();
@@ -900,15 +914,68 @@ function presentEvents(result: SpinResult) {
   }
 }
 function showAnimationPreview() {
+  previewRequest++;
+  dismissSpectacle();
+  pokerGuests.stop();
+  let back = document.getElementById('return-animation-gallery');
+  if (!back) {
+    back = document.createElement('button');
+    back.id = 'return-animation-gallery';
+    back.className = 'action-button';
+    back.textContent = 'Back to animations';
+    document.body.append(back);
+    back.onclick = showAnimationPreview;
+  }
+  back.hidden = true;
+  const hands = ['Pair','Two pair','Three of a kind','Straight','Flush','Full house','Four of a kind','Straight flush','Royal flush'];
+  const reactions: [string,string][] = [
+    ['Lantern maiden · good result',parlorResidentMedia('queen').reaction],
+    ['Brazier maiden · good result',parlorResidentMedia('medium').reaction],
+    ['Gambler · receives a card','/video/parlor-gambler-native-v2/receive.webm'],
+    ['Gambler · notices a result','/video/parlor-gambler-hair-v1/notice.webm'],
+    ['Gambler · loses again','/video/parlor-gambler-hair-v1/loss.webm'],
+    ['Condemned ghost · $1,000 Easter egg','/video/parlor-exterior-stories-v1/condemned-jackpot.webm'],
+    ['Mounted ghost · $1,000 Easter egg','/video/parlor-exterior-stories-v1/rider-jackpot.webm'],
+  ];
   openModal(
     `<div class="feature-gallery">${["ride", "witch", "awaken-0", "awaken-1", "awaken-2", "awaken-3", "awaken-4", "fortune", "noon", "brand"].map((id) => `<button class="outline-button" data-feature-preview="${id}">${({ ride: "Ride of the Damned", witch: "Witching Hour", "awaken-0": "Graveyard", "awaken-1": "Saloon", "awaken-2": "Jail", "awaken-3": "Mine", "awaken-4": "Church", fortune: "Major win", noon: "High Noon", brand: "Hellfire Brand" } as Record<string, string>)[id]}</button>`).join("")}</div>`,
-    "ANIMATION PREVIEW · NO WAGER",
+    "RARE ANIMATIONS · NO WAGER",
   );
+  el('modal-body').insertAdjacentHTML('afterbegin','<h2>Rare animations</h2><p>Preview the current game’s performances without spending credits or changing your hand. Sound follows your sound setting.</p><h3>Feature events</h3>');
+  el('modal-body').insertAdjacentHTML('beforeend', `<h3>Poker hand reactions</h3><div class="feature-gallery">${hands.map(rank=>`<button class="outline-button" data-hand-preview="${rank}">${rank}</button>`).join('')}</div><h3>Character reactions & Easter eggs</h3><div class="feature-gallery">${reactions.map(([label],i)=>`<button class="outline-button" data-character-preview="${i}">${label}</button>`).join('')}</div>`);
+  if (busy) el('modal-body').insertAdjacentHTML('afterbegin','<p>Let the current spin finish, then choose an animation.</p>');
+  el('modal-body').querySelectorAll<HTMLButtonElement>('button').forEach(button=>button.disabled=busy);
+  if (busy) {
+    const buttons=[...el('modal-body').querySelectorAll<HTMLButtonElement>('button')];
+    const enableWhenReady=()=>{
+      if (!modal.open || !buttons[0]?.isConnected) return;
+      if (busy) { setTimeout(enableWhenReady,200); return; }
+      buttons.forEach(button=>button.disabled=false);
+    };
+    setTimeout(enableWhenReady,200);
+  }
   document
     .querySelectorAll<HTMLButtonElement>("[data-feature-preview]")
     .forEach(
-      (b) => (b.onclick = () => void startShowcase(b.dataset.featurePreview)),
+      (b) => (b.onclick = () => { back!.hidden=false; void startShowcase(b.dataset.featurePreview); }),
     );
+  el('modal-body').querySelectorAll<HTMLButtonElement>('[data-hand-preview]').forEach(button=>button.onclick=()=>{
+    previewRequest++;
+    if (reduced) {
+      if (!document.getElementById('preview-motion-note')) el('modal-body').insertAdjacentHTML('afterbegin','<p id="preview-motion-note" role="status">Reduced motion is on. Turn it off in Settings to review the poker-hand performances.</p>');
+      el('preview-motion-note').scrollIntoView({block:'nearest'});
+      return;
+    }
+    modal.close(); back!.hidden=false;
+    dismissSpectacle(); pokerGuests.stop();
+    pokerGuests.play(button.dataset.handPreview!);
+  });
+  el('modal-body').querySelectorAll<HTMLButtonElement>('[data-character-preview]').forEach(button=>button.onclick=()=>{
+    previewRequest++;
+    const [label,src]=reactions[Number(button.dataset.characterPreview)];
+    openModal(`<h2>${label}</h2><video class="reaction-review" controls playsinline muted ${reduced?'':'autoplay'} src="${src}" poster="${src.replace('.webm','.png')}"></video><button id="back-to-rare-animations" class="action-button">Back to animations</button>`, 'CHARACTER PREVIEW · NO WAGER');
+    el('back-to-rare-animations').onclick=showAnimationPreview;
+  });
 }
 function showMathLab() {
   openModal(

@@ -736,3 +736,20 @@
   object-fit: contain;
   mask-image: none;
 }
+
+#return-animation-gallery {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+#return-animation-gallery[hidden] { display: none; }
+.reaction-review {
+  display: block;
+  width: 100%;
+  max-height: 62vh;
+  object-fit: contain;
+  background: radial-gradient(ellipse, #263846, #0d141c);
+  margin: 16px 0;
+}
