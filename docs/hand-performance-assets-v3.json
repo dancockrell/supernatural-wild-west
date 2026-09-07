@@ -1,0 +1,236 @@
+{
+  "version": 3,
+  "policy": "Existing generated sources only. No further paid generation. Native RGB retained; no upscaling. Transparent VP9, dark-backed source.",
+  "assets": [
+    {
+      "path": "/video/hand-performances-v3/flush.webm",
+      "creation": "eIEA5rrdqL",
+      "width": 1442,
+      "height": 1600,
+      "sha256": "2d32a2b7697450e846975f9fcc2fd6bb4207681a5baee62e42a4461bd25f2ab8",
+      "bytes": 62806430,
+      "alpha": "1",
+      "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
+      "durationSeconds": 8.042,
+      "nativeReview": {
+        "droppedFrames": 0,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "controlsRecovered": true,
+        "naturalEnd": true,
+        "unchangedBalance": true,
+        "totalFrames": 193
+      },
+      "posterSHA256": "5f968b6e13c27dca66d07f562c086d3828a68a9dc59576e751a7c96a81805d73"
+    },
+    {
+      "path": "/video/hand-performances-v3/four-kind.webm",
+      "creation": "vQ1MKAHa47",
+      "width": 1920,
+      "height": 1800,
+      "sha256": "84d27f562e8e7942e1f2d478b442b7458e1ee6f05e11ecbb965d720a05b296fd",
+      "bytes": 79617442,
+      "alpha": "1",
+      "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
+      "durationSeconds": 8.042,
+      "nativeReview": {
+        "droppedFrames": 1,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "controlsRecovered": true,
+        "naturalEnd": true,
+        "unchangedBalance": true,
+        "totalFrames": 193
+      },
+      "posterSHA256": "7f51e29b56ad089f1d46f2d60cb1df3fa76cd3429ccf89f5ca612a53c4f6b9fe"
+    },
+    {
+      "path": "/video/hand-performances-v3/full-house.webm",
+      "creation": "s76Q98ml8e",
+      "width": 2562,
+      "height": 1800,
+      "sha256": "39005eb4bca935570e00e1f436471f50a6e25c2192c0a9a7a57511a79655ef59",
+      "bytes": 94198618,
+      "alpha": "1",
+      "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
+      "durationSeconds": 9.042,
+      "nativeReview": {
+        "droppedFrames": 0,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "controlsRecovered": true,
+        "naturalEnd": true,
+        "unchangedBalance": true,
+        "totalFrames": 217
+      },
+      "posterSHA256": "31d04267d3619fb1e30621156e36f5d7dc132ed3e601e2d71e81d14aebc21826"
+    },
+    {
+      "path": "/video/hand-performances-v3/high-card.webm",
+      "creation": "LwNumOuswO",
+      "width": 1920,
+      "height": 1440,
+      "sha256": "3aafdecc9941d1f5fb62d3806dd2ef03619c0cbbee3f4f0ca54224d4c65db4fe",
+      "bytes": 16102984,
+      "alpha": "1",
+      "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
+      "durationSeconds": 8.042,
+      "nativeReview": {
+        "droppedFrames": 0,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "controlsRecovered": true,
+        "naturalEnd": true,
+        "unchangedBalance": true,
+        "totalFrames": 193
+      },
+      "posterSHA256": "43efac50ae272934c3a072a6b315a334ecf6e6f5ac5a59c3061a8483cee4eb87"
+    },
+    {
+      "path": "/video/hand-performances-v3/pair.webm",
+      "creation": "iGVgA843uK",
+      "width": 1442,
+      "height": 1600,
+      "sha256": "bdce66dcff12339118e91952a1306fb89dc994ad9b418e172779d2e751c6e46d",
+      "bytes": 65710687,
+      "alpha": "1",
+      "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
+      "durationSeconds": 8.042,
+      "nativeReview": {
+        "droppedFrames": 2,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "controlsRecovered": true,
+        "naturalEnd": true,
+        "unchangedBalance": true,
+        "totalFrames": 193
+      },
+      "posterSHA256": "787d5b6de83f965e3a3ca05547fcb1ade639868fb65fe6da1e06ebd9e647c3af"
+    },
+    {
+      "path": "/video/hand-performances-v3/royal-flush.webm",
+      "creation": "TdhitwAVNR",
+      "width": 1920,
+      "height": 1440,
+      "sha256": "94f470e81ea8ad53be92788d68827bf016962793e283873c2bc7638832bfda61",
+      "bytes": 67530823,
+      "alpha": "1",
+      "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
+      "durationSeconds": 10.042,
+      "nativeReview": {
+        "droppedFrames": 2,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "controlsRecovered": true,
+        "naturalEnd": true,
+        "unchangedBalance": true,
+        "totalFrames": 241
+      },
+      "posterSHA256": "f8a4b331eafe5e6bc76c01dcd8267beff9f0169941d41b792df00d14ffc3a9e3"
+    },
+    {
+      "path": "/video/hand-performances-v3/straight-flush.webm",
+      "creation": "YM84BlrWeC",
+      "width": 1442,
+      "height": 1600,
+      "sha256": "83ae8ec02ff1488ddd59351f5412aa1a8dfe656762691c201c873792f45ad841",
+      "bytes": 99798017,
+      "alpha": "1",
+      "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
+      "durationSeconds": 9.042,
+      "nativeReview": {
+        "droppedFrames": 2,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "controlsRecovered": true,
+        "naturalEnd": true,
+        "unchangedBalance": true,
+        "totalFrames": 217
+      },
+      "posterSHA256": "bbf36990414cb213b1dcf5479f5ba99f192e35339bbadea266462eb141856a19"
+    },
+    {
+      "path": "/video/hand-performances-v3/straight.webm",
+      "creation": "s76Q98wl8e",
+      "width": 2560,
+      "height": 1600,
+      "sha256": "f0e58be7a5694ba66fded21f2beffe30f3edba2a46f3c5b1de174fe6e1f8116b",
+      "bytes": 88281065,
+      "alpha": "1",
+      "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
+      "durationSeconds": 8.042,
+      "nativeReview": {
+        "droppedFrames": 2,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "controlsRecovered": true,
+        "naturalEnd": true,
+        "unchangedBalance": true,
+        "totalFrames": 193
+      },
+      "posterSHA256": "5b2bd253dfc995a7d90c6d9c58acb26af4d0bf9d57bf7e98900e40868332ecb2"
+    },
+    {
+      "path": "/video/hand-performances-v3/two-pair.webm",
+      "creation": "9ZcLYQXNYZ",
+      "width": 1442,
+      "height": 1600,
+      "sha256": "45e9143218197ffef86b12d705919d6fa1a2a8f635fa419f4c40cca7a90f396d",
+      "bytes": 92504408,
+      "alpha": "1",
+      "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
+      "durationSeconds": 8.042,
+      "nativeReview": {
+        "droppedFrames": 3,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "controlsRecovered": true,
+        "naturalEnd": true,
+        "unchangedBalance": true,
+        "totalFrames": 193
+      },
+      "posterSHA256": "9812c08746d45e4c4c54fcf41ce63ca3a4d8444e11df72c10eb75950de9d3ce3"
+    },
+    {
+      "path": "/video/hand-performances-v3/three-kind.webm",
+      "creation": "3zMSaE7REY",
+      "width": 1920,
+      "height": 1440,
+      "sha256": "2b2fbedde6f6d7bd1430f003e9a1dc46098114ae25d3e0a029e2957fc8622159",
+      "bytes": 35072934,
+      "alpha": "1",
+      "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
+      "durationSeconds": 8.042,
+      "nativeReview": {
+        "droppedFrames": 1,
+        "viewport": [
+          3840,
+          2160
+        ],
+        "controlsRecovered": true,
+        "naturalEnd": true,
+        "unchangedBalance": true,
+        "totalFrames": 193
+      },
+      "posterSHA256": "a69908ef1e435db5cac428c4211aca21787720d0ee8d2cb5288f772d971c56a9"
+    }
+  ]
+}
