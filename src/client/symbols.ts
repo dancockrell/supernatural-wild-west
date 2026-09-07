@@ -5,8 +5,8 @@ export const SYMBOLS: Record<
   { name: string; short: string; color: string }
 > = {
   gunslinger: { name: "Gunslinger", short: "GUNSLINGER", color: "#d6ae69" },
-  medium: { name: "Medium", short: "THE MEDIUM", color: "#9bb9b1" },
-  queen: { name: "Outlaw Queen", short: "OUTLAW QUEEN", color: "#cb927c" },
+  medium: { name: "Brazier Maiden", short: "BRAZIER MAIDEN", color: "#9bb9b1" },
+  queen: { name: "Lantern Maiden", short: "LANTERN MAIDEN", color: "#cb927c" },
   preacher: { name: "Preacher", short: "THE PREACHER", color: "#c9b997" },
   rider: { name: "Devil Rider", short: "DEVIL RIDER", color: "#d47b51" },
   ace: { name: "Ace", short: "ACE", color: "#bdb394" },

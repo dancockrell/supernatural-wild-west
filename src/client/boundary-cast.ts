@@ -15,8 +15,8 @@ export class BoundaryCast {
       const slot = document.createElement('div');
       slot.className = `ghost-porch ${side}`;
       const media = parlorResidentMedia(key);
-      const idle = movie(key, offset, parlor ? media.idle : `/video/cast-spectral-v3/${key}-idle.webm`);
-      const reaction = movie(key, 0, parlor ? media.reaction : `/video/cast-spectral-v3/${key}-reaction.webm`);
+      const idle = movie(key, offset, media.idle);
+      const reaction = movie(key, 0, media.reaction);
       const alternateIdles = parlor
         ? [movie(key, 0, media.alternate), movie(key, 0, media.characterIdle)]
         : [];
@@ -44,9 +44,10 @@ export class BoundaryCast {
     this.setReduced(reduced);
     if (reduced) return;
     const netWin = result.payout > result.bet;
-    if ((result.gold?.amount || 0) > 0 || (netWin && result.payout >= result.bet * 5))
+    const excellent=netWin && result.payout >= result.bet * 10;
+    if (excellent)
       this.residents.get('queen')!.enqueue(1);
-    if (result.events.some(e => ['witching','bonus-start','awaken'].includes(e.type)) || (netWin && result.poker?.complete))
+    if (excellent || (netWin && result.poker?.complete && result.poker.amount >= result.bet * 5))
       this.residents.get('medium')!.enqueue(2);
   }
 }

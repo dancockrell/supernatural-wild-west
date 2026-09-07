@@ -1,58 +1,248 @@
 {
-  "family": "public/video/parlor-residents-color-v8",
-  "method": "Full silhouette closed-form alpha and multilevel foreground estimation from original white-stage RGB. Opaque costume and skin use source RGB. Existing Queen lamp core protection retained. Native frames and speed preserved.",
-  "newPerformances": {
-    "queen-listen": {
-      "creation": "gO38urKSXO",
-      "reference": "lJiVivAgv9",
-      "credits": 1120
-    },
-    "medium-whisper": {
-      "creation": "9Zcur7JNYZ",
-      "reference": "0emKtnbTfW",
-      "credits": 1120
-    }
-  },
-  "clips": {
-    "medium-alternate": {
-      "frames": 265,
-      "fps": 24.0,
-      "sha256": "b37b782ad9129bc50891b13e974cf12a192c52e75f6fa12b479d695dd290b9f3"
-    },
-    "medium-idle": {
-      "frames": 217,
-      "fps": 24.0,
-      "sha256": "f6743f24b8b0bb8a9e2e02d2a8a15f596977cdfa19c703edb80dfd2afe97f771"
-    },
-    "medium-reaction": {
+  "method": "Dark-source per-frame segmentation, closed-form matting and smoke decontamination; native 24fps, true VP9 alpha.",
+  "clips": [
+    {
+      "name": "medium-idle",
+      "identifier": "rgPefqBxtc",
+      "reference": "9ZcQLQuNYZ",
+      "duration": 4,
+      "credits": 1120,
       "frames": 97,
-      "fps": 24.0,
-      "sha256": "a80a468a623fe73f829efe0176481722ba52f8a76df90811e80d0c8b18c3f302"
+      "dimensions": [
+        432,
+        768
+      ],
+      "path": "/video/parlor-maidens-v1/medium-idle.webm",
+      "sha256": "8de5185a1144dd7677f8508ce1030df00807ce743799df6ba3751ff20aa5b538",
+      "sourceSHA256": "afd945a4b27690fa6cc9d8c5c115bc7e9656c7c470eed440dbbe77224f8e20a3",
+      "decodedAlphaVerified": true
     },
-    "medium-whisper": {
-      "frames": 97,
-      "fps": 24.0,
-      "sha256": "d57696b9e5d351a01ada23824007f1fe05dc508e1d4d7c84f179b9bfe9403533"
-    },
-    "queen-alternate": {
-      "frames": 193,
-      "fps": 24.0,
-      "sha256": "768b77569cc72ddaa4671eeac81fb1696f8f958d06f02a87681ee61df23ea077"
-    },
-    "queen-idle": {
-      "frames": 169,
-      "fps": 24.0,
-      "sha256": "9d8aa40419072d5413af6de89757ef1aca81cbc83a2d8fd70bea084bd6828e8a"
-    },
-    "queen-listen": {
-      "frames": 97,
-      "fps": 24.0,
-      "sha256": "d47087504443407b767ab8d17195bf008d8050fc92db8152693a303fbfbd02eb"
-    },
-    "queen-reaction": {
+    {
+      "name": "medium-alternate",
+      "reference": "9ZcQLQuNYZ",
+      "duration": 5,
+      "prompt": "Chinese adult18 ghost in jade qipao cradles brazier in BOTH hands. Slowly lifts the brazier a few inches to tend its rising incense, breathes softly across the bowl so ivory blue smoke curls outward, then lowers it to the starting pose. Quiet absorbed ritual, no posing.",
+      "identifier": "1lypb7ur4r",
+      "credits": 1400,
       "frames": 121,
-      "fps": 24.0,
-      "sha256": "320af7dbc97f5ca72b246a432c7bd8d54ae3da87e2583071e2fd8578adea5146"
+      "dimensions": [
+        432,
+        768
+      ],
+      "path": "/video/parlor-maidens-v1/medium-alternate.webm",
+      "sha256": "7ec8fb8834ec7e9f996d5468cf6e39808f37292510dfbd24a3a793c60d7f96a3",
+      "sourceSHA256": "ee4d36fcd904e9fd8d7b74812d8ea727cbe599f7b2a65478723f36ee0146c53c",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "medium-whisper",
+      "reference": "9ZcQLQuNYZ",
+      "duration": 4,
+      "prompt": "Chinese adult18 ghost holding brazier in BOTH hands follows one pale blue smoke wisp with her eyes, inclines her head slightly as if listening to it, then returns her gaze to the bowl. Hands securely support it throughout.",
+      "identifier": "N20FyYN6D9",
+      "credits": 1120,
+      "frames": 97,
+      "dimensions": [
+        432,
+        768
+      ],
+      "path": "/video/parlor-maidens-v1/medium-whisper.webm",
+      "sha256": "1eb1583f4ebdb0c46948d109bda75758de71fda3533a071414e93da6bbbebe89",
+      "sourceSHA256": "f047c84d80fb256536b10942089b342bcba46e2b30fe58177a8b0784e5ad67af",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "medium-reaction",
+      "reference": "9ZcQLQuNYZ",
+      "duration": 4,
+      "prompt": "Chinese adult18 ghost holding brazier in BOTH hands notices an especially fortunate result to screen right. Looks right briefly, a small knowing pleased smile; ivory blue incense blooms once gently, then she returns to watching her bowl. Understated and warm, no cheering.",
+      "identifier": "cptlz8B0eP",
+      "credits": 1120,
+      "frames": 97,
+      "dimensions": [
+        432,
+        768
+      ],
+      "path": "/video/parlor-maidens-v1/medium-reaction.webm",
+      "sha256": "dec53cee5c57f1d93adf63f3236b1b1b156fe4e4cb2b117bca03b67ac3d89760",
+      "sourceSHA256": "75b9d743f9f0d88832913e569e4f619ab0002cb65d2159c65757fa56d6172c20",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "queen-idle",
+      "reference": "ovH9Tf9829",
+      "duration": 5,
+      "prompt": "Adult18 red-coat ghost lantern maiden searching a flooded mine for her father. Quiet idle: holds raised lantern steady, scans slightly to screen right with attentive eyes, blinks and returns to original gaze. Warm amber lantern and cool spectral wisps. Keep lamp handle geometry stable.",
+      "identifier": "s76or92l8e",
+      "credits": 1400,
+      "frames": 121,
+      "dimensions": [
+        432,
+        768
+      ],
+      "path": "/video/parlor-maidens-v1/queen-idle.webm",
+      "sha256": "4fb5b589390b8df47ddfe059a48555eacd22e1b7f1da0b18f60918363c250cbd",
+      "sourceSHA256": "6bbdf8b541e18460198d99ee9861716d0404de4ce04e027e08bdfe8b3417dee0",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "queen-alternate",
+      "reference": "ovH9Tf9829",
+      "duration": 6,
+      "prompt": "Adult18 red-coat ghost lantern maiden searching for father. Pauses to listen toward screen right, takes free hand from locket and gently beckons 'this way' toward a remembered escape route, then returns hand and lantern to exact reference pose. Feet stay planted.",
+      "identifier": "rgPe5OWxtc",
+      "credits": 1680,
+      "frames": 145,
+      "dimensions": [
+        432,
+        768
+      ],
+      "path": "/video/parlor-maidens-v1/queen-alternate.webm",
+      "sha256": "2893acdf2ed6ad4bcc1efc122b352889cf4ea0285c005d952620ce24b43a1ac3",
+      "sourceSHA256": "a85689586942d0d476c340dd481fc51212f867d7a5934bf49f06736ec5d805db",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "queen-listen",
+      "reference": "ovH9Tf9829",
+      "duration": 4,
+      "prompt": "Adult18 red-coat ghost lantern maiden hears a remembered mine rumble. A small alert shoulder brace, free hand briefly shelters lantern glass, then reassures herself and returns to watchful reference pose. Restrained human response, no dramatic panic or collapse.",
+      "identifier": "gO3Ij6hSXO",
+      "credits": 1120,
+      "frames": 97,
+      "dimensions": [
+        432,
+        768
+      ],
+      "path": "/video/parlor-maidens-v1/queen-listen.webm",
+      "sha256": "70d1bba2f46598a51987fe054e0f47145e5900025329716787c1f91b84bccfd1",
+      "sourceSHA256": "3eea36be231c6ff294f9b85e72eae7678040a3e8d039304de17c7f2ec7a25f61",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "queen-reaction",
+      "reference": "ovH9Tf9829",
+      "duration": 4,
+      "prompt": "Adult18 red-coat ghost lantern maiden notices a particularly good result toward screen right. Her worried watchfulness briefly softens into a hopeful smile; gives lantern a small acknowledging lift, then returns to her search and exact original pose. No cheering or pinup movement.",
+      "identifier": "1lypbJQr4r",
+      "credits": 1120,
+      "frames": 97,
+      "dimensions": [
+        432,
+        768
+      ],
+      "path": "/video/parlor-maidens-v1/queen-reaction.webm",
+      "sha256": "cc77fe64611f48a3f0c8b434884cb453fe69e37b658f7d527c141eb9d6666209",
+      "sourceSHA256": "f783d2fb6cc4eb8923d1b6b858ce708d3c25b3603c091fbf1bf83fb90f088f34",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "condemned-watch",
+      "reference": "u5snaBIQLD",
+      "aspectRatio": "3:4",
+      "duration": 5,
+      "prompt": "The single old condemned ghost slowly lifts his chin toward the unseen gallows above screen left, waits, then lowers it to the reference pose. No rope appears, no additional figures. He ignores viewer.",
+      "identifier": "p8CJVbcehw",
+      "credits": 1400,
+      "frames": 121,
+      "dimensions": [
+        432,
+        576
+      ],
+      "path": "/video/parlor-exterior-stories-v1/condemned-watch.webm",
+      "sha256": "a5b6e950d1e6a075f90ade7ef2eb90ff083d2f54a70138e29fe533f4c2ff741d",
+      "sourceSHA256": "95555b736e41ccb4b60252e0b574591737ca648a6447f65b708e886f60d544ac",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "condemned-wait",
+      "reference": "u5snaBIQLD",
+      "aspectRatio": "3:4",
+      "duration": 6,
+      "prompt": "The single condemned ghost shifts weight subtly, brushes a worn cuff with his opposite hand, then returns arms to the reference pose, eternally waiting near the gallows. Feet remain in place.",
+      "identifier": "N20FPXn6D9",
+      "credits": 1680,
+      "frames": 145,
+      "dimensions": [
+        432,
+        576
+      ],
+      "path": "/video/parlor-exterior-stories-v1/condemned-wait.webm",
+      "sha256": "59f5857debadce52a2dfa165ca7bb9b9cf7e66d8a21f35b77c88d00738fffcfb",
+      "sourceSHA256": "50c2f5473cb1e9a4bac2a792af4788942a56584365a060d7f646a72b6c27b1ff",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "condemned-jackpot",
+      "reference": "u5snaBIQLD",
+      "aspectRatio": "3:4",
+      "duration": 4,
+      "prompt": "Rare understated comic surprise: the condemned ghost briefly turns his head toward screen right, eyebrows lift at an impossible gambling payout, gives one small incredulous head shake and returns to watching the gallows. No text, no coins, no new objects.",
+      "identifier": "s76oxzTl8e",
+      "credits": 1120,
+      "frames": 97,
+      "dimensions": [
+        432,
+        576
+      ],
+      "path": "/video/parlor-exterior-stories-v1/condemned-jackpot.webm",
+      "sha256": "0b9f93517e42894829f4ce1b82059c90064994b85bfc329ea6c2803670444241",
+      "sourceSHA256": "d578265df42d288c5e5570024d7bd0bf73b86ac6d9e612215a66060cf146cc74",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "rider-watch",
+      "reference": "eIEOVcIdqL",
+      "aspectRatio": "4:3",
+      "duration": 5,
+      "prompt": "The skeletal rider slowly turns his head toward the unseen hanging at screen left, horse flicks one ear, rider returns to reference. Horse stays planted, no locomotion.",
+      "identifier": "Ifb6BL6tvE",
+      "credits": 1400,
+      "frames": 121,
+      "dimensions": [
+        576,
+        432
+      ],
+      "path": "/video/parlor-exterior-stories-v1/rider-watch.webm",
+      "sha256": "a4968549dab09e45b483de605f7435e5beb68a407a73af5858e02f7d20dd580c",
+      "sourceSHA256": "bc5b73455839960b2b1a52454237829db11b2a474896f4466115c98ffa3d3851",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "rider-settle",
+      "reference": "eIEOVcIdqL",
+      "aspectRatio": "4:3",
+      "duration": 6,
+      "prompt": "Skeletal rider subtly settles in saddle and gathers slack in existing reins, horse lowers its head slightly then returns. All four hooves remain planted, rider never dismounts. Return to exact reference pose.",
+      "identifier": "LwNBrGEswO",
+      "credits": 1680,
+      "frames": 145,
+      "dimensions": [
+        576,
+        432
+      ],
+      "path": "/video/parlor-exterior-stories-v1/rider-settle.webm",
+      "sha256": "7f2923d48c365e0ff1a146f1805788957ce43025b20895144e6a91c8a917dbbd",
+      "sourceSHA256": "ec4e9588916f27b28dab6964456a22e7659cd4c8586903c23709cc4ea26e6877",
+      "decodedAlphaVerified": true
+    },
+    {
+      "name": "rider-jackpot",
+      "reference": "eIEOVcIdqL",
+      "aspectRatio": "4:3",
+      "duration": 4,
+      "prompt": "Rare understated comic surprise: the skeletal rider turns his head toward screen left at an extraordinary gambling payout, pauses in disbelief and briefly tips his hat with one hand, then returns hand to reins and original pose. Horse remains planted. No additional figures, no coins or text.",
+      "identifier": "vQ1ZtSoa47",
+      "credits": 1120,
+      "frames": 97,
+      "dimensions": [
+        576,
+        432
+      ],
+      "path": "/video/parlor-exterior-stories-v1/rider-jackpot.webm",
+      "sha256": "17d4067a11b3b8407ff5443ece7a593b5759fea4ca2d6a4f73dd5d7a51558452",
+      "sourceSHA256": "a9d5e3875560176756f0b49b06da1b3ee9bdd29a177c11067ac3396e563991cc",
+      "decodedAlphaVerified": true
     }
-  }
+  ]
 }

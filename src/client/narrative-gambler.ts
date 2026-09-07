@@ -13,6 +13,7 @@ export class NarrativeGambler {
   private active = 0;
   private cycles = 0;
   private pendingNotice = false;
+  private pendingHand: {complete:boolean; paid:boolean} | undefined;
   private lastNoticeCycle = -2;
   private reduced = false;
   private disposed = false;
@@ -60,9 +61,11 @@ export class NarrativeGambler {
     for(const index of [0,2]) this.clips[index].addEventListener('ended', () => {
       if(this.disposed || this.reduced || document.hidden || this.active !== index) return;
       this.cycles++;
-      if(this.cycles % 3 === 0 && this.clips[1].readyState >= 2) {
+      if(this.pendingHand && this.clips[this.pendingHand.complete ? (this.pendingHand.paid ? 3 : 4) : 1].readyState >= 2) {
+        const hand=this.pendingHand;
+        this.pendingHand=undefined;
         this.hadHand = this.cards.classList.contains('visible');
-        this.switchTo(1);
+        this.switchTo(hand.complete ? (hand.paid ? 3 : 4) : 1);
       } else if(this.pendingNotice && this.cycles - this.lastNoticeCycle >= 2 && this.clips[3].readyState >= 2) {
         this.pendingNotice = false;
         this.lastNoticeCycle = this.cycles;
@@ -87,6 +90,12 @@ export class NarrativeGambler {
   }
   /** Coalesce nearby rounds; never interrupt a native performance or accumulate a backlog. */
   noticeRound() { if(!this.disposed && !this.reduced && !document.hidden) this.pendingNotice = true; }
+  /** A resolution takes precedence over unplayed card arrivals; native clips are never interrupted. */
+  noticeHand(complete:boolean, paid:boolean) {
+    if(this.disposed || this.reduced || document.hidden) return;
+    if(!complete && this.pendingHand?.complete) return;
+    this.pendingHand={complete,paid};
+  }
   /** Both appearance and clearing follow decoded performance time, including stalls. */
   private drawHand(time:number) {
     if(this.disposed || this.reduced || document.hidden || this.active!==1) return;
@@ -126,13 +135,13 @@ export class NarrativeGambler {
     present();
   }
   private sync = () => {
-    if(document.hidden) this.pendingNotice = false;
+    if(document.hidden) { this.pendingNotice = false; this.pendingHand=undefined; }
     for(const [i,v] of this.clips.entries()) {
       if(this.disposed || this.awaitingFrame || i!==this.active || document.hidden || this.reduced) v.pause();
       else void v.play().catch(()=>{});
     }
   };
-  setReduced(value:boolean) { this.reduced=value; if(value) this.pendingNotice=false; this.sync(); }
+  setReduced(value:boolean) { this.reduced=value; if(value) {this.pendingNotice=false;this.pendingHand=undefined;} this.sync(); }
   dispose() {
     if(this.disposed) return;
     this.disposed=true; this.events.abort();

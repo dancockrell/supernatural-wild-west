@@ -1,6 +1,8 @@
 import {test,expect} from '@playwright/test';
-test('gambler resolves his own fixed hand without a player spin',async({page})=>{
+test('gambler resolves his own fixed hand after a developing player hand',async({page})=>{
  await page.goto('/?parlor=1');
+ await expect(page.locator('#spin')).toBeEnabled();
+ await page.locator('#spin').click();
  const active=page.locator('.narrative-gambler video:not([hidden])');
  await expect(active).toHaveAttribute('src',/receive.webm/,{timeout:35000});
  await expect(active).toHaveAttribute('src',/loss.webm/,{timeout:10000});
@@ -12,3 +14,4 @@ test('gambler resolves his own fixed hand without a player spin',async({page})=>
  await expect(page.locator('.ghost-ritual-cards .received')).toHaveCount(5);
  await expect(page.locator('#spin')).toBeEnabled();
 });
+

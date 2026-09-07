@@ -1,7 +1,7 @@
 import { parlorResidentMedia } from './resident-media';
 export const MOVIES = {
-  queen: "/video/cast-spectral-v3/queen-symbol-idle.webm",
-  medium: "/video/cast-spectral-v3/medium-symbol-idle.webm",
+  queen: parlorResidentMedia('queen').idle,
+  medium: parlorResidentMedia('medium').idle,
   gunslinger: "/video/cast-loop-v1/dealer-idle.webm",
   gold: "/video/cast-loop-v1/gold-mine-loop.mp4",
   preacher: "/video/preacher-book-v10.webm",
@@ -40,7 +40,7 @@ export class MovieSymbols {
     const parlor = document.documentElement.classList.contains("unified-parlor") ||
       new URLSearchParams(location.search).get("parlor") === "1";
     (Object.keys(MOVIES) as MovieKey[]).forEach((key, i) => {
-      const resident = parlor && (key === "queen" || key === "medium");
+      const resident = key === "queen" || key === "medium";
       const source = movie(key, i * 0.61, resident
         ? parlorResidentMedia(key as 'queen' | 'medium').idle : MOVIES[key]);
       if (resident) source.dataset.parlorResident = "true";
@@ -105,7 +105,7 @@ export class MovieSymbols {
         if (source?.dataset.parlorResident) {
           // Frame the face/hat at reel distance, rather than shrinking the room performance.
           // Source crop stays 4:3, so the portrait is never stretched.
-          ctx.drawImage(frame, w * (key === "medium" ? .30 : .22), h * (key === "medium" ? .09 : .015), w * .50, w * .375, 0, 0, 320, 240);
+          ctx.drawImage(frame, w * (key === "medium" ? .29 : .28), h * (key === "medium" ? .11 : .018), w * .50, w * .375, 0, 0, 320, 240);
         } else ctx.drawImage(frame, w * 0.25, 0, w * 0.5, h * 0.65, 0, 0, 320, 240);
       } else ctx.drawImage(frame, 0, 0, 320, 240);
       canvas.dataset.ready = frame === source ? "true" : "poster";

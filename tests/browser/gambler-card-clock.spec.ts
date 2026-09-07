@@ -3,6 +3,8 @@ import {test,expect} from '@playwright/test';
 test('ghost hand materialization holds when the native gambler performance pauses',async({page})=>{
  await page.setViewportSize({width:1672,height:941});
  await page.goto('/?parlor=1');
+ await expect(page.locator('#spin')).toBeEnabled();
+ await page.locator('#spin').click();
  const receive=page.locator('.narrative-gambler video[src$="receive.webm"]');
  await expect(receive).toBeVisible({timeout:30000});
  await receive.evaluate(async node=>{
@@ -23,3 +25,4 @@ test('ghost hand materialization holds when the native gambler performance pause
  await expect(page.locator('#spin')).toBeEnabled();
  await page.screenshot({path:'docs/gambler-hand-materialized.png'});
 });
+

@@ -31,4 +31,6 @@ Never generate white-backed sources for masking. Use dark backgrounds for footag
 
 ## Delivery status
 
-Contract recorded; replacements are not yet admitted. Existing runtime remains until the new character family passes identity, native motion, loop, mask and game-scale checks. First dark-background brazier idle is the bounded pipeline pilot before the full batch.
+Current playable preview replaces both women in stage, reels and feature guests. Eight new foreground clips and six new exterior clips use dark source footage and decoded alpha. The two original exterior idles and four existing skeleton performances remain, with new hand-development and payout triggers.
+
+This is a work-in-progress visual preview, explicitly requested for publication. Real transparency is verified, but mask quality is not final: lantern coat, boots, hat and wispy edges still need cleanup. Technical alpha checks are not artistic acceptance. See current-character-media.json for source IDs and frame verification.

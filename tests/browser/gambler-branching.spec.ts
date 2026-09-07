@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 import {readFileSync} from 'node:fs';
 import ts from 'typescript';
 
-test('round notices coalesce, respect ritual priority and expire when hidden',async({page})=>{
+test('hand arrivals coalesce, resolutions take priority and hidden tabs clear reactions',async({page})=>{
  await page.setContent('<main></main>');
  const source=readFileSync('src/client/narrative-gambler.ts','utf8').replace('export class','class');
  await page.addScriptTag({content:ts.transpileModule(source+'\nObject.assign(window,{NarrativeGambler});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
@@ -22,7 +22,9 @@ test('round notices coalesce, respect ritual priority and expire when hidden',as
   const first=finish(); // first idle boundary notices the coalesced batch
   const returned=finish();
   const noBacklog=finish(); // second idle boundary has no queued repetitions
+  const idleOnly=[finish(),finish(),finish(),finish()];
   g.noticeRound();
+  g.noticeHand(false,false);
   const ritual=finish(); // third idle boundary gives the ritual priority
   const afterRitual=finish();
   const afterLoss=finish();
@@ -35,9 +37,17 @@ test('round notices coalesce, respect ritual priority and expire when hidden',as
   document.dispatchEvent(new Event('visibilitychange'));
   const afterHidden=[finish(),finish(),finish(),finish()];
   g.dispose();
-  return {before,first,returned,noBacklog,ritual,afterRitual,afterLoss,deferred,afterHidden};
+  g.dispose();
+  const h=new C();
+  h.noticeHand(false,false);h.noticeHand(true,true);h.noticeHand(false,false);
+  const pendingResolution=finish();
+  h.dispose();
+  return {before,first,returned,noBacklog,idleOnly,ritual,afterRitual,afterLoss,deferred,afterHidden,pendingResolution};
  });
  expect(result).toMatchObject({before:'idle.webm',first:'notice.webm',returned:'idle.webm',noBacklog:'idle.webm',ritual:'receive.webm',afterRitual:'loss.webm',afterLoss:'idle.webm',deferred:'notice.webm'});
  expect(result.afterHidden).not.toContain('notice.webm');
+ expect(result.idleOnly).toEqual(['idle.webm','idle.webm','idle.webm','idle.webm']);
+ expect(result.pendingResolution).toBe('notice.webm');
 });
+
 

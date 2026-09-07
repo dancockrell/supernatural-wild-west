@@ -77,7 +77,7 @@ export class FeatureCinematics {
         kind === "witch"
           ? "medium-seance"
           : kind === "fortune"
-            ? "queen-lantern"
+            ? "medium-seance"
             : clips[location] || "medium-seance";
       this.stage.querySelector(".summoned-face")?.remove();
       const spirit = ghostSprite(clip);
@@ -87,9 +87,7 @@ export class FeatureCinematics {
       if (parlorResident) {
         const resident = clip === "queen-lantern" ? "queen" : "medium";
         const media = parlorResidentMedia(resident);
-        spirit.src = kind === "witch"
-          ? '/video/feature-performances-v1/witch-summon.webm'
-          : media.reaction;
+        spirit.src = media.reaction;
         spirit.poster = spirit.src.replace(/\.webm$/, '.png');
         spirit.classList.add("parlor-feature-resident");
       }

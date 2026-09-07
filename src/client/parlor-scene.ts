@@ -72,6 +72,8 @@ export class ParlorScene {
   setReducedMotion(value:boolean) { this.reduced=value; this.gambler.setReduced(value); this.exterior.setReduced(value); this.residentFog.setReduced(value); this.sync(); }
   pulse() {}
   noticeRound() { this.gambler.noticeRound(); }
+  noticeHand(complete:boolean, paid:boolean) { this.gambler.noticeHand(complete,paid); }
+  noticePayout(payout:number) { this.exterior.noticePayout(payout); }
   dispose() {
     if(this.disposed) return;
     this.disposed=true;

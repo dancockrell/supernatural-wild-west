@@ -446,10 +446,13 @@ async function applyResult(result: SpinResult, live = false) {
     result.configVersion !== "dd-1.4.0"
   )
     await new Promise((resolve) => setTimeout(resolve, 250));
+  if(live && !reduced && result.poker && scene instanceof ParlorScene)
+    scene.noticeHand(result.poker.complete, result.poker.amount > 0);
   await pokerTable.show(result, live && !reduced);
   if (live) {
     presentEvents(result);
     boundary.react(result, reduced);
+    if(!reduced && scene instanceof ParlorScene) scene.noticePayout(result.payout);
   }
 }
 let finishAnimation: (() => void) | undefined;
@@ -834,7 +837,8 @@ async function startShowcase(feature = "ride") {
   }
 }
 function presentEvents(result: SpinResult) {
-  if(scene instanceof ParlorScene) scene.noticeRound();
+  if(scene instanceof ParlorScene && result.payout >= result.bet * 5 && result.payout > 0 && !result.poker)
+    scene.noticeRound();
   pendingAward = undefined;
   if (result.events.some((e) => e.type === "retrigger"))
     audio.play("retrigger");

@@ -1,3 +1,4 @@
+import { parlorResidentMedia } from './resident-media';
 export type GhostClip =
   | "rider-gallop"
   | "medium-seance"
@@ -22,8 +23,10 @@ export function ghostSprite(clip: GhostClip) {
         : clip === "gunslinger-chains"
           ? "v12"
           : "v10";
-  video.poster = `/video/${clip}-${version}.png`;
-  video.src = `/video/${clip}-${version}.webm`;
+  video.src = clip==='queen-lantern'||clip==='medium-seance'
+    ? parlorResidentMedia(clip==='queen-lantern'?'queen':'medium').reaction
+    : `/video/${clip}-${version}.webm`;
+  video.poster=video.src.replace('.webm','.png');
   video.addEventListener("error", () => video.classList.add("poster-fallback"));
   return video;
 }
