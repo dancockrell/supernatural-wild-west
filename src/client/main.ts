@@ -288,7 +288,7 @@ function showSpectacle(
     // Failure watchdog, not an animation duration. Native films finish themselves.
     spectacleTimer = setTimeout(close, 15000);
   } else {
-    spectacleTimer = setTimeout(close, reduced ? 900 : kind === "ride" ? 8000 : kind === "noon" ? 2200 : 5700);
+    spectacleTimer = setTimeout(close, reduced ? 900 : kind === "ride" ? 8000 : (kind === "noon" || kind === "brand") ? 7200 : 5700);
   }
   if (kind === "ride" && !reduced && !nativePerformance)
     void effects.haunt().then(() => {
@@ -889,7 +889,10 @@ async function startShowcase(feature = "ride") {
     modal.close();
     dismissSpectacle(); pokerGuests.stop();
     effects.finish(result);
-    presentEvents(result);
+    if (feature === "brand") {
+      showSpectacle("HELLFIRE BRAND", "THE WILD TAKES HOLD", "brand");
+      audio.play("transform");
+    } else presentEvents(result);
     boundary.react(result, reduced);
   } catch (e) {
     setStatus((e as Error).message, true);
@@ -972,16 +975,30 @@ function showAnimationPreview() {
     ['Brazier maiden · good result',parlorResidentMedia('medium').reaction],
     ['Gambler · receives a card','/video/parlor-gambler-native-v2/receive.webm'],
     ['Gambler · notices a result','/video/parlor-gambler-hair-v1/notice.webm'],
-    ['Gambler · loses again','/video/parlor-gambler-hair-v1/loss.webm'],
+    ['Gambler · loses again','/video/parlor-gambler-native-v2/loss.webm'],
     ['Condemned ghost · $1,000 Easter egg','/video/parlor-exterior-stories-v1/condemned-jackpot.webm'],
     ['Mounted ghost · $1,000 Easter egg','/video/parlor-exterior-stories-v1/rider-jackpot.webm'],
   ];
+  const idles: [string,string][] = [];
+  for (const [key,label] of [['queen','Lantern maiden'],['medium','Brazier maiden']] as const) {
+    const media=parlorResidentMedia(key);
+    idles.push([`${label} - quiet idle`,media.idle],[`${label} - alternate idle`,media.alternate],[`${label} - ${key==='queen'?'listening':'whispering'}`,media.characterIdle]);
+    for (const action of key==='queen'?['fringe','shiver']:['turn','neck']) idles.push([`${label} - ${action}`,`/video/parlor-idles-v2/${key}-${action}.webm`]);
+  }
+  idles.push(['Gambler - quiet idle','/video/parlor-gambler-hair-v1/idle.webm'],['Gambler - adjusts his hat','/video/parlor-idles-v2/gambler-brim.webm'],['Gambler - inspects his hand','/video/parlor-idles-v2/gambler-knuckle.webm']);
+  for (const [key,label] of [['condemned','Condemned ghost'],['rider','Mounted ghost']] as const) {
+    idles.push([`${label} - quiet idle`,`/video/parlor-exterior-actors-v2/${key}.webm`]);
+    for (const action of ['watch',key==='rider'?'settle':'wait']) idles.push([`${label} - ${action}`,`/video/parlor-exterior-stories-v1/${key}-${action}.webm`]);
+    for (const action of key==='rider'?['pat','snort']:['palms','cold']) idles.push([`${label} - ${action}`,`/video/parlor-idles-v2/${key}-${action}.webm`]);
+  }
+  const characterPreviews=[...reactions,...idles];
   openModal(
     `<div class="feature-gallery">${["ride", "witch", "awaken-0", "awaken-1", "awaken-2", "awaken-3", "awaken-4", "fortune", "noon", "brand"].map((id) => `<button class="outline-button" data-feature-preview="${id}">${({ ride: "Ride of the Damned", witch: "Witching Hour", "awaken-0": "Graveyard", "awaken-1": "Saloon", "awaken-2": "Jail", "awaken-3": "Mine", "awaken-4": "Church", fortune: "Major win", noon: "High Noon", brand: "Hellfire Brand" } as Record<string, string>)[id]}</button>`).join("")}</div>`,
     "RARE ANIMATIONS · NO WAGER",
   );
   el('modal-body').insertAdjacentHTML('afterbegin','<h2>Rare animations</h2><p>Preview the current game’s performances without spending credits or changing your hand. Sound follows your sound setting.</p><h3>Feature events</h3>');
   el('modal-body').insertAdjacentHTML('beforeend', `<h3>Poker hand reactions</h3><div class="feature-gallery">${hands.map(rank=>`<button class="outline-button" data-hand-preview="${rank}">${rank}</button>`).join('')}</div><h3>Character reactions & Easter eggs</h3><div class="feature-gallery">${reactions.map(([label],i)=>`<button class="outline-button" data-character-preview="${i}">${label}</button>`).join('')}</div>`);
+  el('modal-body').insertAdjacentHTML('beforeend', `<h3>Character idles</h3><div class="feature-gallery">${idles.map(([label],i)=>`<button class="outline-button" data-character-preview="${reactions.length+i}">${label}</button>`).join('')}</div>`);
   if (busy) el('modal-body').insertAdjacentHTML('afterbegin','<p>Let the current spin finish, then choose an animation.</p>');
   el('modal-body').querySelectorAll<HTMLButtonElement>('button').forEach(button=>button.disabled=busy);
   if (busy) {
@@ -1011,10 +1028,10 @@ function showAnimationPreview() {
   });
   el('modal-body').querySelectorAll<HTMLButtonElement>('[data-character-preview]').forEach(button=>button.onclick=()=>{
     previewRequest++;
-    const [label,src]=reactions[Number(button.dataset.characterPreview)];
+    const [label,src]=characterPreviews[Number(button.dataset.characterPreview)];
     openModal(`<h2>${label}</h2><video class="reaction-review" controls playsinline muted ${reduced?'':'autoplay'} src="${src}" poster="${src.replace('.webm','.png')}"></video><button id="back-to-rare-animations" class="action-button">Back to animations</button>`, 'CHARACTER PREVIEW · NO WAGER');
     el('back-to-rare-animations').onclick=showAnimationPreview;
-    if (Number(button.dataset.characterPreview) < 2) el('modal-body').querySelector('video')!.style.filter='url(#resident-soft-rim)';
+    if (label.startsWith('Lantern maiden') || label.startsWith('Brazier maiden')) el('modal-body').querySelector('video')!.style.filter='url(#resident-soft-rim)';
   });
 }
 function showMathLab() {

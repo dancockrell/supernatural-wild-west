@@ -31,6 +31,9 @@ export class BoundaryCast {
       <feColorMatrix in="lightSource" type="matrix" values="0 0 0 0 .678 0 0 0 0 .765 0 0 0 0 .737 0 0 0 .13 0" result="vapor"/>
       <feGaussianBlur in="vapor" stdDeviation=".008 .004" result="softVapor"/>
       <feMerge><feMergeNode in="softVapor"/><feMergeNode in="litBody"/></feMerge>
+    </filter><filter id="mounted-fog-light" color-interpolation-filters="sRGB">
+      <feColorMatrix type="saturate" values=".35"/>
+      <feComponentTransfer><feFuncR type="linear" slope=".85"/><feFuncG type="linear" slope=".85"/><feFuncB type="linear" slope=".82"/></feComponentTransfer>
     </filter><filter id="resident-fog-color" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 .678 0 0 0 0 .765 0 0 0 0 .737 0 0 0 1 0"/></filter></defs></svg>`);
     const parlor = new URLSearchParams(location.search).has('parlor');
     for (const [key, side, offset] of [['queen','left',.35],['medium','right',2.1]] as const) {

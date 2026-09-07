@@ -1,4 +1,5 @@
-export type FeatureScene = "witch" | "awaken" | "ride" | "fortune" | "noon";
+export type FeatureScene = "witch" | "awaken" | "ride" | "fortune" | "noon" | "brand";
+import { rareGlyph } from "./rare-glyph";
 import { ghostSprite, type GhostClip } from "./ghost-sprite";
 import { parlorResidentMedia } from './resident-media';
 /** Scenic choreography only. The caller has already settled the authoritative result. */
@@ -7,6 +8,10 @@ export class FeatureCinematics {
   private reduced = false;
   private observer: MutationObserver;
   private syncPlayback = () => {
+    for (const animation of this.stage.getAnimations({ subtree: true })) {
+      if (this.host.hidden || document.hidden || this.reduced) animation.pause();
+      else animation.play();
+    }
     for (const video of this.stage.querySelectorAll("video")) {
       if (this.host.hidden || document.hidden || this.reduced) video.pause();
       else void video.play().catch(() => video.classList.add("unavailable"));
@@ -65,7 +70,8 @@ export class FeatureCinematics {
         : kind === "ride"
           ? ""
           : '<div class="apparition-light"></div>';
-    if (kind === "awaken" || kind === "witch" || kind === "fortune") {
+    if (kind === "noon" || kind === "brand") this.stage.replaceChildren(rareGlyph(kind));
+    if (kind === "awaken" || kind === "witch" || kind === "fortune" || kind === "ride") {
       const clips: GhostClip[] = [
         "medium-seance",
         "medium-seance",
@@ -74,7 +80,7 @@ export class FeatureCinematics {
         "preacher-book",
       ];
       const clip =
-        kind === "witch"
+        kind === "ride" ? "rider-gallop" : kind === "witch"
           ? "medium-seance"
           : kind === "fortune"
             ? "medium-seance"
@@ -96,6 +102,13 @@ export class FeatureCinematics {
         spirit.src = `/video/feature-performances-v2/${performance}.webm`;
         spirit.poster = spirit.src.replace('.webm', '.png');
         spirit.classList.add('authored-feature');
+      }
+      if (kind === 'fortune' || kind === 'ride' || (kind === 'awaken' && location === 0)) {
+        const performance = kind === 'fortune' ? 'fortune' : kind === 'ride' ? 'ride' : 'graveyard';
+        spirit.src = `/video/rare-features-v4/${performance}.webm`;
+        spirit.poster = spirit.src.replace('.webm', '.png');
+        spirit.classList.add('authored-feature', 'parlor-feature-resident');
+        if (kind === 'ride') spirit.classList.add('rare-mounted-performance');
       }
       this.stage.append(spirit);
       const beats: [
@@ -147,6 +160,7 @@ export class FeatureCinematics {
       this.host.classList.add("has-ghost");
       this.syncPlayback();
     } else this.host.classList.remove("has-ghost");
+    this.syncPlayback();
     // Recreate the animated layer and restart copy on every event, even if already visible.
     const card = this.host.querySelector<HTMLElement>(".spectacle-card")!;
     card.getAnimations().forEach((a) => a.cancel());

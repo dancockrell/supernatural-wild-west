@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "scope": "Distinct rare-event repairs, current gallery coverage and one budgeted high-resolution character replacement.",
+  "reviewDate": "2026-09-07",
+  "candidates": [
+    {
+      "id": "fortune",
+      "source": "C:/Users/Admin/Documents/Codex/2026-09-05/referenced-chatgpt-conversation-this-is-an-4/work/animation-expansion-v2/fortune-long-source.mp4",
+      "sourceSha256": "4de240ddf216d194f1914ed96a5815b5cf6fffc8cc19fee9b31fb08fa93ff76f",
+      "sourceBytes": 15612971,
+      "metadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 2160,
+            "height": 3836,
+            "avg_frame_rate": "24/1"
+          }
+        ],
+        "format": {
+          "duration": "7.041667"
+        }
+      },
+      "reviewEvidence": "C:/Users/Admin/Documents/Codex/2026-09-05/referenced-chatgpt-conversation-this-is-an-4/work/animation-expansion-v2/fortune-long-review.jpg",
+      "status": "admitted-native-alpha-and-4k-stage-reviewed",
+      "sourceReview": "Looks into the supported brazier, raises it near her face at 4 seconds, then smiles. Preserved bounds in source contact review; blue-purple source wisps require neutral treatment.",
+      "generation": {
+        "creation": "jU9aP0vLD0",
+        "newCredits": 0
+      },
+      "admission": true
+    },
+    {
+      "id": "graveyard",
+      "source": "C:/Users/Admin/Documents/Codex/2026-09-05/referenced-chatgpt-conversation-this-is-an-4/work/animation-expansion-v2/graveyard-long-source.mp4",
+      "sourceSha256": "662a424a48929319634d187a3795bde31792d53e7d781128fc67dd5265ae7341",
+      "sourceBytes": 18591360,
+      "metadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 2492,
+            "height": 3324,
+            "avg_frame_rate": "24/1"
+          }
+        ],
+        "format": {
+          "duration": "8.041667"
+        }
+      },
+      "reviewEvidence": "C:/Users/Admin/Documents/Codex/2026-09-05/referenced-chatgpt-conversation-this-is-an-4/work/animation-expansion-v2/graveyard-long-review.jpg",
+      "status": "admitted-native-alpha-and-4k-stage-reviewed",
+      "sourceReview": "Condemned ghost remembers the noose: hands rise to throat, sustained alarm, releases near ending. Full physical actor bounds retained in source contact review.",
+      "generation": {
+        "creation": "xS4vycgjfW",
+        "newCredits": 0
+      },
+      "admission": true
+    },
+    {
+      "id": "ride",
+      "source": "C:/Users/Admin/Documents/Codex/2026-09-05/referenced-chatgpt-conversation-this-is-an-4/work/animation-expansion-v2/ride-long-source.mp4",
+      "sourceSha256": "4588ce8b0af1acb8e5a8cb2ecf4ed1f2feaadff2a9cdb015b96c159aa8aee5ce",
+      "sourceBytes": 31773829,
+      "metadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "width": 3324,
+            "height": 2492,
+            "avg_frame_rate": "24/1"
+          }
+        ],
+        "format": {
+          "duration": "8.041667"
+        }
+      },
+      "reviewEvidence": "C:/Users/Admin/Documents/Codex/2026-09-05/referenced-chatgpt-conversation-this-is-an-4/work/animation-expansion-v2/ride-long-review.jpg",
+      "status": "admitted-native-alpha-and-4k-stage-reviewed",
+      "sourceReview": "Mounted ghost prances, lowers head, settles. Prior native review cleared suspected physical tail clipping; source mist reaches image border. Strong blue illumination requires scene treatment.",
+      "generation": {
+        "creation": "YM8OB5CWeC",
+        "newCredits": 0
+      },
+      "admission": true
+    }
+  ],
+  "heldCandidates": [
+    {
+      "id": "church",
+      "source": "C:/Users/Admin/Documents/Codex/2026-09-05/referenced-chatgpt-conversation-this-is-an-4/work/animation-expansion-v2/church-long-source.mp4",
+      "status": "held-source-framing",
+      "reason": "Hat crown contacts/crops top source border around 3.42 seconds and later. Do not admit unchanged.",
+      "evidence": "C:/Users/Admin/Documents/Codex/2026-09-05/referenced-chatgpt-conversation-this-is-an-4/work/animation-expansion-v2/critic-church-top-f82.png"
+    }
+  ],
+  "runtimeCandidates": [
+    {
+      "name": "fortune",
+      "width": 1442,
+      "height": 1600,
+      "duration": 7.042,
+      "frames": 169,
+      "partialAlphaPixels": 58665798,
+      "bytes": 89081160,
+      "sha256": "5d756632082397b73fd8dc23062409ee4b4a4ce7cf4511bdedfb4e8b86fce554",
+      "decodedAlphaVerified": true,
+      "path": "/video/rare-features-v4/fortune.webm",
+      "creation": "jU9aP0vLD0",
+      "posterSHA256": "27919dcbf3f1a71addbd05efa18841d3a0fe01b75194e36f8c9ae9c8dbe1f1ba",
+      "runtimeGate": "Passed decoded alpha, native 3840x2160 playback and critic visual review; remaining baked pale character light acknowledged.",
+      "method": "Every-frame BiRefNet alpha with native RGB refinement and background decontamination; source RGB never enlarged; VP9 alpha."
+    },
+    {
+      "name": "graveyard",
+      "width": 1800,
+      "height": 1600,
+      "duration": 8.042,
+      "frames": 193,
+      "partialAlphaPixels": 55941329,
+      "bytes": 23067203,
+      "sha256": "e2701f722b96e8ff1c9aa82b86234dace6833d55a2fa90846a017bcef20aa7aa",
+      "decodedAlphaVerified": true,
+      "path": "/video/rare-features-v4/graveyard.webm",
+      "creation": "xS4vycgjfW",
+      "posterSHA256": "eed2a0fb9819106ba6b14049866cedede4a51a165ba1370c6ddca7239ddb4b31",
+      "runtimeGate": "Passed decoded alpha, native 3840x2160 playback and critic visual review; remaining baked pale character light acknowledged.",
+      "method": "Every-frame BiRefNet alpha with native RGB refinement and background decontamination; source RGB never enlarged; VP9 alpha."
+    },
+    {
+      "name": "medium-reaction",
+      "width": 1080,
+      "height": 1920,
+      "duration": 8.042,
+      "frames": 193,
+      "partialAlphaPixels": 29685422,
+      "bytes": 13972495,
+      "sha256": "52858d2c70ba6c8255f69d5f90d7f84a3ba2076de41900471c0c9989454aa1b4",
+      "decodedAlphaVerified": true,
+      "path": "/video/rare-features-v4/medium-reaction.webm",
+      "creation": "0em3ZeCTfW",
+      "posterSHA256": "4285971c18963791f221eeb1b80453b391ca5937eeb73ee6d2eb20e9cb67432e",
+      "runtimeGate": "Passed decoded alpha, native 3840x2160 playback and critic visual review; remaining baked pale character light acknowledged.",
+      "method": "Every-frame BiRefNet alpha with native RGB refinement and background decontamination; source RGB never enlarged; VP9 alpha. External vapor uses brightness-bounded alpha and neutral border-background decontamination, preserving the solid body."
+    },
+    {
+      "name": "ride",
+      "width": 2134,
+      "height": 1600,
+      "duration": 8.042,
+      "frames": 193,
+      "partialAlphaPixels": 49534102,
+      "bytes": 102774684,
+      "sha256": "6222c97c9c667725d8f38be3e35c6f627a7ec26565037fbad1d600f009aa665d",
+      "decodedAlphaVerified": true,
+      "path": "/video/rare-features-v4/ride.webm",
+      "creation": "YM8OB5CWeC",
+      "posterSHA256": "1b5893333007ed7c80cfbe69e8844ca474481ba5e800c3d486aa2696216c2a04",
+      "runtimeGate": "Passed decoded alpha, native 3840x2160 playback and critic visual review; remaining baked pale character light acknowledged.",
+      "method": "Every-frame BiRefNet alpha with native RGB refinement and background decontamination; source RGB never enlarged; VP9 alpha."
+    }
+  ],
+  "newGeneration": {
+    "date": "2026-09-07",
+    "budget": {
+      "maximumShots": 5,
+      "reserveShot": 1,
+      "shotsUsed": 1,
+      "creditsUsed": 11200
+    },
+    "shot": {
+      "id": "0em3ZeCTfW",
+      "reference": "9ZcQLQuNYZ",
+      "model": "bytedance-seedance-pro-2.0",
+      "requestedResolution": "4K",
+      "actualOriginal": [
+        2160,
+        3840
+      ],
+      "duration": 8.041667,
+      "role": "Chinese maiden good-result reaction",
+      "identity": "Approved adult petite Chinese brazier maiden, jade embroidered qipao, cowboy boots, two hands supporting bowl",
+      "lighting": "Soft front key requested; source retains cyan wisps requiring admitted neutral fog filter",
+      "alpha": "Dark-backed source; every-frame BiRefNet mask, native RGB refinement, VP9 alpha",
+      "status": "admitted after external smoke matte cleanup, transparent preview backdrop and natural idle-reaction-idle review",
+      "sourceSHA256": "2eb4e854770139275ec302ab7330eae5be242504af7a92c3fd14b28befb2e523"
+    },
+    "recovered": [
+      "fortune",
+      "graveyard",
+      "ride"
+    ],
+    "balanceAfter": 50191
+  },
+  "notes": [
+    "Review video backgrounds stay outside character filters so transparent smoke holes cannot acquire a filtered backdrop.",
+    "High Noon and Hellfire Brand have distinct 7.2-second resolution-independent glyph performances.",
+    "All ten hand films and thirty character reactions/idles are discoverable from How to Play.",
+    "Church remains on its older admitted clip; its recovered long candidate was held for cropped hat framing. Older room idles remain lower resolution."
+  ],
+  "validation": {
+    "unitTests": 62,
+    "browserChecks": "Three recovered films, high-resolution reaction preview, three gallery contracts, two glyph contracts; focused reruns after final fixes. Natural room reaction return additionally reviewed.",
+    "nativeIntervals": {
+      "fortune": "45 frames, zero drops",
+      "graveyard": "45 frames, zero drops",
+      "ride": "44 frames, zero drops",
+      "mediumReaction": "49 frames, zero drops; natural return to advancing idle"
+    },
+    "previewWagers": 0,
+    "limits": [
+      "Pale body veil is baked into source footage.",
+      "Older room idles and the Church film remain lower resolution.",
+      "Existing audio cues and scores reused; no new sound generation."
+    ]
+  }
+}
