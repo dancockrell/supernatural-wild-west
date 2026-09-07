@@ -235,26 +235,27 @@ function showSpectacle(
     awardFrame = requestAnimationFrame(count);
   }
   const close = () => {
+    if (sequence !== spectacleSequence || el("spectacle").hidden) return;
+    clearTimeout(spectacleTimer);
     audio.stopFeature();
     el("spectacle").hidden = true;
     const next = pendingAward;
     pendingAward = undefined;
     next?.();
   };
-  spectacleTimer = setTimeout(
-    close,
-    reduced
-      ? 900
-      : kind === "witch" && document.documentElement.classList.contains("unified-parlor")
-        ? 3000
-      : kind === "ride"
-        ? 8000
-        : kind === "noon"
-          ? 2200
-          : kind === "awaken" && location === 2
-            ? 6100
-            : 5700,
-  );
+  const nativePerformance = el("spectacle").querySelector<HTMLVideoElement>(".feature-ghost");
+  if (!reduced && nativePerformance) {
+    nativePerformance.addEventListener("ended", () => {
+      if (sequence !== spectacleSequence) return;
+      clearTimeout(spectacleTimer);
+      spectacleTimer = setTimeout(close, 250);
+    }, {once:true});
+    nativePerformance.addEventListener("error", close, {once:true});
+    // Failure watchdog, not an animation duration. Native films finish themselves.
+    spectacleTimer = setTimeout(close, 15000);
+  } else {
+    spectacleTimer = setTimeout(close, reduced ? 900 : kind === "ride" ? 8000 : kind === "noon" ? 2200 : 5700);
+  }
   if (kind === "ride" && !reduced)
     void effects.haunt().then(() => {
       if (sequence !== spectacleSequence || el("spectacle").hidden) return;
@@ -272,9 +273,10 @@ function dismissSpectacle() {
   el("spectacle").hidden = true;
 }
 
-document.addEventListener("visibilitychange", () =>
-  document.hidden ? audio.suspend() : audio.resume(),
-);
+document.addEventListener("visibilitychange", () => {
+    if(document.hidden) { dismissSpectacle(); audio.suspend(); }
+    else audio.resume();
+});
 function openModal(html: string, kicker = "HOW TO PLAY") {
   if (autoplay.active) autoplay.stop();
   focusBefore = document.activeElement as HTMLElement;
@@ -674,6 +676,7 @@ const pokerGuests = new PokerGuests(
   cue => audio.play(cue),
 );
 function applyMotion() {
+  if(reduced && !el("spectacle").hidden) dismissSpectacle();
   pokerGuests.setReduced(reduced);
   cardEffects.setReduced(reduced);
   movieSymbols.setReduced(reduced);
