@@ -91,8 +91,8 @@ export class FeatureCinematics {
         spirit.poster = spirit.src.replace(/\.webm$/, '.png');
         spirit.classList.add("parlor-feature-resident");
       }
-      if (kind === 'awaken' && [1,2,3].includes(location)) {
-        const performance = ['','saloon','jail','mine'][location];
+      if (kind === 'witch' || (kind === 'awaken' && [1,2,3].includes(location))) {
+        const performance = kind === 'witch' ? 'witch' : ['','saloon','jail','mine'][location];
         spirit.src = `/video/feature-performances-v2/${performance}.webm`;
         spirit.poster = spirit.src.replace('.webm', '.png');
         spirit.classList.add('authored-feature');

@@ -10,6 +10,16 @@ export class BoundaryCast {
   constructor(shell: Element, sound: (cue: 'lantern' | 'breath') => void) {
     this.host.className = 'boundary-cast';
     this.host.setAttribute('aria-hidden', 'true');
+    // Dim baked bright cyan light; preserve warm character RGB and the original alpha.
+    this.host.insertAdjacentHTML('beforeend', `<svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs><filter id="resident-soft-rim" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -6.5 2 4.5 0 -.5" result="cool"/>
+      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .638 2.146 .216 0 -1.35" result="bright"/>
+      <feComposite in="cool" in2="bright" operator="in" result="rim"/>
+      <feComponentTransfer in="SourceGraphic" result="soft"><feFuncR type="linear" slope=".55"/><feFuncG type="linear" slope=".55"/><feFuncB type="linear" slope=".55"/></feComponentTransfer>
+      <feComposite in="soft" in2="rim" operator="in" result="softRim"/>
+      <feComposite in="SourceGraphic" in2="rim" operator="out" result="body"/>
+      <feComposite in="body" in2="softRim" operator="arithmetic" k2="1" k3="1"/>
+    </filter></defs></svg>`);
     const parlor = new URLSearchParams(location.search).has('parlor');
     for (const [key, side, offset] of [['queen','left',.35],['medium','right',2.1]] as const) {
       const slot = document.createElement('div');
@@ -52,6 +62,4 @@ export class BoundaryCast {
       this.residents.get('medium')!.enqueue(2);
   }
 }
-
-
 

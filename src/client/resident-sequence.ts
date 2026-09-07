@@ -120,6 +120,7 @@ export class ResidentSequence {
         frame.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;z-index:2';
         const appearance = getComputedStyle(this.current);
         frame.style.opacity = appearance.opacity;
+        frame.style.filter = appearance.filter;
         frame.style.maskImage = appearance.maskImage;
         frame.style.transform = appearance.transform;
         this.heldFrame = frame;
@@ -167,5 +168,4 @@ export class ResidentSequence {
     }
   }
 }
-
 

@@ -321,5 +321,24 @@
       "assembled 3840x2160 Chrome NVIDIA GPU review",
       "native duration and completion"
     ]
+  },
+  "witch": {
+    "sourceCreation": "iGVL0aJ3uK",
+    "sourceModel": "kling-30",
+    "sourceResolution": "4K",
+    "output": [
+      1442,
+      1600
+    ],
+    "durationSeconds": 8.042,
+    "fps": 24,
+    "sha256": "6c8514198e666cd357c7fdd39876365c7cf5cd9d203247dc5871029690e4c523",
+    "scope": "Dedicated brazier invocation with native RGB and real alpha; warm ivory and purple plume repaired within bounded smoke region.",
+    "gates": [
+      "critic source and temporal smoke continuity",
+      "native detail on contrasting backgrounds",
+      "assembled 3840x2160 Chrome GPU review",
+      "full natural segment completion"
+    ]
   }
 }

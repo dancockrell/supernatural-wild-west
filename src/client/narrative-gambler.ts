@@ -4,6 +4,7 @@ export class NarrativeGambler {
   // Two idle buffers keep the last frame visible while the other rewinds.
   private clips = ['idle','receive','idle','notice','loss','brim','knuckle'].map(name => {
     const v = document.createElement('video');
+    v.dataset.performance = name;
     const family = 'parlor-gambler-hair-v1';
     v.src = name === 'receive'
       ? '/video/parlor-gambler-native-v2/receive.webm'
@@ -63,7 +64,13 @@ export class NarrativeGambler {
     }).join('')}</g>`;
     this.cards.classList.add('ghost-ritual-cards');
     this.clips.forEach((clip, index) => clip.hidden = index !== 0);
-    this.host.append(contact, ...this.clips, this.cards); document.body.append(this.host);
+    // Keep the felt, front panel, and feet identical across independently generated films.
+    // The plate begins below every reviewed hand silhouette; it contains no frozen fingers.
+    const tablePlate = document.createElement('img');
+    tablePlate.className = 'gambler-table-plate'; tablePlate.alt = '';
+    tablePlate.addEventListener('load', () => this.host.classList.add('table-plate-ready'), {signal:this.events.signal});
+    tablePlate.src = '/video/parlor-gambler-native-v2/receive.png';
+    this.host.append(contact, ...this.clips, tablePlate, this.cards); document.body.append(this.host);
     const idleOrder = [0,5,2,6];
     for(const index of idleOrder) this.clips[index].addEventListener('ended', () => {
       if(this.disposed || this.reduced || document.hidden || this.active !== index) return;

@@ -975,6 +975,7 @@ function showAnimationPreview() {
     const [label,src]=reactions[Number(button.dataset.characterPreview)];
     openModal(`<h2>${label}</h2><video class="reaction-review" controls playsinline muted ${reduced?'':'autoplay'} src="${src}" poster="${src.replace('.webm','.png')}"></video><button id="back-to-rare-animations" class="action-button">Back to animations</button>`, 'CHARACTER PREVIEW · NO WAGER');
     el('back-to-rare-animations').onclick=showAnimationPreview;
+    if (Number(button.dataset.characterPreview) < 2) el('modal-body').querySelector('video')!.style.filter='url(#resident-soft-rim)';
   });
 }
 function showMathLab() {

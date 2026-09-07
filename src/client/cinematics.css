@@ -753,3 +753,11 @@
   background: radial-gradient(ellipse, #263846, #0d141c);
   margin: 16px 0;
 }
+
+/* Preserve saturated skin and costumes; soften only the baked bright cool rim. */
+.unified-parlor .boundary-cast .ghost-porch video,
+.unified-parlor .boundary-cast .ghost-porch canvas,
+.unified-parlor .feature-ghost.parlor-feature-resident,
+.unified-parlor .poker-guest.resident-guest video {
+  filter: url(#resident-soft-rim);
+}
