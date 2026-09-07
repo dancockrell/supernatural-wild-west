@@ -68,6 +68,8 @@
 .parlor-exterior-residents { position:absolute; inset:0; height:56.28cqw; z-index:1; pointer-events:none; }
 .parlor-exterior-residents > div { position:absolute; }
 .parlor-exterior-residents video { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:.65; mask-image:linear-gradient(#000 65%,transparent 98%); }
+.parlor-exterior-residents video,
+.parlor-exterior-residents canvas { filter:url(#exterior-mist-blend); }
 .parlor-exterior-residents .condemned { left:7.2cqw; top:17.95cqw; width:11.7cqw; height:15.53cqw; }
 .parlor-exterior-residents .rider { left:67.5cqw; top:18.29cqw; width:21.5cqw; height:16.1cqw; }
 

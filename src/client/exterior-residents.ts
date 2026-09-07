@@ -10,6 +10,17 @@ export class ExteriorResidents {
  private events=new AbortController();
  constructor(){
   this.host.className='parlor-exterior-residents';this.host.setAttribute('aria-hidden','true');
+  // Diffuse only the silhouette fringe. The interior retains its native detail.
+  this.host.insertAdjacentHTML('beforeend', `<svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs>
+   <filter id="exterior-mist-blend" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+    <feMorphology in="SourceAlpha" operator="erode" radius=".004 .003" result="interior"/>
+    <feComposite in="SourceGraphic" in2="interior" operator="in" result="body"/>
+    <feComposite in="SourceGraphic" in2="interior" operator="out" result="fringe"/>
+    <feComponentTransfer in="fringe" result="quietFringe"><feFuncR type="linear" slope=".85"/><feFuncG type="linear" slope=".85"/><feFuncB type="linear" slope=".85"/><feFuncA type="linear" slope=".65"/></feComponentTransfer>
+    <feGaussianBlur in="quietFringe" stdDeviation=".003 .002" result="mist"/>
+    <feMerge><feMergeNode in="mist"/><feMergeNode in="body"/></feMerge>
+   </filter>
+  </defs></svg>`);
   for(const [name,offset] of [['condemned',1.3],['rider',4.2]] as const){
    const slot=document.createElement('div');slot.className=name;
    const film=(action:string,start=0)=>{
@@ -30,4 +41,3 @@ export class ExteriorResidents {
  setReduced(value:boolean){this.reduced=value;for(const r of this.residents)r.setReduced(value);this.sync();}
  dispose(){if(this.disposed)return;this.disposed=true;this.events.abort();for(const r of this.residents)r.setPaused(true);for(const v of this.clips){v.pause();v.removeAttribute('src');v.load();}this.host.remove();}
 }
-

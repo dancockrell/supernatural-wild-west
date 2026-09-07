@@ -4,6 +4,8 @@ The women retain rich skin and clothing colors. Cool-spill suppression now also 
 
 Same-frame primary and alternate idle review found a modest improvement in face-to-arm balance without returning purple or a hard halo. Broad pale bands remain in the admitted source footage, so this is an incremental repair, not complete relighting or newly authored skin-emission animation.
 
+The exterior condemned and mounted ghosts now use a dedicated narrow fringe blend: their silhouette edge is dimmed and diffused while the interior retains native detail. The treatment covers all resident clips, held transition frames and gallery previews. Same-frame 4K primary, alternate and jackpot review passed with readable hats, faces, hands, reins and horse anatomy, without a new halo. Both residents presented 44 frames with zero dropped frames over the measured 1.8-second interval; a real held transition inherited the filter. No new media generation was used.
+
 Ten distinct hand performances now play their complete native eight-to-ten-second films over a large stage above the player cards and controls. Each has its own score and action effects. The gallery works before any wager, and controls recover after native completion. Hidden tabs and reduced motion cancel presentation and scores without reopening queued events.
 
 The gambler's new native loss film shares the receive table's geometry and material. The old affine correction is removed. Whole-body alpha and dense masks through both fast hand transitions replace inappropriate pose-specific cuts. A stable lower table plate retains continuity between the films. Independent review passed every frame of the repaired transitions.

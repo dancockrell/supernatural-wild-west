@@ -1032,6 +1032,7 @@ function showAnimationPreview() {
     openModal(`<h2>${label}</h2><video class="reaction-review" controls playsinline muted ${reduced?'':'autoplay'} src="${src}" poster="${src.replace('.webm','.png')}"></video><button id="back-to-rare-animations" class="action-button">Back to animations</button>`, 'CHARACTER PREVIEW · NO WAGER');
     el('back-to-rare-animations').onclick=showAnimationPreview;
     if (label.startsWith('Lantern maiden') || label.startsWith('Brazier maiden')) el('modal-body').querySelector('video')!.style.filter='url(#resident-soft-rim)';
+    if (label.startsWith('Condemned ghost') || label.startsWith('Mounted ghost')) el('modal-body').querySelector('video')!.style.filter='url(#exterior-mist-blend)';
   });
 }
 function showMathLab() {
