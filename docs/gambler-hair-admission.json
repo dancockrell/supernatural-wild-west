@@ -1,0 +1,117 @@
+{
+  "repair": "Local rear-hair negative-space alpha repair. Per-clip optical-flow tracking with dense authored anchors through the loss head turn. Native RGB and full stage geometry retained; zero RGB outside alpha. No generated media or lighting filter.",
+  "limitations": "Bright surviving hair tips remain source lighting; this pass removes the flat backing planes rather than repainting the hair.",
+  "clips": [
+    {
+      "sourceSHA256": "f3097e980d3fb785b9d60b8342759934937e23d515c9617f045614a6905328c4",
+      "width": 960,
+      "height": 720,
+      "fps": 24.0,
+      "frames": 169,
+      "maxChangedAlphaPixels": 1153,
+      "sha256": "be0860c9efc7df24e754d877b082b02ecf5d6466f252ae63561a4767e0d3cf80",
+      "bytes": 685899,
+      "posterSHA256": "9524dca1714931682755d0bebc7c907f03d00a510114d86b30b651cff6c0023e",
+      "path": "/video/parlor-gambler-hair-v1/idle.webm"
+    },
+    {
+      "sourceSHA256": "1011b37d71eac9ede4d1d26d9ed5008517caa296e3a22f21c0f70435b2aff92c",
+      "width": 960,
+      "height": 720,
+      "fps": 24.0,
+      "frames": 97,
+      "maxChangedAlphaPixels": 1196,
+      "sha256": "5d58b32147c3f4e8ed34e87a05f06667a6f250b147c380c8835cc9d2180e52a5",
+      "bytes": 389584,
+      "posterSHA256": "f93ff2519541dcea14aae411d8f9e6a0260a794451408ad7d539d5aba745ab0c",
+      "path": "/video/parlor-gambler-hair-v1/notice.webm"
+    },
+    {
+      "sourceSHA256": "a94e5ddd5a46dc9667465beb9d7d56b326189d55e1d560c952ed15d3323f1aaa",
+      "width": 1920,
+      "height": 1440,
+      "fps": 24.0,
+      "frames": 169,
+      "maxChangedAlphaPixels": 5896,
+      "sha256": "0db102988ad6c9b41abd21f4ff5b97e601f2ff14c049bfc4bf256284b0884c9f",
+      "bytes": 596182,
+      "posterSHA256": "8609719ba92b99e1c2dfcfde5eccf57c2a6b886ee1a01c350654d4c92b5e00f0",
+      "path": "/video/parlor-gambler-native-v2/receive.webm"
+    },
+    {
+      "sourceSHA256": "c8e8ff6fadb6777e9b187da04d397ef19351f6500214753c199c6302d0471fd7",
+      "width": 1920,
+      "height": 1440,
+      "fps": 24.0,
+      "frames": 193,
+      "maxChangedAlphaPixels": 12244,
+      "sha256": "79f9996f76c58085f24b875234431f39c5c9c7bbf69c0fc285577e944f60ef37",
+      "bytes": 3057523,
+      "posterSHA256": "71125943acc8d7e832459f5cc9bed0cdf8e4f9a401c0788c50e4b4447d2fe558",
+      "path": "/video/parlor-gambler-native-v2/loss.webm"
+    },
+    {
+      "sourceSHA256": "137be91207559613bf5302d52d6707daf600b6d43a86ee005678edc609fd496d",
+      "width": 1440,
+      "height": 1080,
+      "fps": 24.0,
+      "frames": 121,
+      "maxChangedAlphaPixels": 3262,
+      "sha256": "8344770f1f6b03f36420489d20d2a0e46aef5c913d083e4e7db4a69f960401c2",
+      "bytes": 392982,
+      "posterSHA256": "6b5a49c61b462d09ee3670579a7c992231419f587142711393ea9cdf4f2bbccd",
+      "path": "/video/parlor-idles-v2/gambler-brim.webm"
+    },
+    {
+      "sourceSHA256": "c2e272e18d7058a2865fff8f9f8634ce82b7f936a6e1cd8e865263b07bcfede3",
+      "width": 1440,
+      "height": 1080,
+      "fps": 24.0,
+      "frames": 145,
+      "maxChangedAlphaPixels": 3236,
+      "sha256": "6b4482ec3ed298eea58f20a1b89f660c85ddc55a86c25a300342cbaf8b1915a8",
+      "bytes": 459304,
+      "posterSHA256": "b767ff78fee67cb0dbbd5959d25c4ac9f42968689afac5fb431be6f4bd6a7b4b",
+      "path": "/video/parlor-idles-v2/gambler-knuckle.webm"
+    }
+  ],
+  "alphaGate": [
+    {
+      "name": "idle",
+      "decodedFrames": 169,
+      "minPartialAlphaPixels": 9280,
+      "maxFrameAreaStep": 114
+    },
+    {
+      "name": "notice",
+      "decodedFrames": 97,
+      "minPartialAlphaPixels": 9244,
+      "maxFrameAreaStep": 104
+    },
+    {
+      "name": "receive",
+      "decodedFrames": 169,
+      "minPartialAlphaPixels": 68884,
+      "maxFrameAreaStep": 1270
+    },
+    {
+      "name": "loss",
+      "decodedFrames": 193,
+      "minPartialAlphaPixels": 73391,
+      "maxFrameAreaStep": 12905
+    },
+    {
+      "name": "brim",
+      "decodedFrames": 121,
+      "minPartialAlphaPixels": 19495,
+      "maxFrameAreaStep": 3229
+    },
+    {
+      "name": "knuckle",
+      "decodedFrames": 145,
+      "minPartialAlphaPixels": 19505,
+      "maxFrameAreaStep": 2131
+    }
+  ],
+  "review": "Independent decoded motion review across all six clips, with every-frame late-turn and hand-transition checks for loss. See runtime validation in presentation-continuity-review.md."
+}

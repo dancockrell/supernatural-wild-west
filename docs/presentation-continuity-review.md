@@ -10,6 +10,8 @@ Ten distinct hand performances now play their complete native eight-to-ten-secon
 
 The gambler's new native loss film shares the receive table's geometry and material. The old affine correction is removed. Whole-body alpha and dense masks through both fast hand transitions replace inappropriate pose-specific cuts. A stable lower table plate retains continuity between the films. Independent review passed every frame of the repaired transitions.
 
+The six active gambler films now have localized rear-hair matte repairs. Tracked contours remove the flat triangular backing beneath the brim, including the opposite-side patch exposed by the loss head turn. This changes the negative space around the hair rather than applying an actor-wide glow or blur. Surviving bright hair tips retain their source lighting. Native dimensions, frame counts, timing and table registration are retained. Updated file hashes and decoded alpha checks are recorded in gambler-hair-admission.json.
+
 Validation:
 
 - All ten hand films passed full native Chrome/D3D11 3840 × 2160 playback: 8.042–10.042 seconds, no enlargement beyond native dimensions, natural end, unchanged preview balance, control clearance and score shutdown. Worst measured loss was 3/193 frames (1.55%).
