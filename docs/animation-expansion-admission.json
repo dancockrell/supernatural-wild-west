@@ -18,5 +18,138 @@
       "runtime composition",
       "native completion and no upscaling"
     ]
+  },
+  "gambler-brim": {
+    "sourceCreation": "rgPII6Pxtc",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      1440,
+      1080
+    ],
+    "fps": 24,
+    "sha256": "137be91207559613bf5302d52d6707daf600b6d43a86ee005678edc609fd496d",
+    "scope": "Independent staged idle; existing reactions retained",
+    "gates": [
+      "source acting",
+      "dark and tan alpha composites",
+      "6fps sampled temporal review",
+      "assembled runtime critic",
+      "native playback and independent segment route"
+    ]
+  },
+  "gambler-knuckle": {
+    "sourceCreation": "lJiaa2Dgv9",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      1440,
+      1080
+    ],
+    "fps": 24,
+    "sha256": "c2e272e18d7058a2865fff8f9f8634ce82b7f936a6e1cd8e865263b07bcfede3",
+    "scope": "Independent staged idle; existing reactions retained",
+    "gates": [
+      "source acting",
+      "dark and tan alpha composites",
+      "6fps sampled temporal review",
+      "assembled runtime critic",
+      "native playback and independent segment route"
+    ]
+  },
+  "condemned-palms": {
+    "sourceCreation": "ksOoo9a16B",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      720,
+      960
+    ],
+    "fps": 24,
+    "sha256": "7009b8781c19343e0467519a24c8253c23dd08e6cdeae9a202098b0234aee1f6",
+    "scope": "Independent staged idle; existing reactions retained",
+    "gates": [
+      "source acting",
+      "dark and tan alpha composites",
+      "6fps sampled temporal review",
+      "assembled runtime critic",
+      "native playback and independent segment route"
+    ]
+  },
+  "condemned-cold": {
+    "sourceCreation": "jU9mmRJLD0",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      720,
+      960
+    ],
+    "fps": 24,
+    "sha256": "a8be4af5e44b90a2b38f6941693c712b743ebc56a951bcbe631890381f988fab",
+    "scope": "Independent staged idle; existing reactions retained",
+    "gates": [
+      "source acting",
+      "dark and tan alpha composites",
+      "6fps sampled temporal review",
+      "assembled runtime critic",
+      "native playback and independent segment route"
+    ]
+  },
+  "queen-fringe": {
+    "sourceCreation": "s76vvRyl8e",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      542,
+      960
+    ],
+    "fps": 24,
+    "sha256": "927e18bf256d230f9a0bf46b780b9e7a01da51cd84e1ad21c1139d49315be8b9",
+    "scope": "Independent staged idle; existing reactions retained",
+    "gates": [
+      "source acting",
+      "dark and tan alpha composites",
+      "6fps sampled temporal review",
+      "assembled runtime critic",
+      "native playback and independent segment route"
+    ]
+  },
+  "rider-pat": {
+    "sourceCreation": "WDI77abcXe",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      1282,
+      960
+    ],
+    "fps": 24,
+    "sha256": "5c4dcec671371e82dcfc7dabd6e213fbe6371c8e0dea752a09cba65ca6b36e31",
+    "scope": "Independent staged idle; existing reactions retained",
+    "gates": [
+      "source acting",
+      "dark and tan alpha composites",
+      "6fps sampled temporal review",
+      "assembled runtime critic",
+      "native playback and independent segment route"
+    ]
+  },
+  "rider-snort": {
+    "sourceCreation": "lJiaaAfgv9",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      1282,
+      960
+    ],
+    "fps": 24,
+    "sha256": "c3d778164f8a531c9d77703d6a2eed5b17948d66b4ef43f15fddfff7c312605b",
+    "scope": "Independent staged idle; existing reactions retained",
+    "gates": [
+      "source acting",
+      "dark and tan alpha composites",
+      "6fps sampled temporal review",
+      "assembled runtime critic",
+      "native playback and independent segment route"
+    ]
   }
 }

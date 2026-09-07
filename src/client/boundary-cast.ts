@@ -18,7 +18,8 @@ export class BoundaryCast {
       const idle = movie(key, offset, media.idle);
       const reaction = movie(key, 0, media.reaction);
       const alternateIdles = parlor
-        ? [movie(key, 0, media.alternate), movie(key, 0, media.characterIdle)]
+        ? [movie(key, 0, media.alternate), movie(key, 0, media.characterIdle),
+           ...(key === 'queen' ? [movie(key, 0, '/video/parlor-idles-v2/queen-fringe.webm')] : [])]
         : [];
       slot.append(idle); this.host.append(slot);
       this.residents.set(key, new ResidentSequence(slot, idle, reaction,

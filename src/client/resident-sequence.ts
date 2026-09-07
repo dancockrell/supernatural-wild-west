@@ -110,7 +110,8 @@ export class ResidentSequence {
     this.current.pause();
     // Keep the last presented pixels while the next decoder seeks and starts.
     // HAVE_CURRENT_DATA alone does not guarantee a composited video frame.
-    if (!this.heldFrame && this.current.readyState >= 2) {
+    if (!this.heldFrame && this.current.readyState >= 2 &&
+        this.current.videoWidth > 0 && this.current.videoHeight > 0) {
       const frame = document.createElement('canvas');
       frame.width = this.current.videoWidth;
       frame.height = this.current.videoHeight;

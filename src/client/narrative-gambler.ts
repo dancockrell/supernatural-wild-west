@@ -2,11 +2,13 @@
 export class NarrativeGambler {
   private host = document.createElement('aside');
   // Two idle buffers keep the last frame visible while the other rewinds.
-  private clips = ['idle','receive','idle','notice','loss'].map(name => {
+  private clips = ['idle','receive','idle','notice','loss','brim','knuckle'].map(name => {
     const v = document.createElement('video');
     const family = 'parlor-gambler-hair-v1';
-    v.src = `/video/${family}/${name}.webm`;
-    v.poster = `/video/${family}/${name}.png`;
+    v.src = name === 'brim' || name === 'knuckle'
+      ? `/video/parlor-idles-v2/gambler-${name}.webm`
+      : `/video/${family}/${name}.webm`;
+    v.poster = v.src.replace('.webm', '.png');
     v.muted = true; v.playsInline = true; v.preload = 'auto';
     return v;
   });
@@ -53,12 +55,10 @@ export class NarrativeGambler {
       </g>`;
     }).join('')}</g>`;
     this.cards.classList.add('ghost-ritual-cards');
-    this.clips[1].hidden = true;
-    this.clips[2].hidden = true;
-    this.clips[3].hidden = true;
-    this.clips[4].hidden = true;
+    this.clips.forEach((clip, index) => clip.hidden = index !== 0);
     this.host.append(contact, ...this.clips, this.cards); document.body.append(this.host);
-    for(const index of [0,2]) this.clips[index].addEventListener('ended', () => {
+    const idleOrder = [0,5,2,6];
+    for(const index of idleOrder) this.clips[index].addEventListener('ended', () => {
       if(this.disposed || this.reduced || document.hidden || this.active !== index) return;
       this.cycles++;
       if(this.pendingHand && this.clips[this.pendingHand.complete ? (this.pendingHand.paid ? 3 : 4) : 1].readyState >= 2) {
@@ -70,7 +70,10 @@ export class NarrativeGambler {
         this.pendingNotice = false;
         this.lastNoticeCycle = this.cycles;
         this.switchTo(3);
-      } else this.switchTo(index === 0 ? 2 : 0);
+      } else {
+        const next = idleOrder[(idleOrder.indexOf(index) + 1) % idleOrder.length];
+        this.switchTo(this.clips[next].readyState >= 2 ? next : index === 0 ? 2 : 0);
+      }
     }, {signal:this.events.signal});
     if (typeof this.clips[1].requestVideoFrameCallback === 'function') {
       const frame: VideoFrameRequestCallback = (_now, metadata) => {

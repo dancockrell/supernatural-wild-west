@@ -44,9 +44,9 @@ test('hand arrivals coalesce, resolutions take priority and hidden tabs clear re
   h.dispose();
   return {before,first,returned,noBacklog,idleOnly,ritual,afterRitual,afterLoss,deferred,afterHidden,pendingResolution};
  });
- expect(result).toMatchObject({before:'idle.webm',first:'notice.webm',returned:'idle.webm',noBacklog:'idle.webm',ritual:'receive.webm',afterRitual:'loss.webm',afterLoss:'idle.webm',deferred:'notice.webm'});
+ expect(result).toMatchObject({before:'idle.webm',first:'notice.webm',returned:'idle.webm',noBacklog:'gambler-brim.webm',ritual:'receive.webm',afterRitual:'loss.webm',afterLoss:'idle.webm',deferred:'notice.webm'});
  expect(result.afterHidden).not.toContain('notice.webm');
- expect(result.idleOnly).toEqual(['idle.webm','idle.webm','idle.webm','idle.webm']);
+ expect(result.idleOnly).toEqual(['idle.webm','gambler-knuckle.webm','idle.webm','gambler-brim.webm']);
  expect(result.pendingResolution).toBe('notice.webm');
 });
 

@@ -14,13 +14,13 @@ export class ExteriorResidents {
    const slot=document.createElement('div');slot.className=name;
    const film=(action:string,start=0)=>{
     const v=document.createElement('video');
-    v.src=action==='idle' ? `/video/parlor-exterior-actors-v2/${name}.webm` : `/video/parlor-exterior-stories-v1/${name}-${action}.webm`;
+    v.src=['palms','cold','pat','snort'].includes(action) ? `/video/parlor-idles-v2/${name}-${action}.webm` : action==='idle' ? `/video/parlor-exterior-actors-v2/${name}.webm` : `/video/parlor-exterior-stories-v1/${name}-${action}.webm`;
     v.poster=v.src.replace('.webm','.png');v.muted=true;v.playsInline=true;v.preload='auto';
     v.addEventListener('loadedmetadata',()=>{if(start&&Number.isFinite(v.duration)&&v.duration>0)v.currentTime=start%v.duration;},{once:true,signal:this.events.signal});
     this.clips.push(v);return v;
    };
    const idle=film('idle',offset);slot.append(idle);this.host.append(slot);
-   this.residents.push(new ResidentSequence(slot,idle,film('jackpot'),()=>true,()=>{},[film('watch'),film(name==='rider'?'settle':'wait')]));
+   this.residents.push(new ResidentSequence(slot,idle,film('jackpot'),()=>true,()=>{},[film('watch'),film(name==='rider'?'settle':'wait'),...(name==='condemned'?[film('palms'),film('cold')]:[film('pat'),film('snort')])]));
   }
   document.querySelector('.boundary-cast')?.before(this.host);
   document.addEventListener('visibilitychange',this.sync,{signal:this.events.signal});this.sync();
