@@ -6,6 +6,9 @@ export class SoundBus {
   private musicFilter?: BiquadFilterNode;
   private scoreSource?: MediaElementAudioSourceNode;
   private duckUntil = 0;
+  private quietFoleyUntil = 0;
+  private featureActive = false;
+  beginFeature(){this.featureActive=true;}
   private duckScale = 1;
   private voices = new Set<AudioScheduledSourceNode>();
   private stopVoices() {
@@ -191,6 +194,7 @@ export class SoundBus {
   }
   private featureVoices = new Set<AudioScheduledSourceNode>();
   stopFeature() {
+    this.featureActive=false;
     for (const source of this.featureVoices) {
       try {
         source.stop();
@@ -290,6 +294,7 @@ export class SoundBus {
   }
   feature(kind: "witch" | "awaken", location = 0) {
     this.stopFeature();
+    this.beginFeature();
     if (!this.active || document.hidden) return;
     try {
       this.prepare();
@@ -394,6 +399,7 @@ export class SoundBus {
       | "awaken"
       | "bell"
       | "chain"
+      | "ghost-deck"
       | "gambler-win"
       | "gambler-loss"
       | "chain-snap"
@@ -407,6 +413,8 @@ export class SoundBus {
     detail = 0,
   ) {
     if (!this.active || document.hidden) return;
+    if(['fortune','awaken','ride','mine'].includes(event)) this.quietFoleyUntil=performance.now()+4500;
+    if(event==='ghost-deck' && (this.featureActive || performance.now()<this.quietFoleyUntil)) return;
     if (this.score?.paused) void this.score.play().catch(() => {});
     if (event === "ride") {
       this.duckMusic(3100, 0.4);
@@ -434,6 +442,19 @@ export class SoundBus {
       this.prepare();
       void this.context!.resume();
       const t = this.context!.currentTime;
+      if (event === 'ghost-deck') {
+        if(detail===0){
+          this.noise(t,.65,1400,.018);
+          [392,587.33].forEach((f,i)=>this.tone(f,t+i*.1,.55,.008,'sine'));
+        } else {
+          this.noise(t,.055,2200,.018);
+          this.tone(145,t,.09,.012,'triangle');
+          if(detail===5){
+            this.tone(293.66,t+.06,.25,.014,'triangle');
+            this.tone(277.18,t+.25,.5,.012,'triangle');
+          } else this.tone(440+detail*73.42,t+.025,.26,.007,'sine');
+        }
+      }
       if (event === "card") {
         this.noise(t, 0.065, 1800, 0.055);
         this.tone(170, t + 0.05, 0.07, 0.025, "triangle");

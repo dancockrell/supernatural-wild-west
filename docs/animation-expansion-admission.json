@@ -1,22 +1,21 @@
 {
   "mine": {
-    "sourceCreation": "Cqj0s4BEEy",
+    "sourceCreation": "0emP0k5TfW",
     "sourceModel": "kling-30",
-    "sourceResolution": "1080p",
+    "sourceResolution": "4K",
     "output": [
-      812,
-      850
+      1442,
+      1600
     ],
-    "frames": 97,
+    "durationSeconds": 7.042,
     "fps": 24,
-    "sha256": "2141823255f9c0ccc556f9e12042748ef72c9f34d8f2f5f96bd0de091ad5a21b",
-    "scope": "Dedicated mine event only; full-body mask rejected",
+    "sha256": "e7733a205e8248f3b6605d8bd10164bee7a8ee2e0fe1300c2f69139f86355e0e",
+    "scope": "Native RGB detail with refined real alpha; only this admitted performance",
     "gates": [
-      "source gesture and prop support",
-      "dark and tan alpha composites",
-      "12fps elbow and hat review",
-      "runtime composition",
-      "native completion and no upscaling"
+      "critic sampled gesture and alpha on contrasting backgrounds",
+      "native detail",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native segment completion"
     ]
   },
   "gambler-brim": {
@@ -100,18 +99,18 @@
     "sourceModel": "kling-30",
     "sourceResolution": "1080p",
     "output": [
-      542,
-      960
+      812,
+      1440
     ],
+    "durationSeconds": 6.042,
     "fps": 24,
-    "sha256": "927e18bf256d230f9a0bf46b780b9e7a01da51cd84e1ad21c1139d49315be8b9",
-    "scope": "Independent staged idle; existing reactions retained",
+    "sha256": "bede083a242bd2ee7a95e0dec42ba033d65296e1f696dc14f1e810b763dd13f6",
+    "scope": "Native RGB detail with refined real alpha; only this admitted performance",
     "gates": [
-      "source acting",
-      "dark and tan alpha composites",
-      "6fps sampled temporal review",
-      "assembled runtime critic",
-      "native playback and independent segment route"
+      "critic sampled gesture and alpha on contrasting backgrounds",
+      "native detail",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native segment completion"
     ]
   },
   "rider-pat": {
@@ -150,6 +149,101 @@
       "6fps sampled temporal review",
       "assembled runtime critic",
       "native playback and independent segment route"
+    ]
+  },
+  "pair": {
+    "sourceCreation": "UPZQExgwny",
+    "sourceModel": "kling-30",
+    "sourceResolution": "4K",
+    "output": [
+      1442,
+      1600
+    ],
+    "durationSeconds": 5.042,
+    "fps": 24,
+    "sha256": "7ae99d80467f8846b4f17644c8db85fd317d4aba10f85794291184f2325ac823",
+    "scope": "Native RGB detail with refined real alpha; only this admitted performance",
+    "gates": [
+      "critic sampled gesture and alpha on contrasting backgrounds",
+      "native detail",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native segment completion"
+    ]
+  },
+  "full-house": {
+    "sourceCreation": "Dof69W5pcl",
+    "sourceModel": "kling-30",
+    "sourceResolution": "4K",
+    "output": [
+      1442,
+      1600
+    ],
+    "durationSeconds": 6.042,
+    "fps": 24,
+    "sha256": "8bad069a6813cd1f14b68de3509da3aa3df49fb647915130c25a87e90661aac3",
+    "scope": "Native RGB detail with refined real alpha; only this admitted performance",
+    "gates": [
+      "critic sampled gesture and alpha on contrasting backgrounds",
+      "native detail",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native segment completion"
+    ]
+  },
+  "queen-shiver": {
+    "sourceCreation": "rgPtpeoxtc + p8C6TX3ehw",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      812,
+      1440
+    ],
+    "durationSeconds": 7.084,
+    "fps": 24,
+    "sha256": "b64adff932aa70edf1fe5669296fe46e2f4c765d8003897765226bec95c24320",
+    "scope": "Native RGB detail with refined real alpha; only this admitted performance",
+    "gates": [
+      "critic sampled gesture and alpha on contrasting backgrounds",
+      "native detail",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native segment completion"
+    ]
+  },
+  "medium-turn": {
+    "sourceCreation": "cptOsgV0eP + cptOzMX0eP",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      812,
+      1440
+    ],
+    "durationSeconds": 7.084,
+    "fps": 24,
+    "sha256": "1592ccc290843d714316ad1ddfe31ed3badfb676399d22d52fde4a22c279cc46",
+    "scope": "Native RGB detail with refined real alpha; only this admitted performance",
+    "gates": [
+      "critic sampled gesture and alpha on contrasting backgrounds",
+      "native detail",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native segment completion"
+    ]
+  },
+  "medium-neck": {
+    "sourceCreation": "lJifoIPgv9 + MBa9cdLDCm",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      812,
+      1440
+    ],
+    "durationSeconds": 7.084,
+    "fps": 24,
+    "sha256": "5ec58adf00db414c94a667e6451d9a32580f2fd87da17d290935e835794c5d63",
+    "scope": "Native RGB detail with refined real alpha; only this admitted performance",
+    "gates": [
+      "critic sampled gesture and alpha on contrasting backgrounds",
+      "native detail",
+      "assembled 3840x2160 Chrome NVIDIA GPU review",
+      "native segment completion"
     ]
   }
 }

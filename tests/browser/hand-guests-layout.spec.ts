@@ -12,7 +12,7 @@ for (const rank of ["Two pair", "Full house"])
           host.dispatchEvent(new CustomEvent("hand-award", { detail: rank })),
         rank,
       );
-    await expect(page.locator(".poker-guest.arrived")).toHaveCount(2);
+    await expect(page.locator(".poker-guest.arrived")).toHaveCount(rank === "Full house" ? 1 : 2);
     const cards = await page.locator(".poker-slot").evaluateAll((es) =>
       es.map((e) => {
         const b = e.getBoundingClientRect();

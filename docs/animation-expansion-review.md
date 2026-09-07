@@ -1,40 +1,33 @@
-# Animation expansion: critic-gated production
+# Animation expansion: current admission and remaining work
 
-Status: work in progress, not admitted or deployed.
+Reviewed local build, 7 September 2026. Publication is recorded by the associated Git commit; this document does not imply a remote deployment or CI result.
 
-The independent critic identified feature/room/hand clip reuse, a single true skeleton idle, low extracted resolution and fixed feature timers that truncate native motion.
+## Admitted performances
 
-## Scope
+Ten additional idles now cover the five staged characters: two each for the lantern maiden, brazier maiden, skeleton, condemned and mounted rider. The new idle durations range from five to just over seven seconds. Existing repertoire remains available.
 
-- Two new idles for each staged character: lantern maiden, brazier maiden, skeleton, condemned, mounted rider.
-- Eight dedicated feature performances: mine, jail, church, graveyard, saloon, witch, fortune, ride.
-- Dedicated hand-award performances remain required; feature work alone does not complete the request.
-- Source native1080p or higher; preserve final actor pixel density at maximum stage size.
-- No white-backed sources; real alpha plus moving-mask review on contrasting backgrounds.
+The four new or upgraded female idles retain 1440-pixel native RGB height. Queen-fringe, queen-shiver, medium-turn and medium-neck have passed assembled 3840x2160 playback checks in Chrome using the local NVIDIA GPU. These checks are hardware-specific, not a claim about every device. The shiver measured two dropped frames among 46 in its sampled interval; the other three measured zero in their reviewed intervals.
 
-## Critic gates
+Dedicated Pair (5.042 seconds), Full House (6.042 seconds) and Mine (7.042 seconds) performances use native source RGB and real refined alpha at 1442x1600. The critic reviewed gestures, prop contact, moving edges and native details over contrasting backgrounds. Assembled 4K browser checks verify pixel density and native completion; Pair and Full House also verify continuous playback and dropped-frame proportion.
 
-Brief: approved with action differentiation. Mine uses reflected floodlight, no opaque water plane. Saloon lateral incense, fortune contained gold spiral, witch vertical plume. Graveyard no invented rope prop. Rider contained rear with bounds margin.
+Admission dimensions, duration, source identifiers and hashes are in animation-expansion-admission.json. The shipping inventory is runtime-assets.json. No signed source URLs belong in this repository.
 
-Pilot: mine4seconds, native1080p, approved identity and matching endpoint. Await native motion review, extraction review, runtime review. Do not extend batch until pilot passes or is explicitly revised.
+## Timing and card choreography
 
-Runtime: native event completion replaces fixed three-second Witching Hour truncation; failure watchdog and stale-sequence guards retained. Validation pending.
+Native film completion owns feature timing. The ride fallback cannot overwrite a native performance's completion timer. Ordinary poker presentation updates no longer remove a hand guest; the current guest finishes before the newest queued award starts. Explicit reset, hidden-tab handling, reduced motion and feature takeover can still dismiss presentations deliberately. Stale queued awards are discarded on explicit cancellation.
 
-## Pilot rejection 1
+The skeleton receives one fixed ghost card for each actual player-card arrival. His hand is always A-spades, K-spades, Q-spades, J-spades, 2-hearts. Curved flights, pale trails and a late final off-suit card play independently from his body loop. Duplicated arrivals, cancelled player flights, hidden-tab arrivals and reduced motion preserve the known hand prefix. Deck foley yields to feature audio; an audible mix review is still outstanding.
 
-Mine pilot 3zMr92SREY: native1080x1920,97frames,2800credits. Critic rejected sampled motion: unwanted concentric floor rings and electric outline; late palm-forward gesture read as stop. Not admitted. Revised brief removes all new VFX and specifies palm-up fingers curling toward chest, early readable acting and clean return.
+## Validation
 
-## Pilot rejection 2
+- Build and all 54 unit tests pass.
+- Three focused guest/deck lifecycle browser tests pass.
+- Four female idle native-GPU 4K checks pass (separate runs).
+- Pair, Full House and Mine assembled 4K checks pass.
+- Critic media gates distinguish sampled frames from uninterrupted playback; screenshots alone are not motion approval.
 
-Mine revision eIE6ITodqL:2800credits. Critic rejected wrong-hand performance: lantern released and floats while holding hand gestures, free hand unchanged. No extraction or runtime admission. Two same-model revisions failed action/prop fidelity; change generation approach rather than continuing bulk same-prompt retries.
+## Still unfinished
 
-## Runtime critic closure
+The remaining seven dedicated hand performances have completed generation at five to eight seconds, but have not been admitted. Most long feature and higher-resolution skeleton sources are also still awaiting extraction and native-stage review. Some older resident and reaction clips remain lower-resolution or shorter than the new target; this build does not claim that every animation has been replaced. The new skeleton loss source requires stronger acting. Church and rider sources require edge-clipping review. Broader theatrical effects and listening-based sound-mix review remain outstanding.
 
-Hidden tabs and reduced-motion changes dismiss an active spectacle and clear pending presentations. Native completion and mid-performance reduced-motion browser tests pass. Mine third pilot changes model to Kling3.0,1080p,4seconds,288credits; source review pending.
-
-## Admitted mine performance
-Third source Cqj0s4BEEy passes dedicated mine acting. Authored 812x850 bust composition excludes rejected full-body coat tails. Critic passes contrasting-background composition, dense elbow/hat sequence and assembled game. Three relevant browser tests pass; native completion and reduced-motion dismissal verified. This does not approve other candidates.
-
-## Expansion sources under review
-Ten new idle sources completed: seven pass sampled action, queen-chill and both medium clips held for distinctness. Seven 4K feature sources completed: jail passes sampled action, six held or rejected for framing or acting/effect defects. Nine distinct hand-award sources requested and pending. Unadmitted source files are not shipped.
-
+Keep unapproved source experiments out of the shipping inventory. Do not pad short clips by repeated playback or count reused clips as new performances.

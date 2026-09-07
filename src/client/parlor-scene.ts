@@ -14,7 +14,7 @@ export class ParlorScene {
   private gambler: NarrativeGambler;
   private exterior: ExteriorResidents;
   private residentFog: ResidentFog;
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, sound: (cue:'ghost-deck',detail?:number)=>void=()=>{}) {
     document.documentElement.classList.add('unified-parlor');
     for(const name of ['environment-color','environment-color-night']) {
       const v=document.createElement('video');
@@ -31,7 +31,7 @@ export class ParlorScene {
     canvas.before(floorRepair);
     canvas.remove();
     document.addEventListener('visibilitychange',this.sync);
-    this.exterior=new ExteriorResidents(); this.gambler=new NarrativeGambler();
+    this.exterior=new ExteriorResidents(); this.gambler=new NarrativeGambler(sound);
     this.fog.className='parlor-foreground-fog'; this.fog.src='/video/parlor-fog-v1/foreground-fog.webm';
     this.fog.poster='/video/parlor-fog-v1/foreground-fog.png';
     this.fog.muted=true; this.fog.loop=true; this.fog.playsInline=true; this.fog.setAttribute('aria-hidden','true');
@@ -77,6 +77,7 @@ export class ParlorScene {
   setReducedMotion(value:boolean) { this.reduced=value; this.gambler.setReduced(value); this.exterior.setReduced(value); this.residentFog.setReduced(value); this.sync(); }
   pulse() {}
   noticeRound() { this.gambler.noticeRound(); }
+  noticeCard(token:string,index:number,animate=true) { this.gambler.noticeCard(token,index,animate); }
   noticeHand(complete:boolean, paid:boolean) { this.gambler.noticeHand(complete,paid); }
   noticePayout(payout:number) { this.exterior.noticePayout(payout); }
   dispose() {

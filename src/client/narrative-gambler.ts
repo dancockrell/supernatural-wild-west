@@ -24,8 +24,13 @@ export class NarrativeGambler {
   private events = new AbortController();
   private cards: SVGSVGElement;
   private hadHand = false;
+  private oldCardCount = 0;
   private cardFrame?: number;
-  constructor() {
+  private ritualStarted = 0;
+  private ritualSeen = new Set<string>();
+  private ritualSounds = new Set<number>();
+  private cardStarts = Array<number>(5).fill(Infinity);
+  constructor(private sound: (cue: 'ghost-deck', detail?: number) => void = () => {}) {
     this.host.className = 'narrative-gambler'; this.host.setAttribute('aria-hidden','true');
     const contact = document.createElementNS('http://www.w3.org/2000/svg','svg');
     contact.setAttribute('viewBox','0 0 960 720');
@@ -43,7 +48,7 @@ export class NarrativeGambler {
     this.cards.setAttribute('viewBox','0 0 960 720');
     // Standard card proportions projected together onto the authored felt plane.
     // Rank and suit occupy separate areas; no stretched two-glyph label can spill over.
-    this.cards.innerHTML = `<g transform="matrix(1 .107 -.16 .40 288 331.2)">${['A','K','Q','J','2'].map((rank,i) => {
+    this.cards.innerHTML = `<defs><filter id="ritual-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2.5"/></filter></defs><g class="ritual-trails" transform="matrix(1 .107 -.16 .40 288 331.2)"></g><g transform="matrix(1 .107 -.16 .40 288 331.2)">${['A','K','Q','J','2'].map((rank,i) => {
       const suit = i === 4 ? '♥' : '♠';
       const ink = i === 4 ? '#dc969a' : '#c7def0';
       return `<g class="ritual-card" transform="translate(${i*66} 0)">
@@ -64,7 +69,6 @@ export class NarrativeGambler {
       if(this.pendingHand && this.clips[this.pendingHand.complete ? (this.pendingHand.paid ? 3 : 4) : 1].readyState >= 2) {
         const hand=this.pendingHand;
         this.pendingHand=undefined;
-        this.hadHand = this.cards.classList.contains('visible');
         this.switchTo(hand.complete ? (hand.paid ? 3 : 4) : 1);
       } else if(this.pendingNotice && this.cycles - this.lastNoticeCycle >= 2 && this.clips[3].readyState >= 2) {
         this.pendingNotice = false;
@@ -75,14 +79,6 @@ export class NarrativeGambler {
         this.switchTo(this.clips[next].readyState >= 2 ? next : index === 0 ? 2 : 0);
       }
     }, {signal:this.events.signal});
-    if (typeof this.clips[1].requestVideoFrameCallback === 'function') {
-      const frame: VideoFrameRequestCallback = (_now, metadata) => {
-        if(this.disposed) return;
-        this.drawHand(metadata.mediaTime);
-        this.cardFrame=this.clips[1].requestVideoFrameCallback(frame);
-      };
-      this.cardFrame=this.clips[1].requestVideoFrameCallback(frame);
-    } else this.clips[1].addEventListener('timeupdate', () => this.drawHand(this.clips[1].currentTime), {signal:this.events.signal});
     for(const index of [1,3,4]) this.clips[index].addEventListener('ended', () => {
       if(!this.disposed && !this.reduced && !document.hidden && this.active === index) {
         this.switchTo(index===1 && this.clips[4].readyState>=2 ? 4 : 0);
@@ -99,18 +95,62 @@ export class NarrativeGambler {
     if(!complete && this.pendingHand?.complete) return;
     this.pendingHand={complete,paid};
   }
-  /** Both appearance and clearing follow decoded performance time, including stalls. */
-  private drawHand(time:number) {
-    if(this.disposed || this.reduced || document.hidden || this.active!==1) return;
-    const smooth=(t:number)=>{const x=Math.max(0,Math.min(1,t));return x*x*(3-2*x);};
-    const clearing=this.hadHand && time<.6;
-    this.cards.classList.toggle('visible',clearing || time>=3.25);
-    this.cards.style.opacity=String(clearing ? .8*(1-smooth(time/.6)) : time>=3.25 ? .8 : 0);
+  /** Each actual player-card arrival gets a local card performance; body acting stays on its own clock. */
+  noticeCard(token:string,index=0,animate=true) {
+    if(this.disposed || this.ritualSeen.has(token)) return;
+    this.ritualSeen.add(token);
+    if(this.ritualSeen.size>40) this.ritualSeen.delete(this.ritualSeen.values().next().value!);
+    index=Math.max(0,Math.min(4,index));
+    const now=performance.now();
+    if(index===0 || !this.ritualStarted){
+      this.oldCardCount=this.cardStarts.filter(Number.isFinite).length;
+      this.hadHand=this.oldCardCount>0;
+      this.ritualStarted=now;this.ritualSounds.clear();this.cardStarts.fill(Infinity);
+      for(let i=0;i<index;i++){this.cardStarts[i]=-10;this.ritualSounds.add(i+1);}
+    }
+    for(let i=0;i<index;i++) if(!Number.isFinite(this.cardStarts[i])){this.cardStarts[i]=-10;this.ritualSounds.add(i+1);}
+    const elapsed=(now-this.ritualStarted)/1000;
+    this.cardStarts[index]=Math.max(elapsed+.15,.65+index*.42+(index===4?.48:0));
+    if(this.cardFrame!==undefined) cancelAnimationFrame(this.cardFrame);
+    this.cards.dataset.arrival=token;
+    if(!animate || this.reduced || document.hidden){this.settleCards();if(document.hidden)this.cards.style.opacity='0';return;}
+    const tick=(now:number)=>{
+      if(this.disposed || this.reduced || document.hidden) return;
+      const time=(now-this.ritualStarted)/1000;
+      this.drawHand(time);
+      const end=Math.max(...this.cardStarts.filter(Number.isFinite))+3.3;
+      if(time<end) this.cardFrame=requestAnimationFrame(tick);
+      else this.cardFrame=undefined;
+    };
+    this.cardFrame=requestAnimationFrame(tick);
+  }
+  private settleCards(){
+    if(this.cardFrame!==undefined)cancelAnimationFrame(this.cardFrame);this.cardFrame=undefined;
+    this.cardStarts=this.cardStarts.map(t=>Number.isFinite(t)?-10:Infinity);this.drawHand(7,false);
+  }
+  private drawHand(time:number,foley=true) {
+    const clamp=(t:number)=>Math.max(0,Math.min(1,t));
+    const smooth=(t:number)=>{const x=clamp(t);return x*x*(3-2*x);};
+    this.cards.classList.add('visible');this.cards.style.opacity='.94';
+    const trails:string[]=[];
     this.cards.querySelectorAll<SVGGElement>('.ritual-card').forEach((card,i)=>{
-      const coverage=clearing ? 1 : smooth((time-3.25-i*.2)/.45);
-      card.style.opacity=String(coverage);
-      card.classList.toggle('received',coverage>0);
+      const start=this.cardStarts[i], progress=clamp((time-start)/1.3);
+      const ease=1-Math.pow(1-progress,3),x=90+(i*66-90)*ease;
+      const y=progress===1 ? 0 : -160*(1-ease)-Math.sin(progress*Math.PI)*95;
+      const angle=(-75+i*12)*(1-ease)+Math.sin(progress*Math.PI*3)*4*(1-progress);
+      const old=this.hadHand&&time<.6;
+      const opacity=old ? (i<this.oldCardCount ? 1-smooth(time/.6) : 0) : smooth((time-start)/.22);
+      card.style.opacity=String(opacity);
+      card.setAttribute('transform',old ? `translate(${i*66} ${-smooth(time/.6)*35})` : `translate(${x} ${y}) rotate(${angle} 28 40)`);
+      card.classList.toggle('received',progress===1);
+      if(!old && progress>0 && progress<1) trails.push(`<path d="M118 -120 Q${x-30} ${y-70} ${x+28} ${y+40}" fill="none" stroke="${i===4?'#c1a4ed':'#c7eaff'}" stroke-width="${7*(1-progress)+1}" opacity="${.2*Math.sin(progress*Math.PI)}" filter="url(#ritual-glow)"/>`);
+      const landed=start+1.3;
+      if(time>=landed && !this.ritualSounds.has(i+1)){
+        this.ritualSounds.add(i+1);if(foley && time-landed<.15)this.sound('ghost-deck',i+1);
+      }
     });
+    this.cards.querySelector('.ritual-trails')!.innerHTML=trails.join('');
+    if(time>=.65&&!this.ritualSounds.has(0)){this.ritualSounds.add(0);if(foley && time-.65<.15)this.sound('ghost-deck',0);}
   }
   private switchTo(index:number) {
     if(this.disposed) return;
@@ -138,17 +178,18 @@ export class NarrativeGambler {
     present();
   }
   private sync = () => {
-    if(document.hidden) { this.pendingNotice = false; this.pendingHand=undefined; }
+    if(document.hidden) { this.pendingNotice = false; this.pendingHand=undefined; if(this.cardFrame!==undefined)cancelAnimationFrame(this.cardFrame);this.cardFrame=undefined;this.settleCards();this.cards.style.opacity='0'; }
+    else if(this.ritualStarted && this.cardFrame===undefined) this.settleCards();
     for(const [i,v] of this.clips.entries()) {
       if(this.disposed || this.awaitingFrame || i!==this.active || document.hidden || this.reduced) v.pause();
       else void v.play().catch(()=>{});
     }
   };
-  setReduced(value:boolean) { this.reduced=value; if(value) {this.pendingNotice=false;this.pendingHand=undefined;} this.sync(); }
+  setReduced(value:boolean) { if(value && this.cardFrame!==undefined){cancelAnimationFrame(this.cardFrame);this.cardFrame=undefined;this.settleCards();} this.reduced=value; if(value) {this.pendingNotice=false;this.pendingHand=undefined;} this.sync(); }
   dispose() {
     if(this.disposed) return;
     this.disposed=true; this.events.abort();
-    if(this.cardFrame!==undefined) this.clips[1].cancelVideoFrameCallback(this.cardFrame);
+    if(this.cardFrame!==undefined) cancelAnimationFrame(this.cardFrame);
     for(const v of this.clips) { v.pause(); v.removeAttribute('src'); v.load(); }
     this.host.remove();
   }

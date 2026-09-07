@@ -7,6 +7,7 @@ export class PokerGuests {
   private performance?: AbortController;
   private reduced = false;
   private disposed = false;
+  private pendingRank?: string;
   private timer?: ReturnType<typeof setTimeout>;
   constructor(
     host: HTMLElement,
@@ -36,6 +37,7 @@ export class PokerGuests {
     if (value) this.stop();
   }
   stop() {
+    this.pendingRank = undefined;
     clearTimeout(this.timer);
     this.performance?.abort();
     this.performance = undefined;
@@ -48,6 +50,11 @@ export class PokerGuests {
     delete this.stage.dataset.reaction;
   }
   play(rank: string) {
+    // Finish the current performance; retain only the newest subsequent award.
+    if (this.stage.querySelector("video") && !this.reduced && !document.hidden) {
+      this.pendingRank = rank;
+      return;
+    }
     this.stop();
     if (
       this.disposed ||
@@ -62,7 +69,7 @@ export class PokerGuests {
       "Three of a kind": ["medium-seance"],
       Straight: ["preacher-book"],
       Flush: ["medium-seance"],
-      "Full house": ["preacher-book", "queen-lantern"],
+      "Full house": ["queen-lantern"],
       "Four of a kind": ["queen-lantern"],
       "Straight flush": ["medium-seance", "preacher-book"],
       "Royal flush": ["queen-lantern", "preacher-book"],
@@ -84,6 +91,14 @@ export class PokerGuests {
         video.src = media.reaction;
         video.poster = video.src.replace(/\.webm$/, ".png");
         seat.classList.add("resident-guest");
+      }
+      const dedicated: Record<string, string> = {
+        Pair: 'pair', 'Full house': 'full-house',
+      };
+      if (dedicated[rank]) {
+        video.src = `/video/hand-performances-v2/${dedicated[rank]}.webm`;
+        video.poster = video.src.replace('.webm', '.png');
+        seat.classList.add('authored-hand');
       }
       video.preload = "auto";
       seat.append(video);
@@ -135,6 +150,11 @@ export class PokerGuests {
           seat.remove();
           video.removeAttribute("src");
           video.load();
+          if (!this.stage.querySelector("video")) {
+            const next = this.pendingRank;
+            this.stop();
+            if (next) this.play(next);
+          }
         },
         { once: true, signal },
       );

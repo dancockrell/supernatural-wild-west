@@ -77,6 +77,7 @@ const movieSymbols = new MovieSymbols(el("reels"));
 const pokerTable = new PokerTable(
   document.querySelector(".cabinet")!,
   (cue, detail) => audio.play(cue, detail),
+  (token,index,animate) => { if(scene instanceof ParlorScene) scene.noticeCard(token,index,animate); },
 );
 const boundary = new BoundaryCast(document.querySelector(".shell")!, (cue) =>
   audio.play(cue),
@@ -220,6 +221,7 @@ function showSpectacle(
   el("spectacle-copy").textContent = copy;
 
   el("spectacle").hidden = false;
+  audio.beginFeature();
   cinematics.play(kind, location);
   if (kind === "witch" || kind === "awaken") audio.feature(kind, location);
   scene?.pulse();
@@ -256,7 +258,7 @@ function showSpectacle(
   } else {
     spectacleTimer = setTimeout(close, reduced ? 900 : kind === "ride" ? 8000 : kind === "noon" ? 2200 : 5700);
   }
-  if (kind === "ride" && !reduced)
+  if (kind === "ride" && !reduced && !nativePerformance)
     void effects.haunt().then(() => {
       if (sequence !== spectacleSequence || el("spectacle").hidden) return;
       clearTimeout(spectacleTimer);
@@ -984,11 +986,9 @@ modal.addEventListener("close", () => {
   worker = undefined;
 });
 try {
-  scene = new (
-    new URLSearchParams(location.search).has("parlor")
-      ? ParlorScene
-      : FrontierScene
-  )(el<HTMLCanvasElement>("frontier"));
+  scene = new URLSearchParams(location.search).has('parlor')
+    ? new ParlorScene(el<HTMLCanvasElement>('frontier'), (cue,detail)=>audio.play(cue,detail))
+    : new FrontierScene(el<HTMLCanvasElement>('frontier'));
   applyMotion();
 } catch (e) {
   console.warn("WebGL presentation unavailable", e);

@@ -6,6 +6,7 @@ export class PokerTable {
   private table = document.createElement("div");
   private content = document.createElement("div");
   private reduced = false;
+  private presentation = 0;
   setReduced(value: boolean) {
     this.reduced = value;
   }
@@ -15,6 +16,7 @@ export class PokerTable {
       cue: "card" | "hand" | "breath" | "lantern" | "pages",
       detail?: number,
     ) => void,
+    private arrived: (token:string,index:number,animate:boolean)=>void = ()=>{},
   ) {
     this.table.className = "poker-table player-play-space";
     this.table.setAttribute("aria-label", "Your poker hand");
@@ -23,8 +25,9 @@ export class PokerTable {
     (document.querySelector(".controls") || cabinet).after(this.table);
     this.restore([]);
   }
-  restore(cards: number[], rank = "", amount = 0) {
-    this.table.dispatchEvent(new Event("hand-reset"));
+  restore(cards: number[], rank = "", amount = 0, preserveGuest = false) {
+    this.presentation++;
+    if (!preserveGuest) this.table.dispatchEvent(new Event("hand-reset"));
     const slots = (hand: number[]) =>
       Array.from({ length: 5 }, (_, i) => {
         const card = hand[i];
@@ -43,10 +46,11 @@ export class PokerTable {
       !["dd-1.3.0", "dd-1.4.0"].includes(result.configVersion),
     );
     if (!hand) {
-      this.restore(result.state.poker?.cards || []);
+      this.restore(result.state.poker?.cards || [], "", 0, true);
       return;
     }
-    this.restore(hand.cards);
+    this.restore(hand.cards, "", 0, true);
+    const generation=this.presentation;
     const cells = hand.cells || [hand.cell!];
     const indices = hand.cells
       ? hand.cards.map((_, i) => i)
@@ -87,6 +91,7 @@ export class PokerTable {
             height: `${to.height}px`,
           });
           document.body.append(flyer);
+          let landed=false;
           try {
             await flyer.animate(
               [
@@ -97,15 +102,22 @@ export class PokerTable {
               ],
               { duration: 220, easing: "cubic-bezier(.2,.75,.3,1)" },
             ).finished;
+            landed=true;
+          } catch {
+            // A cancelled flight cannot trigger a new ghost arrival.
           } finally {
             flyer.remove();
             target.style.visibility = "";
+
           }
+          if(landed && generation===this.presentation && target.isConnected) this.arrived(`${result.id}:${index}`,index,!this.reduced&&!document.hidden);
         }),
       );
       sources.forEach((s) => s.classList.remove("poker-source"));
       symbols.forEach((s) => s.classList.remove("poker-not-selected"));
     }
+    if(!animate && generation===this.presentation) indices.forEach(index=>this.arrived(`${result.id}:${index}`,index,false));
+    if(generation!==this.presentation) return;
     if (!hand.complete) return;
     this.content.querySelector(".poker-award")!.innerHTML =
       `${hand.rank}${hand.amount ? `<strong>${(hand.amount / 100).toFixed(2)} CR</strong>` : ""}`;
