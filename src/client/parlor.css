@@ -171,3 +171,9 @@
 
 
 
+
+/* Matched floor depth: short adult proportions, both facing into the room. */
+.unified-parlor .ghost-porch.right,
+.resident-fog .right { left:-1cqw; top:21cqw; width:20.25cqw; height:36cqw; }
+.unified-parlor .ghost-porch.right video,
+.unified-parlor .ghost-porch.right canvas { transform:scaleX(-1); }

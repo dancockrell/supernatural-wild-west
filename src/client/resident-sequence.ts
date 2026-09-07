@@ -13,6 +13,7 @@ export class ResidentSequence {
   private transition = 0;
   private awaitingFrame = false;
   private handoff = new AbortController();
+  private heldFrame?: HTMLCanvasElement;
   constructor(
     private slot: HTMLElement,
     private idle: HTMLVideoElement,
@@ -107,6 +108,23 @@ export class ResidentSequence {
     this.handoff = new AbortController();
     this.awaitingFrame = true;
     this.current.pause();
+    // Keep the last presented pixels while the next decoder seeks and starts.
+    // HAVE_CURRENT_DATA alone does not guarantee a composited video frame.
+    if (!this.heldFrame && this.current.readyState >= 2) {
+      const frame = document.createElement('canvas');
+      frame.width = this.current.videoWidth;
+      frame.height = this.current.videoHeight;
+      if (frame.width && frame.height) {
+        frame.getContext('2d')!.drawImage(this.current, 0, 0);
+        frame.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;z-index:2';
+        const appearance = getComputedStyle(this.current);
+        frame.style.opacity = appearance.opacity;
+        frame.style.maskImage = appearance.maskImage;
+        frame.style.transform = appearance.transform;
+        this.heldFrame = frame;
+        this.slot.append(frame);
+      }
+    }
     const commit = () => {
       if (request !== this.transition) {
         next.removeEventListener('seeked', commit);
@@ -118,7 +136,20 @@ export class ResidentSequence {
       next.removeEventListener('loadeddata', commit);
       this.awaitingFrame = false;
       const previous = this.current;
-      if (next !== previous) this.slot.replaceChildren(next);
+      if (next !== previous) {
+        previous.remove();
+        this.slot.prepend(next);
+      }
+      const release = () => {
+        if (request !== this.transition) return;
+        this.heldFrame?.remove();
+        this.heldFrame = undefined;
+      };
+      if (typeof next.requestVideoFrameCallback === 'function') {
+        next.requestVideoFrameCallback(() => requestAnimationFrame(release));
+      } else {
+        next.addEventListener('playing', () => requestAnimationFrame(release), {once:true, signal:this.handoff.signal});
+      }
       this.current = next;
       this.sync();
     };
