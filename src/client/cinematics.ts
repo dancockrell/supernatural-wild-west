@@ -91,6 +91,11 @@ export class FeatureCinematics {
         spirit.poster = spirit.src.replace(/\.webm$/, '.png');
         spirit.classList.add("parlor-feature-resident");
       }
+      if (kind === 'awaken' && location === 3) {
+        spirit.src = '/video/feature-performances-v2/mine.webm';
+        spirit.poster = '/video/feature-performances-v2/mine.png';
+        spirit.classList.add('authored-feature');
+      }
       this.stage.append(spirit);
       const beats: [
         number,

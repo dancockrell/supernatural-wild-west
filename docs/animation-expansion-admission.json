@@ -1,0 +1,22 @@
+{
+  "mine": {
+    "sourceCreation": "Cqj0s4BEEy",
+    "sourceModel": "kling-30",
+    "sourceResolution": "1080p",
+    "output": [
+      812,
+      850
+    ],
+    "frames": 97,
+    "fps": 24,
+    "sha256": "2141823255f9c0ccc556f9e12042748ef72c9f34d8f2f5f96bd0de091ad5a21b",
+    "scope": "Dedicated mine event only; full-body mask rejected",
+    "gates": [
+      "source gesture and prop support",
+      "dark and tan alpha composites",
+      "12fps elbow and hat review",
+      "runtime composition",
+      "native completion and no upscaling"
+    ]
+  }
+}

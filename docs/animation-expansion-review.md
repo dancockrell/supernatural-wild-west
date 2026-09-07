@@ -31,3 +31,10 @@ Mine revision eIE6ITodqL:2800credits. Critic rejected wrong-hand performance: la
 ## Runtime critic closure
 
 Hidden tabs and reduced-motion changes dismiss an active spectacle and clear pending presentations. Native completion and mid-performance reduced-motion browser tests pass. Mine third pilot changes model to Kling3.0,1080p,4seconds,288credits; source review pending.
+
+## Admitted mine performance
+Third source Cqj0s4BEEy passes dedicated mine acting. Authored 812x850 bust composition excludes rejected full-body coat tails. Critic passes contrasting-background composition, dense elbow/hat sequence and assembled game. Three relevant browser tests pass; native completion and reduced-motion dismissal verified. This does not approve other candidates.
+
+## Expansion sources under review
+Ten new idle sources completed: seven pass sampled action, queen-chill and both medium clips held for distinctness. Seven 4K feature sources completed: jail passes sampled action, six held or rejected for framing or acting/effect defects. Nine distinct hand-award sources requested and pending. Unadmitted source files are not shipped.
+
