@@ -16,7 +16,8 @@ test('colored residents alternate complete native films independently', async ({
       const film = v as HTMLVideoElement;
       return !film.paused && film.currentTime > .1 && film.playbackRate === 1;
     })).toBe(true);
-    await expect(video).toHaveAttribute('src', /\/[^/]+-idle.webm$/, {timeout:15000});
+    await expect(video).toHaveAttribute('src', /-(listen|whisper).webm$/, {timeout:15000});
+    await expect(video).toHaveAttribute('src', /\/[^/]+-idle.webm$/, {timeout:7000});
     await expect.poll(() => video.evaluate(v => (v as HTMLVideoElement).currentTime)).toBeGreaterThan(.1);
   }));
   await expect(page.locator('#spin')).toBeEnabled();

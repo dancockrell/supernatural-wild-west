@@ -1,0 +1,58 @@
+{
+  "family": "public/video/parlor-residents-color-v8",
+  "method": "Full silhouette closed-form alpha and multilevel foreground estimation from original white-stage RGB. Opaque costume and skin use source RGB. Existing Queen lamp core protection retained. Native frames and speed preserved.",
+  "newPerformances": {
+    "queen-listen": {
+      "creation": "gO38urKSXO",
+      "reference": "lJiVivAgv9",
+      "credits": 1120
+    },
+    "medium-whisper": {
+      "creation": "9Zcur7JNYZ",
+      "reference": "0emKtnbTfW",
+      "credits": 1120
+    }
+  },
+  "clips": {
+    "medium-alternate": {
+      "frames": 265,
+      "fps": 24.0,
+      "sha256": "b37b782ad9129bc50891b13e974cf12a192c52e75f6fa12b479d695dd290b9f3"
+    },
+    "medium-idle": {
+      "frames": 217,
+      "fps": 24.0,
+      "sha256": "f6743f24b8b0bb8a9e2e02d2a8a15f596977cdfa19c703edb80dfd2afe97f771"
+    },
+    "medium-reaction": {
+      "frames": 97,
+      "fps": 24.0,
+      "sha256": "a80a468a623fe73f829efe0176481722ba52f8a76df90811e80d0c8b18c3f302"
+    },
+    "medium-whisper": {
+      "frames": 97,
+      "fps": 24.0,
+      "sha256": "d57696b9e5d351a01ada23824007f1fe05dc508e1d4d7c84f179b9bfe9403533"
+    },
+    "queen-alternate": {
+      "frames": 193,
+      "fps": 24.0,
+      "sha256": "768b77569cc72ddaa4671eeac81fb1696f8f958d06f02a87681ee61df23ea077"
+    },
+    "queen-idle": {
+      "frames": 169,
+      "fps": 24.0,
+      "sha256": "9d8aa40419072d5413af6de89757ef1aca81cbc83a2d8fd70bea084bd6828e8a"
+    },
+    "queen-listen": {
+      "frames": 97,
+      "fps": 24.0,
+      "sha256": "d47087504443407b767ab8d17195bf008d8050fc92db8152693a303fbfbd02eb"
+    },
+    "queen-reaction": {
+      "frames": 121,
+      "fps": 24.0,
+      "sha256": "320af7dbc97f5ca72b246a432c7bd8d54ae3da87e2583071e2fd8578adea5146"
+    }
+  }
+}

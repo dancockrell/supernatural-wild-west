@@ -18,7 +18,7 @@ export class BoundaryCast {
       const idle = movie(key, offset, parlor ? media.idle : `/video/cast-spectral-v3/${key}-idle.webm`);
       const reaction = movie(key, 0, parlor ? media.reaction : `/video/cast-spectral-v3/${key}-reaction.webm`);
       const alternateIdles = parlor
-        ? [movie(key, 0, media.alternate)]
+        ? [movie(key, 0, media.alternate), movie(key, 0, media.characterIdle)]
         : [];
       slot.append(idle); this.host.append(slot);
       this.residents.set(key, new ResidentSequence(slot, idle, reaction,

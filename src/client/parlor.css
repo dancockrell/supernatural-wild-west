@@ -88,7 +88,7 @@
  .unified-parlor .boundary-cast { overflow:hidden; }
  .unified-parlor .ghost-porch.left video { mask-image:url('/art/queen-ground-matte.svg'); mask-size:100% 100%; mask-repeat:no-repeat; }
  .unified-parlor .ghost-porch.right video { mask-image:url('/art/medium-ground-matte.svg'); mask-size:100% 100%; mask-repeat:no-repeat; }
- .unified-parlor .narrative-gambler { left:81cqw; top:33.5cqw; width:24cqw; height:18cqw; }
+ .unified-parlor .narrative-gambler { left:80cqw; top:37cqw; width:22.25cqw; height:16.6875cqw; }
  .unified-parlor .parlor-exterior-residents .rider { left:71.11cqw; top:19.2cqw; width:21.47cqw; height:16.09cqw; }
  .unified-parlor .controls .spin-button { border-radius:50%; width:4.8cqw; height:4.8cqw; flex:0 0 4.8cqw; margin-top:-.7cqw; border:3px double #b99855; background:radial-gradient(ellipse at 38% 25%,#665237,#34251b 60%,#140f0a); box-shadow:0 0 0 3px #241a11,inset 0 0 0 2px #6f5434,0 4px 6px #0008; color:#f2cf86; }
  .unified-parlor .controls #spin-label { font:700 1.15cqw 'Cinzel',serif; }
@@ -167,3 +167,4 @@
 
 .unified-parlor .poker-guests .poker-guest { transition: opacity 400ms ease; }
 .unified-parlor .poker-guests .poker-guest.arrived.departing { opacity: 0; }
+

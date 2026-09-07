@@ -10,7 +10,7 @@ test('parlor film leaves reels and player hand independent of the background rit
  const cells=await page.locator('.reels').boundingBox();
  expect(Math.abs(cells!.y-190)).toBeLessThan(2);
  expect(Math.abs(cells!.height-535)).toBeLessThan(2);
- await expect(page.locator('.ghost-porch.right video').first()).toHaveAttribute('src',/parlor-residents-color-v7/);
+ await expect(page.locator('.ghost-porch.right video').first()).toHaveAttribute('src',/parlor-residents-color-v8/);
  const ghost=page.locator('.narrative-gambler');
  const gb=await ghost.boundingBox();
  expect(gb!.x).toBeGreaterThan(board!.x+board!.width);
@@ -69,6 +69,7 @@ test('Witching Hour uses the matching colored room without moving the board',asy
  expect(Math.abs(board!.y-190)).toBeLessThan(2);
  await page.screenshot({path:'docs/parlor-night-review.png'});
 });
+
 
 
 
