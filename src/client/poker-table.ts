@@ -90,6 +90,16 @@ export class PokerTable {
             width: `${to.width}px`,
             height: `${to.height}px`,
           });
+          // The flight and landing use identical ink geometry at every stage scale.
+          for (const selector of ['.playing-card-ink', '.playing-card-ink b', '.playing-card-ink i', '.playing-card-ink small']) {
+            const sourceInk = target.querySelector<HTMLElement>(selector);
+            const flyingInk = flyer.querySelector<HTMLElement>(selector);
+            if (!sourceInk || !flyingInk) continue;
+            const style = getComputedStyle(sourceInk);
+            for (const property of ['font-size','font-weight','line-height','top','right','bottom','left','width','height','transform','text-align']) {
+              flyingInk.style.setProperty(property, style.getPropertyValue(property));
+            }
+          }
           document.body.append(flyer);
           let landed=false;
           try {
@@ -125,9 +135,9 @@ export class PokerTable {
     const motion = handMotion(hand.rank);
     this.table.dataset.hand = motion.name;
     if (hand.amount) matching.forEach((c) => c.classList.add("poker-matching"));
+    if (animate && (hand.amount > 0 || hand.rank === "High card")) this.table.dispatchEvent(new CustomEvent("hand-award", {detail: hand.rank}));
     if (animate && hand.amount > 0) {
       this.sound("hand", motion.sound);
-      this.table.dispatchEvent(new CustomEvent("hand-award", {detail: hand.rank}));
       await Promise.all(
         matching.map(
           (card, i) =>
@@ -143,5 +153,3 @@ export class PokerTable {
     }
   }
 }
-
-

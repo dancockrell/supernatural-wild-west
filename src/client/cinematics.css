@@ -704,9 +704,9 @@
   pointer-events: none;
   z-index: 2;
   background:
-    radial-gradient(ellipse at 25% 55%, #72a7a82e, transparent 48%),
-    radial-gradient(ellipse at 65% 40%, #94bab426, transparent 52%),
-    radial-gradient(ellipse at 48% 70%, #6b9e9d30, transparent 45%);
+    radial-gradient(ellipse at 25% 55%, #adc3bc2e, transparent 48%),
+    radial-gradient(ellipse at 65% 40%, #adc3bc26, transparent 52%),
+    radial-gradient(ellipse at 48% 70%, #adc3bc30, transparent 45%);
   filter: blur(16px);
   animation: apparition-ground-fog 5.5s ease-out both;
 }
@@ -760,4 +760,68 @@
 .unified-parlor .feature-ghost.parlor-feature-resident,
 .unified-parlor .poker-guest.resident-guest video {
   filter: url(#resident-soft-rim);
+}
+/* A single authored hand performance occupies the theatre above the player controls.
+   The runtime fits native media inside this box without enlarging its pixels. */
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage {
+  display:block; position:absolute; left:50%; right:auto; top:-42cqw; bottom:auto;
+  width:58cqw; height:36.6cqw; transform:translateX(-50%); overflow:hidden; pointer-events:none;
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage .authored-hand-v3 {
+  position:absolute; inset:0; width:100%; height:100%; transform:none; filter:none;
+  display:flex; align-items:center; justify-content:center;
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage .authored-hand-v3 video {
+  position:static; flex:none; max-width:100%; max-height:100%; object-fit:contain;
+  object-position:center; transform:none; filter:none; mask-image:none;
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage::before {
+  content:''; position:absolute; inset:8% 0 2%; pointer-events:none;
+  opacity:calc(var(--hand-rise,0) * .48); transform:scale(calc(.86 + var(--hand-rise,0) * .14));
+  background:radial-gradient(ellipse at 50% 60%,#dce8ff38,transparent 64%);
+  filter:blur(.45cqw);
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="pair"]::before {
+  content:none;
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="two-pair"]::before {
+  content:none;
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="three-kind"]::before {
+  background:radial-gradient(ellipse at 22% 70%,#bddfff66,transparent 27%),radial-gradient(ellipse at 50% 40%,#eae4ce55,transparent 30%),radial-gradient(ellipse at 78% 70%,#bddfff66,transparent 27%);
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="straight"]::before {
+  background:linear-gradient(155deg,transparent 35%,#d5eaff38 48%,#e8e2cb44 52%,transparent 65%);
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="flush"]::before {
+  content:none;
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="full-house"]::before {
+  background:radial-gradient(ellipse at 50% 55%,#f2e2ba66,transparent 55%),radial-gradient(ellipse at 50% 75%,#a7cdf655,transparent 67%);
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="four-kind"]::before {
+  background:radial-gradient(ellipse at 20% 65%,#b2d9ee55,transparent 22%),radial-gradient(ellipse at 40% 45%,#ded9f155,transparent 22%),radial-gradient(ellipse at 60% 45%,#b2d9ee55,transparent 22%),radial-gradient(ellipse at 80% 65%,#ded9f155,transparent 22%);
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="straight-flush"]::before {
+  content:none;
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="royal-flush"]::before {
+  background:radial-gradient(ellipse at 50% 25%,#fff1ce88,transparent 34%),radial-gradient(ellipse at 22% 62%,#ada2dd66,transparent 30%),radial-gradient(ellipse at 78% 62%,#c4e7ff66,transparent 30%);
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="three-kind"]::before {
+  opacity:1;
+  background:radial-gradient(ellipse at 22% 65%,rgb(189 223 255 / calc(var(--hand-left,0) * .6)),transparent 26%),radial-gradient(ellipse at 50% 40%,rgb(234 228 206 / calc(var(--hand-center,0) * .6)),transparent 28%),radial-gradient(ellipse at 78% 65%,rgb(189 223 255 / calc(var(--hand-right,0) * .6)),transparent 26%);
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage .authored-hand-v3.resident-guest video {
+  filter:url(#resident-soft-rim);
+}
+/* A low, broad water memory belongs behind the lantern maiden, above the controls.
+   Its envelope follows native seconds 2–6 and stops advancing with the film. */
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="flush"]::after {
+  content:''; position:absolute; z-index:-1; left:3%; right:3%; top:67%; height:17%;
+  border-top:.16cqw solid #adc3bc66; border-radius:48% 55% 42% 50%;
+  background:linear-gradient(180deg,#adc3bc44,#adc3bc22,transparent);
+  opacity:calc(var(--hand-water,0) * .72);
+  transform:translateY(calc(var(--hand-water,0) * -1.1cqw)) scaleX(calc(.9 + var(--hand-water,0) * .1));
+  filter:blur(.10cqw); pointer-events:none;
 }

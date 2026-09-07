@@ -5,7 +5,9 @@ test('native event stays visible past three seconds and closes on completion',as
  const clip=page.locator('.feature-stage video');
  await expect.poll(()=>clip.evaluate((v:HTMLVideoElement)=>v.currentTime),{timeout:12000}).toBeGreaterThan(3.1);
  await expect(page.locator('#spectacle')).toBeVisible();
- await expect(page.locator('#spectacle')).toBeHidden({timeout:3000});
+ const remaining=await clip.evaluate((v:HTMLVideoElement)=>v.duration-v.currentTime);
+ expect(remaining).toBeGreaterThan(0);
+ await expect(page.locator('#spectacle')).toBeHidden({timeout:Math.ceil(remaining*1000)+2500});
 });
 test('enabling reduced motion dismisses an ongoing native event',async({page})=>{
  await page.goto('/?parlor=1');await preview(page,'witch');

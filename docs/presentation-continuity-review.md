@@ -1,9 +1,17 @@
 # Presentation continuity review — 2026-09-07
 
-- Women's baked bright cyan light is selectively softened, preserving warm colors and source alpha. The same treatment applies to held transition frames and review playback.
-- Witching Hour now selects its own 8.042-second, 1442 × 1600 invocation. Native RGB and repaired ivory-to-purple smoke retain detail at the reviewed 4K stage size.
-- The legacy loss film is registered to the shared table geometry. An unchanged high-resolution lower-table plate preserves the main felt, front panel and feet; its fade begins below reviewed hand silhouettes. It activates only after loading.
+The women have no added aura. Separate smoke uses the scene fog color, and selective cool-spill removal suppresses the baked purple/cyan contour strands without desaturating warm skin, burgundy clothing or lantern light. Held transition frames retain the same treatment. Independent before/after review confirms the broad bright filaments are removed; faint ghost texture remains within the lower forms.
 
-Validation: production build, 54 unit tests, three native-GPU 3840 × 2160 browser checks, and independent visual critic review passed. The women's measured playback interval presented 45 frames with zero drops. Witching Hour completed naturally. Gambler receive → loss → idle completed naturally without changing host or card-plane geometry.
+Ten distinct hand performances now play their complete native eight-to-ten-second films over a large stage above the player cards and controls. Each has its own score and action effects. The gallery works before any wager, and controls recover after native completion. Hidden tabs and reduced motion cancel presentation and scores without reopening queued events.
 
-Known limits: this is a scoped outline reduction, not a claim that every source matte is perfect. The narrow rear felt around the hands still has a loss-specific texture variation; the table silhouette and lower surface remain fixed. Some older idle sources remain lower resolution than new performances.
+The gambler's new native loss film shares the receive table's geometry and material. The old affine correction is removed. Whole-body alpha and dense masks through both fast hand transitions replace inappropriate pose-specific cuts. A stable lower table plate retains continuity between the films. Independent review passed every frame of the repaired transitions.
+
+Validation:
+
+- All ten hand films passed full native Chrome/D3D11 3840 × 2160 playback: 8.042–10.042 seconds, no enlargement beyond native dimensions, natural end, unchanged preview balance, control clearance and score shutdown. Worst measured loss was 3/193 frames (1.55%).
+- After final lifecycle guards, High Card also passed the exact soundtrack-path check at 4K, with 1/193 dropped frames. All ten score mappings/files were checked.
+- The final women's treatment presented 44 additional frames in 1.8 seconds with zero drops at 4K.
+- Natural receive → loss → idle passed at 4K, including trusted native ends, identity transforms, exact decoded table edges at four sample rows and felt mean absolute pixel difference below 8/255.
+- Player hand clearance passed at 3840, 1440 and 390 pixel widths. Flying-card ink remains consistent with the landed card. Feature completion, reduced motion and hand lifecycle regressions passed.
+
+Audio transport, duration and loudness are technically checked; the musical mix still needs a listening pass. Older background idle sources remain lower resolution than the new large-stage films. These are scoped visual and runtime approvals, not a claim that every historical asset is flawless. Current hand asset evidence is in hand-performance-assets-v3.json; new loss evidence is in gambler-loss-admission.json.

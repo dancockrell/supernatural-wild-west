@@ -1,4 +1,6 @@
 import {test,expect} from '@playwright/test';
+import {readFileSync} from 'node:fs';
+const admitted=readFileSync('src/client/poker-guests.ts','utf8').match(/ADMITTED_V3_HANDS = new Set<string>\(\[([^\]]*)\]/)?.[1]||'';
 for(const [rank,name] of [['Pair','pair'],['Two pair','two-pair'],['Full house','full-house']] as const){
  test(`${rank} uses a distinct native performance`,async({page})=>{
   await page.setViewportSize({width:3840,height:2160});
@@ -7,12 +9,13 @@ for(const [rank,name] of [['Pair','pair'],['Two pair','two-pair'],['Full house',
   await page.locator('.player-play-space').evaluate((host,rank)=>host.dispatchEvent(new CustomEvent('hand-award',{detail:rank})),rank);
   const video=page.locator('.poker-guest video');
   await expect(video).toHaveCount(1);
-  await expect(video).toHaveAttribute('src',`/video/hand-performances-v2/${name}.webm`);
+  const v3=admitted.includes(`'${name}'`);
+  await expect(video).toHaveAttribute('src',`/video/hand-performances-${v3?'v3':'v2'}/${name}.webm`);
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(1.2);
   const size=await video.evaluate((v:HTMLVideoElement)=>({native:v.videoHeight,display:v.getBoundingClientRect().height,frames:v.getVideoPlaybackQuality().totalVideoFrames}));
   expect(size.native).toBeGreaterThanOrEqual(size.display);expect(size.frames).toBeGreaterThan(8);
   const duration=await video.evaluate((v:HTMLVideoElement)=>v.duration);
-  expect(duration).toBeGreaterThanOrEqual(rank==='Full house'?6:5);
+  expect(duration).toBeGreaterThanOrEqual(v3?7:rank==='Full house'?6:5);
   const before=await video.evaluate((v:HTMLVideoElement)=>({t:v.currentTime,total:v.getVideoPlaybackQuality().totalVideoFrames,dropped:v.getVideoPlaybackQuality().droppedVideoFrames}));
   await page.waitForTimeout(1800);
   const after=await video.evaluate((v:HTMLVideoElement)=>({t:v.currentTime,total:v.getVideoPlaybackQuality().totalVideoFrames,dropped:v.getVideoPlaybackQuality().droppedVideoFrames}));

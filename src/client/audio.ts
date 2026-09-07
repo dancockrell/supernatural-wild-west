@@ -1,4 +1,216 @@
+export type EventScoreKey =
+  | "hand-high-card"
+  | "hand-pair"
+  | "hand-two-pair"
+  | "hand-trips"
+  | "hand-straight"
+  | "hand-flush"
+  | "hand-full-house"
+  | "hand-quads"
+  | "hand-straight-flush"
+  | "hand-royal-flush"
+  | "feature-graveyard"
+  | "feature-saloon"
+  | "feature-jail"
+  | "feature-mine"
+  | "feature-church"
+  | "feature-witch"
+  | "feature-fortune"
+  | "feature-ride";
+
+interface EventScoreVoice {
+  token: number;
+  key: EventScoreKey;
+  audio: HTMLAudioElement;
+  source: MediaElementAudioSourceNode;
+  envelope: number;
+  closing: boolean;
+  fade?: ReturnType<typeof setInterval>;
+  deadline?: ReturnType<typeof setTimeout>;
+}
+
 export class SoundBus {
+  private eventScore?: EventScoreVoice;
+  private eventScoreVoices = new Set<EventScoreVoice>();
+  private eventScoreToken = 0;
+
+  /** The media owner supplies its native duration and clock on every actual playing event. */
+  playEventScore(
+    key: EventScoreKey,
+    durationSeconds = 10,
+    offsetSeconds = 0,
+  ): () => void {
+    this.stopEventScore(180);
+    if (!this.active || document.hidden) return () => {};
+    try {
+      this.prepare();
+      void this.context!.resume();
+      const audio = new Audio(`/audio/event-scores-v1/${key}.mp3`);
+      audio.preload = "auto";
+      audio.preservesPitch = true;
+      audio.volume = 0;
+      const source = this.context!.createMediaElementSource(audio);
+      // Event music follows the music fader, not the effects fader or night low-pass.
+      source.connect(this.compressor!);
+      const voice: EventScoreVoice = {
+        token: ++this.eventScoreToken,
+        key,
+        audio,
+        source,
+        envelope: 0,
+        closing: false,
+      };
+      this.eventScore = voice;
+      this.eventScoreVoices.add(voice);
+      const span = Math.max(
+        7,
+        Math.min(10, Number.isFinite(durationSeconds) ? durationSeconds : 10),
+      );
+      const offset = Math.max(
+        0,
+        Number.isFinite(offsetSeconds) ? offsetSeconds : 0,
+      );
+      const requestedAt = performance.now();
+      let started = false;
+      const start = () => {
+        if (
+          started ||
+          voice.closing ||
+          this.eventScore !== voice ||
+          !this.active ||
+          document.hidden
+        )
+          return;
+        if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+        started = true;
+        const elapsed = offset + (performance.now() - requestedAt) / 1000;
+        if (elapsed >= span) {
+          this.closeEventScore(voice, 0);
+          return;
+        }
+        // Preserve the complete composition and its cadence when the native film is 7–10 seconds.
+        const rate = audio.duration / span;
+        audio.playbackRate = Math.max(0.7, Math.min(1.5, rate));
+        audio.currentTime = Math.min(
+          audio.duration - 0.01,
+          elapsed * audio.playbackRate,
+        );
+        void audio
+          .play()
+          .then(() => {
+            if (
+              voice.closing ||
+              this.eventScore !== voice ||
+              !this.active ||
+              document.hidden
+            ) {
+              audio.pause();
+              this.closeEventScore(voice, 0);
+              return;
+            }
+            const audibleElapsed =
+              offset + (performance.now() - requestedAt) / 1000;
+            if (audibleElapsed >= span) {
+              this.closeEventScore(voice, 0);
+              return;
+            }
+            const position = Math.min(
+              audio.duration - 0.01,
+              audibleElapsed * audio.playbackRate,
+            );
+            if (Math.abs(audio.currentTime - position) > 0.12)
+              audio.currentTime = position;
+            voice.envelope = 1;
+            audio.volume = this.musicVolume * 0.92;
+            this.fadeMusic(this.musicVolume * this.themeDuckScale(), 80);
+          })
+          .catch(() => this.closeEventScore(voice, 0));
+      };
+      audio.onloadedmetadata = start;
+      audio.onplaying = () => {
+        if (
+          voice.closing ||
+          this.eventScore !== voice ||
+          !this.active ||
+          document.hidden
+        ) {
+          audio.pause();
+          return;
+        }
+        const elapsed = offset + (performance.now() - requestedAt) / 1000;
+        if (elapsed >= span) {
+          this.closeEventScore(voice, 0);
+          return;
+        }
+        const position = Math.min(
+          audio.duration - 0.01,
+          elapsed * audio.playbackRate,
+        );
+        // A resumed audio buffer must catch up to the still-running visual performance.
+        if (Math.abs(audio.currentTime - position) > 0.12)
+          audio.currentTime = position;
+      };
+      audio.onended = () => this.closeEventScore(voice, 0);
+      audio.onerror = () => this.closeEventScore(voice, 0);
+      voice.deadline = setTimeout(
+        () => this.closeEventScore(voice, 0),
+        (span - Math.min(offset, span)) * 1000 + 1000,
+      );
+      audio.load();
+      if (audio.readyState >= 1) start();
+      return () => this.closeEventScore(voice, 250);
+    } catch {
+      // A music transport failure must never affect a result or a character's media clock.
+      return () => {};
+    }
+  }
+
+  stopEventScore(fadeMilliseconds = 250) {
+    if (this.eventScore)
+      this.closeEventScore(this.eventScore, fadeMilliseconds);
+  }
+
+  private closeEventScore(voice: EventScoreVoice, milliseconds: number) {
+    if (!this.eventScoreVoices.has(voice)) return;
+    if (voice.closing && milliseconds > 0) return;
+    voice.closing = true;
+    clearTimeout(voice.deadline);
+    clearInterval(voice.fade);
+    voice.audio.onloadedmetadata = null;
+    voice.audio.onplaying = null;
+    voice.audio.onended = null;
+    voice.audio.onerror = null;
+    const finish = () => {
+      clearInterval(voice.fade);
+      voice.audio.pause();
+      voice.source.disconnect();
+      this.eventScoreVoices.delete(voice);
+      if (this.eventScore !== voice) return;
+      this.eventScore = undefined;
+      if (this.active && !document.hidden)
+        this.fadeMusic(this.musicVolume * this.themeDuckScale(), 600);
+    };
+    if (milliseconds <= 0 || voice.audio.paused || voice.envelope === 0) {
+      finish();
+      return;
+    }
+    const startedAt = performance.now(),
+      initial = voice.envelope;
+    voice.fade = setInterval(() => {
+      const progress = Math.min(
+        1,
+        (performance.now() - startedAt) / milliseconds,
+      );
+      voice.envelope = initial * (1 - progress);
+      voice.audio.volume = this.musicVolume * 0.92 * voice.envelope;
+      if (progress === 1) finish();
+    }, 16);
+  }
+
+  private stopAllEventScores() {
+    for (const voice of [...this.eventScoreVoices])
+      this.closeEventScore(voice, 0);
+  }
   private active = false;
   private context?: AudioContext;
   private machine?: GainNode;
@@ -8,7 +220,9 @@ export class SoundBus {
   private duckUntil = 0;
   private quietFoleyUntil = 0;
   private featureActive = false;
-  beginFeature(){this.featureActive=true;}
+  beginFeature() {
+    this.featureActive = true;
+  }
   private duckScale = 1;
   private voices = new Set<AudioScheduledSourceNode>();
   private stopVoices() {
@@ -32,10 +246,10 @@ export class SoundBus {
     this.musicVolume = Math.max(0, Math.min(1, music));
     this.effectVolume = Math.max(0, Math.min(1, effects));
     if (this.machine) this.machine.gain.value = this.effectVolume;
+    for (const voice of this.eventScoreVoices)
+      voice.audio.volume = this.musicVolume * 0.92 * voice.envelope;
     if (this.score)
-      this.score.volume =
-        this.musicVolume *
-        (performance.now() < this.duckUntil ? this.duckScale : 1);
+      this.score.volume = this.musicVolume * this.themeDuckScale();
   }
   private prepare() {
     if (this.context) return;
@@ -97,10 +311,22 @@ export class SoundBus {
       this.score.volume = this.musicVolume;
       void this.score.play().catch(() => {});
     } else {
+      this.stopAllEventScores();
+      this.stopFeature();
       this.stopVoices();
       this.score?.pause();
       void this.context?.suspend();
     }
+  }
+  private themeDuckScale() {
+    const incidental = performance.now() < this.duckUntil ? this.duckScale : 1;
+    const event =
+      this.eventScore &&
+      !this.eventScore.closing &&
+      this.eventScore.envelope > 0
+        ? 0.18
+        : 1;
+    return Math.min(incidental, event);
   }
   private duckMusic(milliseconds: number, depth = 0.63) {
     if (!this.score) return;
@@ -110,10 +336,10 @@ export class SoundBus {
     );
     this.duckUntil = Math.max(this.duckUntil, performance.now() + milliseconds);
     clearTimeout(this.restoreMusicTimer);
-    this.fadeMusic(this.musicVolume * this.duckScale, 80);
+    this.fadeMusic(this.musicVolume * this.themeDuckScale(), 80);
     this.restoreMusicTimer = setTimeout(() => {
       this.duckScale = 1;
-      this.fadeMusic(this.musicVolume, 650);
+      this.fadeMusic(this.musicVolume * this.themeDuckScale(), 650);
     }, this.duckUntil - performance.now());
   }
   private fadeMusic(target: number, milliseconds: number) {
@@ -137,6 +363,7 @@ export class SoundBus {
     duration: number,
     volume = 0.035,
     type: OscillatorType = "sine",
+    pan = 0,
   ) {
     const c = this.context!,
       o = c.createOscillator(),
@@ -147,7 +374,12 @@ export class SoundBus {
     g.gain.exponentialRampToValueAtTime(volume, time + 0.012);
     g.gain.exponentialRampToValueAtTime(0.0001, time + duration);
     o.connect(g);
-    g.connect(this.machine!);
+    const panner = pan === 0 ? undefined : c.createStereoPanner();
+    if (panner) {
+      panner.pan.value = Math.max(-1, Math.min(1, pan));
+      g.connect(panner);
+      panner.connect(this.machine!);
+    } else g.connect(this.machine!);
     o.start(time);
     this.voices.add(o);
     o.stop(time + duration + 0.02);
@@ -155,6 +387,7 @@ export class SoundBus {
       this.voices.delete(o);
       o.disconnect();
       g.disconnect();
+      panner?.disconnect();
     };
   }
   private noise(
@@ -194,7 +427,8 @@ export class SoundBus {
   }
   private featureVoices = new Set<AudioScheduledSourceNode>();
   stopFeature() {
-    this.featureActive=false;
+    this.featureActive = false;
+    if (this.eventScore?.key.startsWith("feature-")) this.stopEventScore();
     for (const source of this.featureVoices) {
       try {
         source.stop();
@@ -295,97 +529,24 @@ export class SoundBus {
   feature(kind: "witch" | "awaken", location = 0) {
     this.stopFeature();
     this.beginFeature();
-    if (!this.active || document.hidden) return;
-    try {
-      this.prepare();
-      void this.context!.resume();
-      this.duckMusic(5400, 0.4);
-      const existing = new Set(this.voices),
-        t = this.context!.currentTime;
-      const strike = (
-        root: number,
-        at: number,
-        volume: number,
-        length = 1.2,
-      ) => {
-        [1, 2.013, 3.91, 6.08].forEach((ratio, i) =>
-          this.tone(
-            root * ratio,
-            at,
-            length / (1 + i * 0.5),
-            volume / (1 + i * 2),
-          ),
-        );
-      };
-      if (kind === "witch") {
-        this.swell(t, 5.1, 480, 0.11);
-        this.pluck(73.42, t, 3, 0.23);
-        this.pluck(110, t + 0.025, 2.5, 0.1);
-        [146.83, 174.61, 164.81, 110].forEach((f, i) => {
-          const at = t + 0.55 + i * 0.5556;
-          this.pluck(f, at, 2, 0.13);
-          this.pluck(f, at + 0.24, 1.4, 0.034);
-        });
-        strike(73.42, t + 3.55, 0.045, 1.5);
-      } else if (location === 0) {
-        this.swell(t, 4.8, 360, 0.18);
-        this.noise(t, 0.65, 250, 0.17);
-        [0.3, 1.1, 2.65].forEach((at, i) =>
-          this.noise(t + at, 0.22, 900 - i * 190, 0.055),
-        );
-        this.pluck(73.42, t + 0.1, 3.7, 0.1);
-      } else if (location === 1) {
-        // A short minor saloon phrase: bass pulse, detuned hammer strings, hanging final chord.
-        [0, 0.48, 0.96, 1.44].forEach((at, i) =>
-          strike(i % 2 ? 110 : 73.42, t + at, 0.065, 0.8),
-        );
-        [293.66, 349.23, 329.63, 220, 293.66].forEach((f, i) => {
-          const at = t + 0.12 + i * 0.34;
-          strike(f, at, 0.075, 1.9);
-          this.tone(f * 1.006, at, 1.4, 0.027, "triangle");
-          this.noise(at, 0.018, 2800, 0.035);
-        });
-        [146.83, 174.61, 220].forEach((f) => strike(f, t + 2.4, 0.04, 2.3));
-        strike(1260, t + 3.75, 0.045, 0.7);
-        this.swell(t + 1, 4, 680, 0.055);
-      } else if (location === 2) {
-        this.noise(t, 0.16, 2100, 0.2);
-        [92, 217, 483].forEach((f) => strike(f, t + 0.03, 0.065, 1.6));
-        [0.22, 0.38, 0.63, 0.81].forEach((at, i) => {
-          this.noise(t + at, 0.09, 4300, 0.065);
-          strike(720 + i * 91, t + at, 0.045, 0.35);
-        });
-        this.swell(t + 0.4, 4.3, 260, 0.12);
-      } else if (location === 3) {
-        this.swell(t, 5, 170, 0.24);
-        [0.2, 1.45, 2.1].forEach((at) => {
-          this.noise(t + at, 0.11, 630, 0.15);
-          strike(67, t + at, 0.07, 0.45);
-          strike(67, t + at + 0.23, 0.025, 0.6);
-        });
-        [196, 207].forEach((f) =>
-          this.tone(f, t + 2.5, 1.7, 0.024, "sawtooth"),
-        );
-      } else {
-        [1, 2.01, 2.61, 4.09, 5.43].forEach((ratio, i) =>
-          this.tone(110 * ratio, t, 4.9 - i * 0.6, 0.11 / (i + 1)),
-        );
-        this.pluck(73.42, t + 0.35, 3.2, 0.065);
-        this.pluck(110, t + 1.46, 2.4, 0.035);
-        this.swell(t + 0.5, 4.3, 420, 0.07);
-      }
-      this.featureVoices = new Set(
-        [...this.voices].filter((source) => !existing.has(source)),
-      );
-    } catch {
-      /* Sound cannot change an authoritative result. */
-    }
+    const places = ["graveyard", "saloon", "jail", "mine", "church"] as const;
+    const place = places[Math.max(0, Math.min(4, location))];
+    this.playEventScore(
+      kind === "witch" ? "feature-witch" : `feature-${place}`,
+    );
   }
   play(
     event:
       | "breath"
       | "lantern"
       | "pages"
+      | "book-close"
+      | "brazier"
+      | "cloth"
+      | "hoof"
+      | "table-knock"
+      | "cartridge"
+      | "ghost-chime"
       | "spin"
       | "fortune"
       | "dawn"
@@ -413,8 +574,15 @@ export class SoundBus {
     detail = 0,
   ) {
     if (!this.active || document.hidden) return;
-    if(['fortune','awaken','ride','mine'].includes(event)) this.quietFoleyUntil=performance.now()+4500;
-    if(event==='ghost-deck' && (this.featureActive || performance.now()<this.quietFoleyUntil)) return;
+    if (["fortune", "awaken", "ride", "mine"].includes(event))
+      this.quietFoleyUntil = performance.now() + 4500;
+    if (
+      event === "ghost-deck" &&
+      (this.featureActive ||
+        !!this.eventScore ||
+        performance.now() < this.quietFoleyUntil)
+    )
+      return;
     if (this.score?.paused) void this.score.play().catch(() => {});
     if (event === "ride") {
       this.duckMusic(3100, 0.4);
@@ -442,17 +610,66 @@ export class SoundBus {
       this.prepare();
       void this.context!.resume();
       const t = this.context!.currentTime;
-      if (event === 'ghost-deck') {
-        if(detail===0){
-          this.noise(t,.65,1400,.018);
-          [392,587.33].forEach((f,i)=>this.tone(f,t+i*.1,.55,.008,'sine'));
+      if (event === "book-close") {
+        this.noise(t, 0.11, 1300, 0.045);
+        this.tone(94, t + 0.012, 0.16, 0.027, "triangle");
+        this.noise(t + 0.08, 0.16, 2700, 0.018);
+      }
+      if (event === "brazier") {
+        this.noise(t, 0.6, 600, 0.022);
+        [326, 877, 1511].forEach((f, i) =>
+          this.tone(f, t + 0.035, 1.1 / (i + 1), 0.015 / (i + 1)),
+        );
+      }
+      if (event === "cloth") {
+        this.noise(t, 0.32, 1600, 0.017);
+        this.noise(t + 0.2, 0.24, 800, 0.01);
+      }
+      if (event === "hoof") {
+        this.noise(t, 0.035, 2800, 0.033);
+        this.tone(87, t, 0.1, 0.032, "triangle");
+        this.noise(t + 0.025, 0.12, 420, 0.028);
+      }
+      if (event === "table-knock") {
+        this.noise(t, 0.045, 1600, 0.022);
+        this.tone(132, t, 0.12, 0.025, "triangle");
+        this.tone(287, t + 0.008, 0.06, 0.008);
+      }
+      if (event === "cartridge") {
+        this.noise(t, 0.026, 3800, 0.019);
+        [1260, 2177, 3240].forEach((f, i) =>
+          this.tone(f, t + i * 0.006, 0.22 / (i + 1), 0.013 / (i + 1)),
+        );
+      }
+      if (event === "ghost-chime") {
+        const index = Math.max(0, Math.min(2, Math.round(detail)));
+        const root = [659.25, 783.99, 987.77][index];
+        [1, 2.013, 3.97].forEach((ratio, i) =>
+          this.tone(
+            root * ratio,
+            t,
+            1.25 / (i + 1),
+            0.019 / (i + 1),
+            "sine",
+            [-0.5, 0, 0.5][index],
+          ),
+        );
+        this.noise(t + 0.02, 0.16, 2200, 0.004);
+      }
+      if (event === "ghost-deck") {
+        if (detail === 0) {
+          this.noise(t, 0.65, 1400, 0.018);
+          [392, 587.33].forEach((f, i) =>
+            this.tone(f, t + i * 0.1, 0.55, 0.008, "sine"),
+          );
         } else {
-          this.noise(t,.055,2200,.018);
-          this.tone(145,t,.09,.012,'triangle');
-          if(detail===5){
-            this.tone(293.66,t+.06,.25,.014,'triangle');
-            this.tone(277.18,t+.25,.5,.012,'triangle');
-          } else this.tone(440+detail*73.42,t+.025,.26,.007,'sine');
+          this.noise(t, 0.055, 2200, 0.018);
+          this.tone(145, t, 0.09, 0.012, "triangle");
+          if (detail === 5) {
+            this.tone(293.66, t + 0.06, 0.25, 0.014, "triangle");
+            this.tone(277.18, t + 0.25, 0.5, 0.012, "triangle");
+          } else
+            this.tone(440 + detail * 73.42, t + 0.025, 0.26, 0.007, "sine");
         }
       }
       if (event === "card") {
@@ -473,18 +690,11 @@ export class SoundBus {
         });
       }
       if (event === "fortune") {
-        this.duckMusic(4200);
-        this.noise(t, 0.4, 700, 0.18);
-        [73.42, 146.83, 220, 293.66].forEach((f) =>
-          this.tone(f, t, 2, 0.08, "triangle"),
+        // Brief material accent only; the native feature lifecycle owns its distinct music.
+        this.noise(t, 0.18, 1600, 0.025);
+        [1174, 1760, 2349].forEach((f, i) =>
+          this.tone(f, t + i * 0.11, 0.7, 0.012 / (i + 1)),
         );
-        for (let i = 0; i < 14; i++)
-          this.tone(
-            [587.33, 440, 349.23, 293.66][i % 4],
-            t + 0.35 + i * 0.09,
-            0.25,
-            0.045,
-          );
       }
       if (event === "dawn") {
         this.duckMusic(2300);
@@ -563,14 +773,14 @@ export class SoundBus {
         this.tone(165, t + 0.25, 0.12, 0.025, "triangle");
       }
       if (event === "gambler-win") {
-        [0, .14, .31].forEach((delay, i) => {
-          this.noise(t + delay, .12, 470 - i * 60, .035);
-          this.tone(310 - i * 30, t + delay, .065, .018, "triangle");
+        [0, 0.14, 0.31].forEach((delay, i) => {
+          this.noise(t + delay, 0.12, 470 - i * 60, 0.035);
+          this.tone(310 - i * 30, t + delay, 0.065, 0.018, "triangle");
         });
       }
       if (event === "gambler-loss") {
-        this.noise(t, .45, 270, .04);
-        this.tone(190, t, .07, .022, "triangle");
+        this.noise(t, 0.45, 270, 0.04);
+        this.tone(190, t, 0.07, 0.022, "triangle");
       }
       if (event === "chain-snap") {
         this.noise(t, 0.065, 3600, 0.095);
@@ -606,6 +816,8 @@ export class SoundBus {
     }
   }
   suspend() {
+    this.stopAllEventScores();
+    this.stopFeature();
     clearTimeout(this.restoreMusicTimer);
     clearInterval(this.musicFadeTimer);
     this.duckUntil = 0;

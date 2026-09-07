@@ -33,24 +33,28 @@ test('natural receive, loss, and idle preserve the gambler table registration at
       const cards=host.querySelector<SVGSVGElement>('.ghost-ritual-cards')!;
       const rect=(e:Element)=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};};
       const m=new DOMMatrixReadOnly(getComputedStyle(v).transform);
-      const tablePoints=[[156,341],[838,341],[552,695]].map(([x,y])=>{
-        // Source footprint points for loss are obtained from the measured inverse registration.
-        const source=v.dataset.performance==='loss'?new DOMPoint(x,y).matrixTransform(new DOMMatrix([1.02425,-.00009,-.000418,1.00894,-11.21568,-2.9592]).inverse()):new DOMPoint(x,y);
-        const point=new DOMPoint(source.x*v.clientWidth/960,source.y*v.clientHeight/720).matrixTransform(m);
-        return {x:point.x,y:point.y};
+      const canvas=document.createElement('canvas');canvas.width=960;canvas.height=720;
+      const ctx=canvas.getContext('2d',{willReadFrequently:true})!;ctx.drawImage(v,0,0,960,720);
+      const pixels=ctx.getImageData(0,0,960,720).data;
+      const tableEdges=[370,430,500,610].map(y=>{
+        const xs:number[]=[];for(let x=80;x<930;x++)if(pixels[(y*960+x)*4+3]>200)xs.push(x);
+        return {y,left:xs[0]??-1,right:xs.at(-1)??-1};
       });
+      const felt:number[]=[];
+      for(let y=368;y<408;y+=4)for(let x=265;x<705;x+=8){const at=(y*960+x)*4;felt.push(pixels[at],pixels[at+1],pixels[at+2]);}
       return {name:v.dataset.performance,t:v.currentTime,duration:v.duration,host:rect(host),cards:rect(cards),
         cardPlane:cards.querySelector('.ritual-card')!.parentElement!.getAttribute('transform'),
-        transform:[m.a,m.b,m.c,m.d,m.e,m.f],origin:getComputedStyle(v).transformOrigin,tablePoints};
+        transform:[m.a,m.b,m.c,m.d,m.e,m.f],native:{width:v.videoWidth,height:v.videoHeight},src:v.currentSrc,tableEdges,felt};
     });
     expect(snapshot.t,'capture the beginning of the natural performance').toBeLessThan(1.5);
+    expect(snapshot.transform).toEqual([1,0,0,1,0,0]);
     if(name==='loss'){
-      expect(snapshot.transform[0]).toBeCloseTo(1.02425,5);
-      expect(snapshot.transform[3]).toBeCloseTo(1.00894,5);
-      expect(snapshot.transform[4]/snapshot.host.width).toBeCloseTo(-.011683,5);
-      expect(snapshot.transform[5]/snapshot.host.height).toBeCloseTo(-.004110,5);
-      expect(snapshot.origin).toBe('0px 0px');
-    }else expect(snapshot.transform).toEqual([1,0,0,1,0,0]);
+      expect(snapshot.src).toContain('/parlor-gambler-native-v2/loss.webm');
+      expect(snapshot.duration).toBeGreaterThanOrEqual(8);
+      expect(snapshot.duration).toBeLessThan(8.2);
+      expect(snapshot.native.width).toBeGreaterThanOrEqual(1920);
+      expect(snapshot.native.height).toBeGreaterThanOrEqual(1440);
+    }
     snapshots.push(snapshot);
     await page.screenshot({path:`docs/gambler-natural-${name}-4k.png`});
     if(name!=='idle')await expect(current).toHaveCount(0,{timeout:10000});
@@ -59,12 +63,19 @@ test('natural receive, loss, and idle preserve the gambler table registration at
     expect(sample.host).toEqual(snapshots[0].host);
     expect(sample.cards).toEqual(snapshots[0].cards);
     expect(sample.cardPlane).toBe(snapshots[0].cardPlane);
-    sample.tablePoints.forEach((point:{x:number;y:number},i:number)=>{
-      expect(Math.abs(point.x-snapshots[0].tablePoints[i].x)).toBeLessThan(.1);
-      expect(Math.abs(point.y-snapshots[0].tablePoints[i].y)).toBeLessThan(.1);
-    });
+    if(sample.name==='loss'){
+      sample.tableEdges.forEach((edge:{y:number;left:number;right:number},i:number)=>{
+        expect(edge.left).toBeGreaterThan(0);
+        expect(Math.abs(edge.left-snapshots[0].tableEdges[i].left),'decoded table left silhouette').toBeLessThanOrEqual(2);
+        expect(Math.abs(edge.right-snapshots[0].tableEdges[i].right),'decoded table right silhouette').toBeLessThanOrEqual(2);
+      });
+      const difference=sample.felt.reduce((sum:number,v:number,i:number)=>sum+Math.abs(v-snapshots[0].felt[i]),0)/sample.felt.length;
+      expect(difference,'decoded felt remains the same material, without an affine workaround').toBeLessThan(8);
+    }
+
   }
   const endings=await page.evaluate(()=>(window as any).tableNaturalEndings as Array<{name:string;trusted:boolean;time:number;duration:number}>);
   for(const name of ['receive','loss'])expect(endings.some(e=>e.name===name&&e.trusted&&e.time>=e.duration-.05)).toBe(true);
-  console.log('natural table registration',JSON.stringify({snapshots,endings}));
+  console.log('natural table registration',JSON.stringify({snapshots:snapshots.map(({felt,...sample})=>sample),endings}));
 });
+

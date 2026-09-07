@@ -1,0 +1,13 @@
+{
+  "path": "/video/parlor-gambler-native-v2/loss.webm",
+  "creation": "ksOvPEF16B",
+  "durationSeconds": 8.042,
+  "width": 1920,
+  "height": 1440,
+  "sha256": "c8e8ff6fadb6777e9b187da04d397ef19351f6500214753c199c6302d0471fd7",
+  "bytes": 29587843,
+  "posterSHA256": "c4786f327bb9c7bf445b0a40df1939fd08b4af1e12d38e7257b3f2be4a10af18",
+  "repair": "Whole-body alpha replacing pose-specific cuts. Dense native masks on fast hand lift and return. Shared lower table silhouette; identity registration.",
+  "sourceAndAlphaGate": "Passed independent native frame review, including every frame80-93 and152-165",
+  "runtimeGate": "Passed native 3840x2160 receive-loss-idle natural completion, identity transforms, exact decoded table edges at four rows, felt MAE below 8"
+}

@@ -11,7 +11,7 @@ test("cancelled hand films cannot restart from late decode events", async ({
     .replace("export class", "class");
   await page.addScriptTag({
     content: ts.transpileModule(
-      `function ghostSprite(){return document.createElement('video');} function parlorResidentMedia(){return {reaction:'test.webm'};} ${source};Object.assign(window,{PokerGuests});`,
+      `function ghostSprite(){return document.createElement('video');} function parlorResidentMedia(){return {reaction:'test.webm'};} ${source};ADMITTED_V3_HANDS.clear();Object.assign(window,{PokerGuests});`,
       { compilerOptions: { target: ts.ScriptTarget.ES2022 } },
     ).outputText,
   });

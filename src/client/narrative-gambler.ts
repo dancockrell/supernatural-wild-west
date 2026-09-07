@@ -6,8 +6,8 @@ export class NarrativeGambler {
     const v = document.createElement('video');
     v.dataset.performance = name;
     const family = 'parlor-gambler-hair-v1';
-    v.src = name === 'receive'
-      ? '/video/parlor-gambler-native-v2/receive.webm'
+    v.src = name === 'receive' || name === 'loss'
+      ? `/video/parlor-gambler-native-v2/${name}.webm`
       : name === 'brim' || name === 'knuckle'
       ? `/video/parlor-idles-v2/gambler-${name}.webm`
       : `/video/${family}/${name}.webm`;

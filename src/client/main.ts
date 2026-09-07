@@ -30,7 +30,7 @@ import "@fontsource/dm-sans/latin-700.css";
 import { FrontierScene } from "./scene";
 import { ParlorScene } from "./parlor-scene";
 import { DemoRgsAdapter, RgsError } from "./adapter";
-import { SoundBus } from "./audio";
+import { SoundBus, type EventScoreKey } from "./audio";
 import { SYMBOLS, symbolSvg } from "./symbols";
 import { CONFIG } from "../engine/config";
 import {
@@ -204,6 +204,25 @@ let spectacleTimer: ReturnType<typeof setTimeout> | undefined;
 let pendingAward: (() => void) | undefined;
 let awardFrame = 0;
 let spectacleSequence = 0;
+let presentationGeneration = 0;
+let spectacleAudioEvents:AbortController|undefined;
+let stopSpectacleScore:()=>void=()=>{};
+const spectacleWaiters = new Set<()=>void>();
+function waitForSpectacles():Promise<void> {
+  return el('spectacle').hidden && !pendingAward ? Promise.resolve() : new Promise(resolve=>spectacleWaiters.add(resolve));
+}
+function finishSpectacle(continueAwards:boolean) {
+  spectacleAudioEvents?.abort();spectacleAudioEvents=undefined;
+  stopSpectacleScore();stopSpectacleScore=()=>{};
+  audio.stopFeature(); spectacleSequence++;
+  cancelAnimationFrame(awardFrame); clearTimeout(spectacleTimer);
+  el('spectacle').querySelectorAll('video').forEach(video=>video.pause());
+  el('spectacle').hidden=true;
+  const next=continueAwards ? pendingAward : undefined; pendingAward=undefined;
+  next?.();
+  if(el('spectacle').hidden && !pendingAward){for(const resolve of spectacleWaiters)resolve();spectacleWaiters.clear();}
+  refresh();
+}
 const cinematics = new FeatureCinematics(el("spectacle"), (cue) =>
   audio.play(cue),
 );
@@ -214,7 +233,8 @@ function showSpectacle(
   location = 0,
   award = 0,
 ) {
-  pokerGuests.stop();
+  spectacleAudioEvents?.abort();stopSpectacleScore();stopSpectacleScore=()=>{};
+  spectacleAudioEvents=new AbortController();
   const sequence = ++spectacleSequence;
   clearTimeout(spectacleTimer);
   cancelAnimationFrame(awardFrame);
@@ -222,9 +242,9 @@ function showSpectacle(
   el("spectacle-copy").textContent = copy;
 
   el("spectacle").hidden = false;
+  refresh();
   audio.beginFeature();
   cinematics.play(kind, location);
-  if (kind === "witch" || kind === "awaken") audio.feature(kind, location);
   scene?.pulse();
   if (kind === "fortune" && award > 0 && !reduced) {
     const start = performance.now();
@@ -239,14 +259,25 @@ function showSpectacle(
   }
   const close = () => {
     if (sequence !== spectacleSequence || el("spectacle").hidden) return;
-    clearTimeout(spectacleTimer);
-    audio.stopFeature();
-    el("spectacle").hidden = true;
-    const next = pendingAward;
-    pendingAward = undefined;
-    next?.();
+    finishSpectacle(true);
   };
   const nativePerformance = el("spectacle").querySelector<HTMLVideoElement>(".feature-ghost");
+  const places=['graveyard','saloon','jail','mine','church'] as const;
+  const scoreKey:EventScoreKey|undefined=kind==='awaken'
+    ? `feature-${places[Math.max(0,Math.min(4,location))]}`
+    : kind==='witch' ? 'feature-witch' : kind==='fortune' ? 'feature-fortune' : kind==='ride' ? 'feature-ride' : undefined;
+  if(!reduced&&scoreKey){
+    if(nativePerformance){
+      const signal=spectacleAudioEvents.signal;
+      const stop=()=>{if(sequence===spectacleSequence){stopSpectacleScore();stopSpectacleScore=()=>{};}};
+      nativePerformance.addEventListener('playing',()=>{
+        if(sequence!==spectacleSequence||el('spectacle').hidden)return;
+        stop();stopSpectacleScore=audio.playEventScore(scoreKey,nativePerformance.duration,nativePerformance.currentTime);
+      },{signal});
+      nativePerformance.addEventListener('waiting',stop,{signal});
+      nativePerformance.addEventListener('pause',stop,{signal});
+    }else stopSpectacleScore=audio.playEventScore(scoreKey,kind==='ride'?8:7);
+  }
   if (!reduced && nativePerformance) {
     nativePerformance.addEventListener("ended", () => {
       if (sequence !== spectacleSequence) return;
@@ -267,17 +298,10 @@ function showSpectacle(
       spectacleTimer = setTimeout(close, 3400);
     });
 }
-function dismissSpectacle() {
-  audio.stopFeature();
-  spectacleSequence++;
-  cancelAnimationFrame(awardFrame);
-  pendingAward = undefined;
-  clearTimeout(spectacleTimer);
-  el("spectacle").hidden = true;
-}
+function dismissSpectacle() { finishSpectacle(false); }
 
 document.addEventListener("visibilitychange", () => {
-    if(document.hidden) { dismissSpectacle(); audio.suspend(); }
+    if(document.hidden) { presentationGeneration++; dismissSpectacle(); audio.suspend(); }
     else audio.resume();
 });
 function openModal(html: string, kicker = "HOW TO PLAY") {
@@ -351,7 +375,7 @@ function refresh() {
   if (!state) return;
   el("balance").textContent = money(state.balance);
   el("bet").textContent = money(currentBet());
-  if (!lastResult) pokerTable.restore(state.poker?.cards || []);
+  if (!lastResult) pokerTable.restore(state.poker?.cards || [], "", 0, true);
   el<HTMLButtonElement>("bet-down").disabled =
     busy ||
     autoplay.active ||
@@ -364,11 +388,11 @@ function refresh() {
     state.phase !== "noon" ||
     !!state.poker?.cards.length ||
     betIndex === CONFIG.bets.length - 1;
-  el<HTMLButtonElement>("spin").disabled = !connected;
+  el<HTMLButtonElement>("spin").disabled = !connected || (busy && !finishAnimation) || pokerGuests.active || !el('spectacle').hidden;
   el<HTMLButtonElement>("autoplay").disabled =
     !autoplay.active && (busy || !connected);
   el("spin-label").textContent = busy
-    ? "QUICK STOP"
+    ? finishAnimation ? "QUICK STOP" : "RESOLVING"
     : state.phase === "bonus"
       ? `FREE SPIN · ${state.freeSpins}`
       : "SPIN";
@@ -411,6 +435,7 @@ function connection(ok: boolean) {
   el<HTMLButtonElement>("spin").disabled = !ok;
 }
 async function applyResult(result: SpinResult, live = false) {
+  const presentation = presentationGeneration;
   lastResult = result;
   state = result.state;
   drawGrid(
@@ -460,7 +485,11 @@ async function applyResult(result: SpinResult, live = false) {
     scene.noticeHand(result.poker.complete, result.poker.amount > 0);
   await pokerTable.show(result, live && !reduced);
   if (live) {
+    // A hand's complete native performance owns its turn before feature events begin.
+    await pokerGuests.whenIdle();
+    if(document.hidden || presentation!==presentationGeneration)return;
     presentEvents(result);
+    await waitForSpectacles();
     boundary.react(result, reduced);
     if(!reduced && scene instanceof ParlorScene) scene.noticePayout(result.payout);
   }
@@ -481,6 +510,7 @@ function animate(result: SpinResult) {
       void applyResult(result, true).then(resolve, reject);
     };
     finishAnimation = finish;
+    refresh();
     if (reduced || quick) {
       finish();
       return;
@@ -527,13 +557,12 @@ async function spin(automatic = false): Promise<SpinResult | undefined> {
     autoplay.stop();
     return;
   }
-  pendingAward = undefined;
-  el("spectacle").hidden = true;
   if (busy) {
-    quick = true;
-    finishAnimation?.();
+    // Quick stop applies only to reel motion, never to a hand or feature performance.
+    if(finishAnimation){quick = true; finishAnimation();}
     return;
   }
+  if (pokerGuests.active || !el('spectacle').hidden) return;
   if (!state || !connected) return;
   if (state.phase !== "bonus" && state.balance < currentBet()) {
     setStatus(
@@ -545,7 +574,6 @@ async function spin(automatic = false): Promise<SpinResult | undefined> {
     return;
   }
   busy = true;
-  pokerGuests.stop();
   const started = performance.now();
   boundary.spin();
   effects.startSpin();
@@ -680,11 +708,23 @@ el("audio").onclick = () => {
   audio.play("stop");
 };
 audioButton();
+let stopHandScore:()=>void=()=>{};
+const handScores:Record<string,EventScoreKey>={
+  'high-card':'hand-high-card',pair:'hand-pair','two-pair':'hand-two-pair','three-kind':'hand-trips',straight:'hand-straight',
+  flush:'hand-flush','full-house':'hand-full-house','four-kind':'hand-quads',
+  'straight-flush':'hand-straight-flush','royal-flush':'hand-royal-flush',
+};
 const pokerGuests = new PokerGuests(
   document.querySelector<HTMLElement>(".player-play-space")!,
-  cue => audio.play(cue),
+  (cue,detail) => audio.play(cue,detail),
+  event=>{
+    stopHandScore();stopHandScore=()=>{};
+    if(event.phase==='start')stopHandScore=audio.playEventScore(handScores[event.id],event.duration,event.currentTime);
+  },
+  ()=>queueMicrotask(refresh),
 );
 function applyMotion() {
+  if(reduced)presentationGeneration++;
   if(reduced && !el("spectacle").hidden) dismissSpectacle();
   pokerGuests.setReduced(reduced);
   cardEffects.setReduced(reduced);
@@ -847,7 +887,7 @@ async function startShowcase(feature = "ride") {
     if (request !== previewRequest || busy || !modal.open) return;
     if (!result) throw new Error("Preview unavailable");
     modal.close();
-    dismissSpectacle();
+    dismissSpectacle(); pokerGuests.stop();
     effects.finish(result);
     presentEvents(result);
     boundary.react(result, reduced);
@@ -915,8 +955,7 @@ function presentEvents(result: SpinResult) {
 }
 function showAnimationPreview() {
   previewRequest++;
-  dismissSpectacle();
-  pokerGuests.stop();
+  if(!busy){dismissSpectacle();pokerGuests.stop();}
   let back = document.getElementById('return-animation-gallery');
   if (!back) {
     back = document.createElement('button');
@@ -927,7 +966,7 @@ function showAnimationPreview() {
     back.onclick = showAnimationPreview;
   }
   back.hidden = true;
-  const hands = ['Pair','Two pair','Three of a kind','Straight','Flush','Full house','Four of a kind','Straight flush','Royal flush'];
+  const hands = ['High card','Pair','Two pair','Three of a kind','Straight','Flush','Full house','Four of a kind','Straight flush','Royal flush'];
   const reactions: [string,string][] = [
     ['Lantern maiden · good result',parlorResidentMedia('queen').reaction],
     ['Brazier maiden · good result',parlorResidentMedia('medium').reaction],

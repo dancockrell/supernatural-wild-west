@@ -25,7 +25,7 @@ test('quiet arrivals and tab return preserve fixed hand prefixes',async({page})=
 test('cancelled player flights cannot notify the ghost and feature score owns foley priority',async({page})=>{
  await page.setContent('<div class="cabinet"></div><div class="controls"></div><div class="symbol"></div>');
  const poker=readFileSync('src/client/poker-table.ts','utf8').replace(/^import .*;\r?\n/gm,'').replace('export class','class');
- const sound=readFileSync('src/client/audio.ts','utf8').replace('export class','class');
+ const sound=readFileSync('src/client/audio.ts','utf8').replace(/export /g,'');
  await page.addScriptTag({content:ts.transpileModule(`const cardFace=()=>'';const handChoreographyIndices=()=>[];const handMotion=()=>({name:'none'});${poker};${sound};Object.assign(window,{PokerTable,SoundBus});`,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
  const result=await page.evaluate(async()=>{
   let finish:()=>void=()=>{};HTMLElement.prototype.animate=function(){return {finished:new Promise<void>(r=>finish=r)} as unknown as Animation};
@@ -40,3 +40,18 @@ test('cancelled player flights cannot notify the ghost and feature score owns fo
  expect(result).toEqual({arrivals:[],muted:true,resumed:true});
 });
 
+
+test('complete unpaid High card starts a reaction without paid-hand sound or matching celebration',async({page})=>{
+ await page.setContent('<div class="cabinet"></div><div class="controls"></div>');
+ const source=readFileSync('src/client/poker-table.ts','utf8').replace(/^import .*;\r?\n/gm,'').replace('export class','class');
+ await page.addScriptTag({content:ts.transpileModule(`const cardFace=()=>'';const handChoreographyIndices=()=>[];const handMotion=()=>({name:'high-card'});${source};Object.assign(window,{PokerTable});`,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ const result=await page.evaluate(async()=>{
+   HTMLElement.prototype.animate=function(){return {finished:Promise.resolve()} as unknown as Animation;};
+   const sounds:string[]=[],events:string[]=[];const table=new (window as any).PokerTable(document.querySelector('.cabinet'),(s:string)=>sounds.push(s));
+   document.querySelector('.player-play-space')!.addEventListener('hand-award',e=>events.push((e as CustomEvent).detail));
+   const result={id:'no-pay',configVersion:'dd-1.4.0',poker:{cards:[0,2,5,7,11],cell:0,complete:true,rank:'High card',amount:0},state:{}};
+   await table.show(result,true);await table.show({...result,poker:{...result.poker,complete:false}},true);
+   return{events,handSound:sounds.includes('hand'),matched:document.querySelectorAll('.poker-matching').length};
+ });
+ expect(result).toEqual({events:['High card'],handSound:false,matched:0});
+});
