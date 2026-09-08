@@ -1,10 +1,38 @@
 {
-  "status": "Four existing native performances enabled for each foreground maiden; brazier visual cleanup remains open",
-  "method": "Original source acting and cadence; tracked alpha only, restrained cool-spill color correction; no inpainting or synthetic replacement detail. No motion transfer, frame-to-frame RGB remapping, mesh deformation or synthetic body movement.",
+  "status": "Brazier appearance restored exactly from db5006f; lantern native acting retained",
+  "method": "Original source RGB geometry and timing, tracked alpha only, selective cool-spill color correction. No RGB remapping, motion transfer, mesh movement or synthetic body animation.",
   "queenSourceFamily": "cast-replacement-v1/queen-{idle,alternate,listen,reaction}-source.mp4",
-  "smoke": "Subtle neutral recorded bowl plume integrated into each brazier performance so it follows the moving bowl. Exterior source alpha capped at 56/255; decoded VP9 alpha may ring up to 64. No separate stationary plume or added body haze.",
-  "remaining": "Brazier source lighting and baked haze need further retouch. Women major hand and feature films still use opaque artwork. Larger Saloon candidate was not admitted after a silhouette failure. No paid generation used.",
+  "smoke": "Recorded bowl plume, neutral #adc3bc, max alpha 56/255; excludes all opaque actor pixels.",
+  "remaining": "Brazier performances contain baked moving haze on skin and were rejected, including the late saloon sequence. Women major event and hand films still use opaque artwork. No new paid generation this pass.",
   "assets": [
+    {
+      "path": "/video/parlor-women-authored-v1/brazier-smoke.png",
+      "sha256": "88719bc0ddcf5b51ee0c3356c9f06b6283ba5c87e573bbb4664daf95b33352c8",
+      "bytes": 14144
+    },
+    {
+      "path": "/video/parlor-women-authored-v1/brazier-smoke.webm",
+      "sha256": "7bab8ba3553ef6c1039eb36e49fa10aa194adfbda4afc419ff0d9e4986ba3efc",
+      "bytes": 447237,
+      "width": 720,
+      "height": 1280,
+      "frames": 97,
+      "fps": 24.0,
+      "method": "Recorded source intensity only; static bounded soft ROI above rim; admitted clean opaque actor silhouette subtracted. Neutral fog color, no sourceRGB, body pixels, synthetic motion or RGB warping.",
+      "validation": {
+        "decodedFrames": 97,
+        "uniqueRGBAFrames": 97,
+        "maxDecodedAlpha": 56,
+        "maxAlphaOnOpaqueActor": 0,
+        "minimumNearRimPeakAlpha": 56,
+        "actualBoundsUnion": [
+          206,
+          260,
+          330,
+          424
+        ]
+      }
+    },
     {
       "path": "/video/parlor-women-authored-v1/queen-alternate.png",
       "sha256": "f35ec0c7eb2750632c393c13668296b5103d8f7c27b13b298d28c3fd5771a7c4",
@@ -68,98 +96,6 @@
       "fps": 24.0,
       "duration": 4.041666666666667,
       "method": "Every native source RGB frame preserved at original geometry and cadence; only tracked opaque-body alpha and cool-spill RGB correction applied. Optical flow tracks matte only; no RGB remapping or synthesized movement."
-    },
-    {
-      "path": "/video/parlor-women-authored-v1/medium-idle.png",
-      "sha256": "057d0cf7395e0cfe917eb19a52668d4905ff62f4ec8d05d56acf33799c9cd08e",
-      "bytes": 580198
-    },
-    {
-      "path": "/video/parlor-women-authored-v1/medium-idle.webm",
-      "sha256": "96443ada5e0e74945fecb1e5fe8ccecd362a5284c18aae0ac4f983292489154f",
-      "bytes": 2928709,
-      "source": "medium-neck-complete-source.mp4",
-      "sourceSHA256": "31af872737fd5c5cb917bfb5e3e9339d838329050f7d0028ed713d9e672a4de3",
-      "width": 1080,
-      "height": 1920,
-      "frames": 170,
-      "fps": 24.0,
-      "duration": 7.083333333333333,
-      "method": "Original acting and cadence; fixed resolution fitting, tracked alpha and region masks only; per-frame color cleanup. No motion transfer or RGB geometry remapping. Body core opaque; separate neutral recorded bowl plume alpha at most 56/255.",
-      "nativeSourceSize": [
-        1080,
-        1916
-      ],
-      "colorCorrectionStrength": 0.9
-    },
-    {
-      "path": "/video/parlor-women-authored-v1/medium-alternate.png",
-      "sha256": "8c092b32ab9a5e99d74af3a1e722a4fa3d5442a42c710a2570324906d3891a17",
-      "bytes": 548145
-    },
-    {
-      "path": "/video/parlor-women-authored-v1/medium-alternate.webm",
-      "sha256": "f0b6b00abd9ec9d087a287a6bc1e0ee4e5979169b107f2bb88adf16c66dd0169",
-      "bytes": 3187478,
-      "source": "medium-turn-complete-source.mp4",
-      "sourceSHA256": "dc0500117138d011795fb5b0a1ef6a69f0e75dd630acd1d6e589db630061c448",
-      "width": 1080,
-      "height": 1920,
-      "frames": 170,
-      "fps": 24.0,
-      "duration": 7.083333333333333,
-      "method": "Original acting and cadence; fixed resolution fitting, tracked alpha and region masks only; per-frame color cleanup. No motion transfer or RGB geometry remapping. Body core opaque; separate neutral recorded bowl plume alpha at most 56/255.",
-      "nativeSourceSize": [
-        1080,
-        1916
-      ],
-      "colorCorrectionStrength": 0.9
-    },
-    {
-      "path": "/video/parlor-women-authored-v1/medium-character-idle.png",
-      "sha256": "817178d44bf3b100492daf58a6648c5746a49483821e6a86147f76fc9e9ef5f7",
-      "bytes": 523130
-    },
-    {
-      "path": "/video/parlor-women-authored-v1/medium-character-idle.webm",
-      "sha256": "6bd7b2b20fd0c15269283058e9bdef591a85510ca4b0ab2a15a87f121eb7f1a7",
-      "bytes": 1571790,
-      "source": "medium-whisper-source.mp4",
-      "sourceSHA256": "f047c84d80fb256536b10942089b342bcba46e2b30fe58177a8b0784e5ad67af",
-      "width": 1080,
-      "height": 1920,
-      "frames": 97,
-      "fps": 24.0,
-      "duration": 4.041666666666667,
-      "method": "Original acting and cadence; fixed resolution fitting, tracked alpha and region masks only; per-frame color cleanup. No motion transfer or RGB geometry remapping. Body core opaque; separate neutral recorded bowl plume alpha at most 56/255.",
-      "nativeSourceSize": [
-        720,
-        1280
-      ],
-      "colorCorrectionStrength": 0.9
-    },
-    {
-      "path": "/video/parlor-women-authored-v1/medium-reaction.png",
-      "sha256": "52efd52b936894736b2947eb667a4ea9aa2d32f165840ac23df4aaa47eadc9d2",
-      "bytes": 748036
-    },
-    {
-      "path": "/video/parlor-women-authored-v1/medium-reaction.webm",
-      "sha256": "e169dc0f4f7225a55c5ab0061eabbb84f621a257b62ebb2f89725fdd08932e76",
-      "bytes": 2284274,
-      "source": "medium-reaction-source.mp4",
-      "sourceSHA256": "2eb4e854770139275ec302ab7330eae5be242504af7a92c3fd14b28befb2e523",
-      "width": 1080,
-      "height": 1920,
-      "frames": 193,
-      "fps": 24.0,
-      "duration": 8.041666666666666,
-      "method": "Original acting and cadence; fixed resolution fitting, tracked alpha and region masks only; per-frame color cleanup. No motion transfer or RGB geometry remapping. Body core opaque; separate neutral recorded bowl plume alpha at most 56/255.",
-      "nativeSourceSize": [
-        2160,
-        3840
-      ],
-      "colorCorrectionStrength": 0.9
     }
   ],
   "queenDecoded": [
@@ -242,60 +178,22 @@
   ],
   "validation": {
     "build": "passed",
-    "nativeChromeBrowserTests": 7,
+    "nativeChromeBrowserTests": 6,
     "viewport": "3840x2160",
     "coverage": [
-      "Both full native three-action idle cycles with fixed stage placement",
-      "All 630 decoded brazier frames have opaque interiors and transparent background corners",
-      "Eight native maiden gallery performances without wagers",
+      "Full lantern idle cycle with fixed stage placement",
+      "Opaque decoded actor bodies and restrained smoke bounds",
+      "Four lantern gallery performances without wagers",
       "Resident handoffs and visibility interruptions",
-      "Women major feature and hand artwork retains no added surrounding haze"
+      "Existing women feature and hand artwork retains no surrounding haze"
     ],
     "reviewImage": "docs/solid-women-room-4k.png"
   },
-  "artReview": "Playback restoration is not final visual approval. Source-baked pale bands on arms, clothing and boots remain visible; stronger experimental cleanup was excluded because it flattened detail. Final neck and turn masks fix the torso notch, stale shoulder silhouette and abrupt mask switch.",
-  "mediumDecoded": [
-    {
-      "role": "idle",
-      "decodedFrames": 170,
-      "uniqueFrames": 170,
-      "minimumOpaqueInteriorAlpha": 252,
-      "maximumCornerAlpha": 0,
-      "maximumPlumeAlphaAwayFromBodyEdge": 61
-    },
-    {
-      "role": "alternate",
-      "decodedFrames": 170,
-      "uniqueFrames": 170,
-      "minimumOpaqueInteriorAlpha": 252,
-      "maximumCornerAlpha": 0,
-      "maximumPlumeAlphaAwayFromBodyEdge": 61
-    },
-    {
-      "role": "character-idle",
-      "decodedFrames": 97,
-      "uniqueFrames": 97,
-      "minimumOpaqueInteriorAlpha": 253,
-      "maximumCornerAlpha": 0,
-      "maximumPlumeAlphaAwayFromBodyEdge": 60
-    },
-    {
-      "role": "reaction",
-      "decodedFrames": 193,
-      "uniqueFrames": 193,
-      "minimumOpaqueInteriorAlpha": 251,
-      "maximumCornerAlpha": 0,
-      "maximumPlumeAlphaAwayFromBodyEdge": 60
-    }
-  ],
-  "brazierMaskCorrections": {
-    "idle": "Filled false torso notch beneath forearm",
-    "alternate": "Removed stale head/shoulder silhouette and abrupt mask switch; frame42-to43 silhouette area change reduced from7.5percent to0.0475percent"
-  },
-  "brazierMaskSHA256": {
-    "neck": "c14e327101d83f3824123fbfe45face212dc02c8a6c81cbf8d7ee51597c4f470",
-    "turn": "5503dfcba883befa4f2373799c4b639c516d8c6daa8e1800112c01eb23148114",
-    "whisper": "9a43da8a3dc4fda4ebdab9dc832006dbb1c4406a825f47e7b6f364437bf239e5",
-    "reaction": "e4b5e87d174a72fe5a6825f98ccbc2b7f56c338c05a4d2ff675f8a76a09e2390"
+  "brazierRollback": {
+    "baselineCommit": "db5006f0bc7d748a209b77a27a686e334bd921ce",
+    "reason": "User rejected the restored native brazier footage and requested the earlier appearance. Return to the previously preferred solid artwork with isolated bowl smoke.",
+    "verifiedMediaFiles": 24,
+    "bodyAnimation": "Still artwork; do not describe this rollback as restoring native body acting.",
+    "rejectedRevision": "91c4a80; retained in Git history but its medium clips are removed from the runtime payload."
   }
 }
