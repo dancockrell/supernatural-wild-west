@@ -6,4 +6,6 @@ Character extraction must never use white-backed generated sources. Use dark bac
 
 The brazier may emit restrained smoke from its bowl only. This is a prop effect, never a body aura or a veil across the women.
 
+Small supernatural details are welcome when the figures remain readable and grounded in the room. Preserve their opaque bodies, natural color, stage placement and floor shadows; avoid washing them out with added haze or light.
+
 Character motion must come from authored footage. Never apply motion transfer, dense optical-flow RGB remapping, local displacement, mesh warping, or synthetic wobble to any character, even at low strength. Mask tracking may follow original footage without moving its RGB. Foreground women must have no added ghost effects. If clean acting is unavailable, show explicitly labeled stable artwork; never present a warped still or duplicate hold as a finished animation.

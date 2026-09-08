@@ -212,7 +212,6 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); 
 
 /* Foreground women use their admitted natural color with no shader. */
 .unified-parlor .ghost-porch video { filter:none; }
-.unified-parlor .ghost-porch .brazier-plume { position:absolute; z-index:1; pointer-events:none; opacity:1; mix-blend-mode:normal; }
 
 .unified-parlor canvas[data-movie='queen'],
 .unified-parlor canvas[data-movie='medium'] { filter:none; }

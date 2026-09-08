@@ -37,32 +37,28 @@ test('solid women draw naturally in the room with contact shadows retained',asyn
  await expect(page.locator('.resident-fog,#women-clean')).toHaveCount(0);
  const women=page.locator('.boundary-cast .ghost-porch video[data-movie]');await expect(women).toHaveCount(2);
  for(let i=0;i<2;i++)await decoded(women.nth(i));
- const plume=page.locator('.brazier-plume');
- await expect.poll(()=>plume.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.2);
- const smoke=await plume.evaluate((v:HTMLVideoElement)=>{
-  const c=document.createElement('canvas');c.width=720;c.height=1280;const ctx=c.getContext('2d')!;ctx.drawImage(v,0,0);
-  const p=ctx.getImageData(0,0,720,1280).data;let max=0,outside=0,count=0;
-  for(let y=0;y<1280;y++)for(let x=0;x<720;x++){
-   const a=p[(y*720+x)*4+3];max=Math.max(max,a);if(a){count++;if(x<200||x>335||y<255||y>430)outside++;}
-  }return {max,outside,count};
- });
- expect(smoke.max).toBeLessThanOrEqual(57);expect(smoke.count).toBeGreaterThan(100);expect(smoke.outside).toBe(0);
- await natural(plume);
+ await expect(page.locator('.brazier-plume')).toHaveCount(0);
  await page.screenshot({path:'docs/women-no-added-effects.png'});
  await expect(page.locator('.resident-ground-shadows')).toHaveCount(1);
 });
 
-test('women previews distinguish native acting from the remaining still artwork',async({page})=>{
+test('both women offer four native performances without placing a wager',async({page})=>{
  test.setTimeout(90000);await openGallery(page);
  let wagers=0;page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/api/spin'))wagers++;});
  const balance=await page.locator('#balance').textContent();
  const variants=[{index:5,name:'queen-idle'},{index:6,name:'medium-idle'},
-  {index:7,name:'queen-alternate'},{index:8,name:'queen-character-idle'},{index:9,name:'queen-reaction'}];
- await expect(page.getByText('The lantern maiden has four recorded performances. The brazier maiden currently uses still artwork with bowl smoke; her clean acting is unfinished.')).toBeVisible();
+  {index:7,name:'queen-alternate'},{index:8,name:'queen-character-idle'},{index:9,name:'queen-reaction'},
+  {index:10,name:'medium-alternate'},{index:11,name:'medium-character-idle'},{index:12,name:'medium-reaction'}];
+ await expect(page.getByText("Each maiden has four recorded performances. Their quiet actions cycle in the room, and good results bring a reaction. The brazier maiden's existing performances are restored; visual cleanup remains in progress.")).toBeVisible();
  for(const variant of variants){
   await page.locator(`[data-character-preview="${variant.index}"]`).click();
-  const video=page.locator('.reaction-review');await expect(video).toHaveAttribute('src',`/video/${variant.name.startsWith('queen') ? 'parlor-women-authored-v1' : 'parlor-women-solid-v2'}/${variant.name}.webm`);
-  await decoded(video);await page.locator('#back-to-rare-animations').click();
+  const video=page.locator('.reaction-review');await expect(video).toHaveAttribute('src',`/video/parlor-women-authored-v1/${variant.name}.webm`);
+  await decoded(video);
+  if(variant.name.startsWith('medium')){
+   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime),{timeout:8000}).toBeGreaterThan(3.5);
+   await page.screenshot({path:`docs/${variant.name}-native-gallery.png`});
+  }
+  await page.locator('#back-to-rare-animations').click();
  }
  expect(await page.locator('#balance').textContent()).toBe(balance);expect(wagers).toBe(0);
 });
