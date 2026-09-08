@@ -76,8 +76,8 @@
       "creation": "LwNumOuswO",
       "width": 1920,
       "height": 1440,
-      "sha256": "3aafdecc9941d1f5fb62d3806dd2ef03619c0cbbee3f4f0ca54224d4c65db4fe",
-      "bytes": 16102984,
+      "sha256": "6d21e4fa0c727a509c50330b5b6528ead149946e1a8e52ebc57e99af69ab2772",
+      "bytes": 2628752,
       "alpha": "1",
       "status": "Source acting, native alpha and complete 3840x2160 browser playback passed",
       "durationSeconds": 8.042,
@@ -92,7 +92,8 @@
         "unchangedBalance": true,
         "totalFrames": 193
       },
-      "posterSHA256": "43efac50ae272934c3a072a6b315a334ecf6e6f5ac5a59c3061a8483cee4eb87"
+      "posterSHA256": "224b0812775805b7308f65b5cd7f108f762b88d170d1b36031cee88cda31c287",
+      "repair": "Tracked local rear-hair backing-plane removal with dense turn anchors; native dimensions and all 193 frames retained."
     },
     {
       "path": "/video/hand-performances-v3/pair.webm",
