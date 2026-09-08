@@ -36,6 +36,7 @@ test('solid women draw naturally in the room with contact shadows retained',asyn
  await page.setViewportSize({width:3840,height:2160});await page.goto('/?parlor=1');await expect(page.locator('#spin')).toBeEnabled();
  await expect(page.locator('.resident-fog,#women-clean')).toHaveCount(0);
  const women=page.locator('.boundary-cast .ghost-porch video[data-movie]');await expect(women).toHaveCount(2);
+ await expect(page.locator('.boundary-cast video[data-movie="medium"]')).toHaveAttribute('src','/video/parlor-women-solid-v2/medium-idle.webm');
  for(let i=0;i<2;i++)await decoded(women.nth(i));
  const plume=page.locator('.brazier-plume');
  await expect.poll(()=>plume.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.2);

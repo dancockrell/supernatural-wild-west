@@ -1,0 +1,77 @@
+{
+  "reviewDate": "2026-09-08",
+  "liveBaseline": "6c3bc8b restores the db5006f brazier appearance",
+  "scope": "Six early original recordings and their four corresponding first transparent cutouts. This is a bounded audit, not a claim that every possible source has been inspected.",
+  "method": "Inspected original frames every half second and at endpoints. Decoded original cutout alpha with libvpx-vp9 and viewed composites on dark and warm backgrounds. No source pixels changed.",
+  "result": "No clean native body interval of at least three seconds found in these sources. Bright bands exist in the original RGB, not solely in added runtime effects. No candidates admitted.",
+  "sources": [
+    {
+      "source": "cast-replacement-v1/medium-idle-source.mp4",
+      "sha256": "afd945a4b27690fa6cc9d8c5c115bc7e9656c7c470eed440dbbe77224f8e20a3",
+      "durationSeconds": 4.041666666666667,
+      "nativeSize": [
+        720,
+        1280
+      ],
+      "finding": "Persistent cyan tracing on forearms, dress, calves and boots; additional foot mist around 1.5-2.5 seconds."
+    },
+    {
+      "source": "cast-replacement-v1/medium-alternate-source.mp4",
+      "sha256": "ee4d36fcd904e9fd8d7b74812d8ea727cbe599f7b2a65478723f36ee0146c53c",
+      "durationSeconds": 5.041666666666667,
+      "nativeSize": [
+        720,
+        1280
+      ],
+      "finding": "Bowl lift and lowering; luminous bands remain across forearms and calves."
+    },
+    {
+      "source": "cast-replacement-v1/medium-reaction-source.mp4",
+      "sha256": "75b9d743f9f0d88832913e569e4f619ab0002cb65d2159c65757fa56d6172c20",
+      "durationSeconds": 4.041666666666667,
+      "nativeSize": [
+        720,
+        1280
+      ],
+      "finding": "Turn and smile; blue bloom obscures the upper torso around 1.5-2 seconds."
+    },
+    {
+      "source": "cast-replacement-v1/medium-whisper-source.mp4",
+      "sha256": "f047c84d80fb256536b10942089b342bcba46e2b30fe58177a8b0784e5ad67af",
+      "durationSeconds": 4.041666666666667,
+      "nativeSize": [
+        720,
+        1280
+      ],
+      "finding": "Upward listening gesture; cyan bands remain across arms, dress and boots."
+    },
+    {
+      "source": "animation-expansion-v2/feature-saloon-source.mp4",
+      "sha256": "b8dca07d2f13633656cc63970bf2b677289becc3f8b8d14e343224cf40859132",
+      "durationSeconds": 4.041666666666667,
+      "nativeSize": [
+        2160,
+        3836
+      ],
+      "finding": "Gold wisp above the bowl around 1-2 seconds; cyan body tracing persists."
+    },
+    {
+      "source": "animation-expansion-v2/feature-fortune-source.mp4",
+      "sha256": "eca3fb9dd0a1c9ad8d092d9b1f76874cbf2d463671344e9757a0a37a53aedd81",
+      "durationSeconds": 4.041666666666667,
+      "nativeSize": [
+        2160,
+        3836
+      ],
+      "finding": "Gold glyph above the bowl around 0.5-2.5 seconds; cyan body tracing persists."
+    }
+  ],
+  "originalCutouts": "parlor-maidens-v1 medium idle, alternate, reaction and whisper: 432x768 extractions retain bright edging and dark contaminated smoke.",
+  "currentLimitation": "The live brazier body remains clean still artwork plus isolated bowl smoke. Good native body animation is still unresolved.",
+  "regressionCoverage": [
+    "Active brazier body and poster paths must match the restored asset manifest and SHA256 hashes.",
+    "Browser check pins the live brazier to the restored body family.",
+    "Sequence tests exercise decoded frame holds, native frame callbacks, fallback paint, pending seek and superseded transition."
+  ],
+  "paidGenerationCredits": 0
+}
