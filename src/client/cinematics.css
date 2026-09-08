@@ -755,12 +755,12 @@
   margin: 16px 0;
 }
 
-/* Preserve saturated skin and costumes; soften only the baked bright cool rim. */
+/* Draw admitted foreground women directly, without a character shader. */
 .unified-parlor .boundary-cast .ghost-porch video,
 .unified-parlor .boundary-cast .ghost-porch canvas,
 .unified-parlor .feature-ghost.parlor-feature-resident,
 .unified-parlor .poker-guest.resident-guest video {
-  filter: url(#women-clean);
+  filter: none;
 }
 /* A single authored hand performance occupies the theatre above the player controls.
    The runtime fits native media inside this box without enlarging its pixels. */
@@ -814,19 +814,8 @@
   background:radial-gradient(ellipse at 22% 65%,rgb(189 223 255 / calc(var(--hand-left,0) * .6)),transparent 26%),radial-gradient(ellipse at 50% 40%,rgb(234 228 206 / calc(var(--hand-center,0) * .6)),transparent 28%),radial-gradient(ellipse at 78% 65%,rgb(189 223 255 / calc(var(--hand-right,0) * .6)),transparent 26%);
 }
 .unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage .authored-hand-v3.resident-guest video {
-  filter:url(#women-clean);
+  filter:none;
 }
-/* A low, broad water memory belongs behind the lantern maiden, above the controls.
-   Its envelope follows native seconds 2–6 and stops advancing with the film. */
-.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage[data-performance="flush"]::after {
-  content:''; position:absolute; z-index:-1; left:3%; right:3%; top:67%; height:17%;
-  border-top:.16cqw solid #adc3bc66; border-radius:48% 55% 42% 50%;
-  background:linear-gradient(180deg,#adc3bc44,#adc3bc22,transparent);
-  opacity:calc(var(--hand-water,0) * .72);
-  transform:translateY(calc(var(--hand-water,0) * -1.1cqw)) scaleX(calc(.9 + var(--hand-water,0) * .1));
-  filter:blur(.10cqw); pointer-events:none;
-}
-
 /* A theatrical lower-third: native-time reveal, readable amounts, no cover over controls. */
 .unified-parlor .large-hand-stage .hand-marquee {
  position:absolute; z-index:5; left:5%; right:5%; bottom:.65cqw;
@@ -920,4 +909,24 @@
 @media(prefers-reduced-motion:reduce) {
  .unified-parlor .large-hand-stage .hand-marquee[data-result='paid']::after,
  .unified-parlor .large-hand-stage .hand-marquee-payout::after { display:none; }
+}
+
+/* Opaque women retain natural source color and silhouette in every presentation.
+   Contact and cast shadows belong to the floor and remain separate. */
+.unified-parlor video[src*="/parlor-women-solid-v1/"],
+.unified-parlor .boundary-cast .ghost-porch canvas,
+.unified-parlor canvas[data-movie="queen"],
+.unified-parlor canvas[data-movie="medium"] {
+ filter:none; opacity:1; mix-blend-mode:normal; mask-image:none;
+}
+.unified-parlor .feature-stage:has(video[src*="/parlor-women-solid-v1/"]) .performance-fog,
+.unified-parlor .feature-stage:has(video[src*="/parlor-women-solid-v1/"]) .apparition-light {
+ display:none;
+}
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage:has(video[src*="/parlor-women-solid-v1/"])::before,
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage:has(video[src*="/parlor-women-solid-v1/"])::after {
+ content:none;
+}
+.unified-parlor .feature-stage .feature-ghost[src*="/parlor-women-solid-v1/"] {
+ filter:none; mix-blend-mode:normal; mask-image:none; animation:none;
 }

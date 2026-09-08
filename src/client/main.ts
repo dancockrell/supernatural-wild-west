@@ -991,8 +991,8 @@ function showAnimationPreview() {
   const idles: [string,string][] = [];
   for (const [key,label] of [['queen','Lantern maiden'],['medium','Brazier maiden']] as const) {
     const media=parlorResidentMedia(key);
-    idles.push([`${label} - quiet idle`,media.idle],[`${label} - alternate idle`,media.alternate],[`${label} - ${key==='queen'?'listening':'whispering'}`,media.characterIdle]);
-    for (const action of key==='queen'?['fringe','shiver']:['turn','neck']) idles.push([`${label} - ${action}`,`/video/parlor-idles-v2/${key}-${action}.webm`]);
+    idles.push([`${label} - quiet idle`,media.idle],[`${label} - alternate idle`,media.alternate],[`${label} - quiet movement`,media.characterIdle]);
+    media.quietVariants.forEach((src, i) => idles.push([`${label} - quiet variation ${i + 1}`, src]));
   }
   idles.push(['Gambler - quiet idle','/video/parlor-gambler-hair-v1/idle.webm'],['Gambler - adjusts his hat','/video/parlor-idles-v2/gambler-brim.webm'],['Gambler - inspects his hand','/video/parlor-idles-v2/gambler-knuckle.webm']);
   for (const [key,label] of [['condemned','Condemned ghost'],['rider','Mounted ghost']] as const) {
@@ -1039,7 +1039,7 @@ function showAnimationPreview() {
     previewRequest++;
     const [label,src]=characterPreviews[Number(button.dataset.characterPreview)];
     openModal(`<h2>${label}</h2><video class="reaction-review" controls playsinline muted ${reduced?'':'autoplay'} src="${src}" poster="${src.replace('.webm','.png')}"></video><button id="back-to-rare-animations" class="action-button">Back to animations</button>`, 'CHARACTER PREVIEW · NO WAGER');
-    if (label.startsWith('Lantern maiden') || label.startsWith('Brazier maiden')) el('modal-body').querySelector('video')!.style.filter='url(#women-clean)';
+    if (label.startsWith('Lantern maiden') || label.startsWith('Brazier maiden')) el('modal-body').querySelector('video')!.style.filter='none';
     el('back-to-rare-animations').onclick=showAnimationPreview;
     if (label.startsWith('Condemned ghost') || label.startsWith('Mounted ghost')) el('modal-body').querySelector('video')!.style.filter='url(#exterior-mist-blend)';
   });

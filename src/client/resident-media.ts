@@ -1,12 +1,14 @@
 export type ResidentKey = 'queen' | 'medium';
 
-/** Change an admitted family here so room, reels and features keep one identity. */
+/** One admitted, effect-free family for every resident playback and poster. */
 export function parlorResidentMedia(key: ResidentKey) {
-  const family = 'parlor-maidens-v1';
+  const base = `/video/parlor-women-solid-v1/${key}`;
   return {
-    idle: `/video/${family}/${key}-idle.webm`,
-    reaction: key === 'medium' ? '/video/rare-features-v4/medium-reaction.webm' : `/video/${family}/${key}-reaction.webm`,
-    characterIdle: `/video/${family}/${key === 'queen' ? 'queen-listen' : 'medium-whisper'}.webm`,
-    alternate: `/video/${family}/${key}-alternate.webm`,
+    idle: `${base}-idle.webm`,
+    reaction: `${base}-reaction.webm`,
+    characterIdle: `${base}-character-idle.webm`,
+    alternate: `${base}-alternate.webm`,
+    quietVariants: (key === 'queen' ? ['fringe', 'shiver'] : ['turn', 'neck'])
+      .map(action => `${base}-${action}.webm`),
   };
 }

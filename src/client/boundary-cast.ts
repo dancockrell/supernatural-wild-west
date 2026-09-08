@@ -29,15 +29,6 @@ export class BoundaryCast {
       <feComposite in="face" in2="softEdge" operator="arithmetic" k2="1" k3="1" result="balanced"/>
       <feComponentTransfer in="balanced" result="litBody"><feFuncR type="table" tableValues="0 .112 .221 .321 .419 .514 .607 .704 .801 .9 1"/><feFuncG type="table" tableValues="0 .112 .221 .321 .419 .514 .607 .704 .801 .9 1"/><feFuncB type="table" tableValues="0 .112 .221 .321 .419 .514 .607 .704 .801 .9 1"/></feComponentTransfer>
       <feMerge><feMergeNode in="litBody"/></feMerge>
-    </filter><filter id="women-clean" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
-      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2 2 3 0 -1.5" result="bakedColdEffect"/>
-      <feComponentTransfer in="SourceGraphic" result="quietColor"><feFuncR type="linear" slope=".45"/><feFuncG type="linear" slope=".45"/><feFuncB type="linear" slope=".38"/></feComponentTransfer>
-      <feComposite in="quietColor" in2="bakedColdEffect" operator="in" result="quietEffect"/>
-      <feComposite in="SourceGraphic" in2="bakedColdEffect" operator="out" result="untouchedBody"/>
-      <feComposite in="quietEffect" in2="untouchedBody" operator="arithmetic" k2="1" k3="1" result="cleanBody"/>
-      <feMorphology in="SourceAlpha" operator="erode" radius=".008 .004" result="bodyAlpha"/>
-      <feGaussianBlur in="bodyAlpha" stdDeviation=".002" result="softBodyAlpha"/>
-      <feComposite in="cleanBody" in2="softBodyAlpha" operator="in"/>
     </filter><filter id="mounted-fog-light" color-interpolation-filters="sRGB">
       <feColorMatrix type="saturate" values=".35"/>
       <feComponentTransfer><feFuncR type="linear" slope=".85"/><feFuncG type="linear" slope=".85"/><feFuncB type="linear" slope=".82"/></feComponentTransfer>
@@ -51,7 +42,7 @@ export class BoundaryCast {
       const reaction = movie(key, 0, media.reaction);
       const alternateIdles = parlor
         ? [movie(key, 0, media.alternate), movie(key, 0, media.characterIdle),
-           ...(key === 'queen' ? [movie(key, 0, '/video/parlor-idles-v2/queen-fringe.webm'), movie(key, 0, '/video/parlor-idles-v2/queen-shiver.webm')] : [movie(key, 0, '/video/parlor-idles-v2/medium-turn.webm'), movie(key, 0, '/video/parlor-idles-v2/medium-neck.webm')])]
+           ...media.quietVariants.map(src => movie(key, 0, src))]
         : [];
       slot.append(idle); this.host.append(slot);
       this.residents.set(key, new ResidentSequence(slot, idle, reaction,

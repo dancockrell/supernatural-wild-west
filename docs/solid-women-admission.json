@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 1,
+  "scope": "Opaque foreground women across room, reels, review gallery, feature events and hand performances. No body smoke, aura, spectral edge or runtime ghost filter.",
+  "method": "Reconstructed clean reference colors with true alpha and bounded original regional motion. Solid interiors; native durations retained.",
+  "limitation": "Quiet reconstructions replace source effects. Original turns, smiles, raised-brazier gestures and supernatural actions are not reproduced. Gallery labels describe quiet variants.",
+  "files": [
+    {
+      "path": "/video/parlor-women-solid-v1/medium-alternate.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-alternate.webm",
+      "bytes": 281762,
+      "sha256": "f20a0254c312620bbbae48a07d98a75bed6b2df23289f23a7a15c0ac660f7506",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 5.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-character-idle.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-character-idle.webm",
+      "bytes": 243354,
+      "sha256": "3813bc6325bf8f424ba38ca2dc24f3a6cabaea6e5bf4db1a0679735723086a47",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 4.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-feature-fortune.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-feature-fortune.webm",
+      "bytes": 557028,
+      "sha256": "03a757946ce3df25260e56052531fd764ced4e7cea255a3c01d9087b276e0da0",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 7.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-feature-saloon.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-feature-saloon.webm",
+      "bytes": 539261,
+      "sha256": "99376c60cf301fc1028d8de596bd8b6faa07ca7aa59bdac4e9e66b41c7ccb14e",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 7.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-feature-witch.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-feature-witch.webm",
+      "bytes": 548614,
+      "sha256": "a2df5d50740f3b6195e58faa41f7e51b7233c8745e9546fee0aaac9e5ee8782d",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 8.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-hand-straight-flush.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-hand-straight-flush.webm",
+      "bytes": 596088,
+      "sha256": "a8883be9416b21439c233880df68e0ad5a4afc69598779999f0eb664d2b4e87a",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 9.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-hand-two-pair.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-hand-two-pair.webm",
+      "bytes": 590407,
+      "sha256": "f79c9b34b35256dfda8e5b69ffb0202746fb022c6610f07e152448482593a4c1",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 8.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-idle.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-idle.webm",
+      "bytes": 338236,
+      "sha256": "d07f962734e95722acbdaef707b36fd12fe2eaca7c5117fe7464a8d3d32e4f5e",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 4.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-neck.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-neck.webm",
+      "bytes": 525376,
+      "sha256": "44e6aba42fbb5c4ddcf5b5466c78795c763f293a2b174affc17b092e357421f0",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 7.084
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-reaction.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-reaction.webm",
+      "bytes": 464256,
+      "sha256": "3f31fdc92c2aaca4eeb19b9fb58ba84c6c038591e3f8e3a943592e4863fae362",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 8.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-turn.png",
+      "bytes": 375901,
+      "sha256": "97621bba782e08e4c3c2aee2aefbfda6007ab585b14be84b8feb20192f5f87a0"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/medium-turn.webm",
+      "bytes": 545533,
+      "sha256": "db31013bd4a51984577b24d01dfa88e10abbd7d5552ecf5ba2ac9173269f7035",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 7.084
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-alternate.png",
+      "bytes": 716076,
+      "sha256": "99b65887382c9de9b82b50e7845bbd6e16080389f565a47486f7e70f91ec912a"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-alternate.webm",
+      "bytes": 1760632,
+      "sha256": "9550c5b5c5db912f0b2aef16833d1f503deae3aa6858faf5dec7614f5c9551f6",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 6.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-character-idle.png",
+      "bytes": 716076,
+      "sha256": "99b65887382c9de9b82b50e7845bbd6e16080389f565a47486f7e70f91ec912a"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-character-idle.webm",
+      "bytes": 1282709,
+      "sha256": "e16bc56c24fe63f1474d7950cd45ba2b1d9170c6181bdc560a2c81e361a8affe",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 4.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-feature-mine.png",
+      "bytes": 716076,
+      "sha256": "99b65887382c9de9b82b50e7845bbd6e16080389f565a47486f7e70f91ec912a"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-feature-mine.webm",
+      "bytes": 1601559,
+      "sha256": "e8277353532051b30abb4c1d01431bb243018bbc84617f66e54261a594003211",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 7.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-fringe.png",
+      "bytes": 716076,
+      "sha256": "99b65887382c9de9b82b50e7845bbd6e16080389f565a47486f7e70f91ec912a"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-fringe.webm",
+      "bytes": 1938962,
+      "sha256": "be9733f08c7da73e582d5e48e81325a9fdf4029e4e7b533e3b74f40dfc488ec2",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 6.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-hand-flush.png",
+      "bytes": 716076,
+      "sha256": "99b65887382c9de9b82b50e7845bbd6e16080389f565a47486f7e70f91ec912a"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-hand-flush.webm",
+      "bytes": 3278594,
+      "sha256": "29753e08f5a46f8835be71145ff50b48c75d1f81be2320156f3aa3d7da5f5fc8",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 8.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-hand-pair.png",
+      "bytes": 716076,
+      "sha256": "99b65887382c9de9b82b50e7845bbd6e16080389f565a47486f7e70f91ec912a"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-hand-pair.webm",
+      "bytes": 4089249,
+      "sha256": "8d5b37ec008a62b987c30c676c32533e95740e9f79234b0ad7ff38ec739a4efc",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 8.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-idle.png",
+      "bytes": 716076,
+      "sha256": "99b65887382c9de9b82b50e7845bbd6e16080389f565a47486f7e70f91ec912a"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-idle.webm",
+      "bytes": 1391978,
+      "sha256": "c874a3e3ba2a7f1e7b4cfd2d3f34fa6dc342316e051e2ae2c80f1611ab7551f4",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 5.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-reaction.png",
+      "bytes": 716076,
+      "sha256": "99b65887382c9de9b82b50e7845bbd6e16080389f565a47486f7e70f91ec912a"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-reaction.webm",
+      "bytes": 1185178,
+      "sha256": "998656c45d009a9ea928dd45e807ea17fa1e99e2cb23ad2321ef58904c79499f",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 4.042
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-shiver.png",
+      "bytes": 716076,
+      "sha256": "99b65887382c9de9b82b50e7845bbd6e16080389f565a47486f7e70f91ec912a"
+    },
+    {
+      "path": "/video/parlor-women-solid-v1/queen-shiver.webm",
+      "bytes": 3825911,
+      "sha256": "200221334633e5ca75c5fee30ef78d4941b05352f83af1b4c64acd8ba5d0c495",
+      "width": 720,
+      "height": 1280,
+      "durationSeconds": 7.084
+    }
+  ],
+  "validation": {
+    "build": "passed",
+    "nativeBrowser": "7 regression and stage checks passed; room at 3840x2160, all twelve gallery clips, four features and four hands, frame retention across handoff and decoder gaps",
+    "unitTests": "10 resident/sequence tests passed",
+    "visualEvidence": [
+      "solid-women-room-4k.png",
+      "solid-women-fortune-4k.png",
+      "solid-women-pair-4k.png"
+    ],
+    "alpha": "Native libvpx decode verifies opaque sampled skin, dress/coat, legs and boots plus transparent exterior; real alpha, no white or checkerboard backing"
+  }
+}
