@@ -980,8 +980,6 @@ function showAnimationPreview() {
   back.hidden = true;
   const hands = ['High card','Pair','Two pair','Three of a kind','Straight','Flush','Full house','Four of a kind','Straight flush','Royal flush'];
   const reactions: [string,string][] = [
-    ['Lantern maiden · good result',parlorResidentMedia('queen').reaction],
-    ['Brazier maiden · good result',parlorResidentMedia('medium').reaction],
     ['Gambler · receives a card','/video/parlor-gambler-native-v2/receive.webm'],
     ['Gambler · notices a result','/video/parlor-gambler-hair-v1/notice.webm'],
     ['Gambler · loses again','/video/parlor-gambler-native-v2/loss.webm'],
@@ -991,8 +989,7 @@ function showAnimationPreview() {
   const idles: [string,string][] = [];
   for (const [key,label] of [['queen','Lantern maiden'],['medium','Brazier maiden']] as const) {
     const media=parlorResidentMedia(key);
-    idles.push([`${label} - quiet idle`,media.idle],[`${label} - alternate idle`,media.alternate],[`${label} - quiet movement`,media.characterIdle]);
-    media.quietVariants.forEach((src, i) => idles.push([`${label} - quiet variation ${i + 1}`, src]));
+    idles.push([`${label} - still artwork`,media.idle]);
   }
   idles.push(['Gambler - quiet idle','/video/parlor-gambler-hair-v1/idle.webm'],['Gambler - adjusts his hat','/video/parlor-idles-v2/gambler-brim.webm'],['Gambler - inspects his hand','/video/parlor-idles-v2/gambler-knuckle.webm']);
   for (const [key,label] of [['condemned','Condemned ghost'],['rider','Mounted ghost']] as const) {
@@ -1007,7 +1004,7 @@ function showAnimationPreview() {
   );
   el('modal-body').insertAdjacentHTML('afterbegin','<h2>Rare animations</h2><p>Preview the current game’s performances without spending credits or changing your hand. Sound follows your sound setting.</p><h3>Feature events</h3>');
   el('modal-body').insertAdjacentHTML('beforeend', `<h3>Poker hand reactions</h3><div class="feature-gallery">${hands.map(rank=>`<button class="outline-button" data-hand-preview="${rank}">${rank}</button>`).join('')}</div><h3>Character reactions & Easter eggs</h3><div class="feature-gallery">${reactions.map(([label],i)=>`<button class="outline-button" data-character-preview="${i}">${label}</button>`).join('')}</div>`);
-  el('modal-body').insertAdjacentHTML('beforeend', `<h3>Character idles</h3><div class="feature-gallery">${idles.map(([label],i)=>`<button class="outline-button" data-character-preview="${reactions.length+i}">${label}</button>`).join('')}</div>`);
+  el('modal-body').insertAdjacentHTML('beforeend', `<h3>Characters</h3><p>The two maidens currently use still artwork. Their replacement acting is unfinished.</p><div class="feature-gallery">${idles.map(([label],i)=>`<button class="outline-button" data-character-preview="${reactions.length+i}">${label}</button>`).join('')}</div>`);
   if (busy) el('modal-body').insertAdjacentHTML('afterbegin','<p>Let the current spin finish, then choose an animation.</p>');
   el('modal-body').querySelectorAll<HTMLButtonElement>('button').forEach(button=>button.disabled=busy);
   if (busy) {

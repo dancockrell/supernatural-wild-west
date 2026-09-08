@@ -31,7 +31,7 @@ const HAND_PERFORMANCES: Record<string,HandPerformance> = Object.fromEntries([
   ['Four of a kind','four-kind','gunslinger','Four spectral cartridges presented in turn'],
   ['Straight flush','straight-flush','medium','A sustained moment of remembrance'],
   ['Royal flush','royal-flush','gambler','A grand hat bow and impossible royal flourish'],
-].map(([rank,id,character,action])=>[rank,{id,character,action,src:character==='queen'||character==='medium' ? `/video/parlor-women-solid-v1/${character}-hand-${id}.webm` : `/video/hand-performances-v3/${id}.webm`,minimumDuration:7,beats:HAND_BEATS[id]}]));
+].map(([rank,id,character,action])=>[rank,{id,character,action,src:character==='queen'||character==='medium' ? `/video/parlor-women-solid-v2/${character}-hand-${id}.webm` : `/video/hand-performances-v3/${id}.webm`,minimumDuration:7,beats:HAND_BEATS[id]}]));
 // Admit only after native alpha, acting, duration, and stage review. Staged paths are never fetched.
 const ADMITTED_V3_HANDS = new Set<string>(['high-card','pair','two-pair','three-kind','straight','flush','full-house','four-kind','straight-flush','royal-flush']);
 const LEGACY_CASTS: Record<string,GhostClip[]> = {

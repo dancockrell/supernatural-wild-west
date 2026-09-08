@@ -8,22 +8,24 @@ async function natural(video:Locator){
  expect(await video.evaluate(e=>{const s=getComputedStyle(e);return {filter:s.filter,opacity:s.opacity,blend:s.mixBlendMode,mask:s.maskImage};})).toEqual({filter:'none',opacity:'1',blend:'normal',mask:'none'});
 }
 async function decoded(video:Locator){
- await expect(video).toHaveAttribute('src',/\/parlor-women-solid-v1\//);
+ await expect(video).toHaveAttribute('src',/\/parlor-women-solid-v2\//);
  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.readyState),{timeout:18000}).toBeGreaterThanOrEqual(2);
  const samples=await video.evaluate(async(v:HTMLVideoElement)=>{
   const canvas=document.createElement('canvas');canvas.width=96;canvas.height=96;const ctx=canvas.getContext('2d',{willReadFrequently:true})!;
-  return await new Promise<{time:number;opaque:number;lit:number}[]>((resolve,reject)=>{
-   const samples:{time:number;opaque:number;lit:number}[]=[];let id:number;
+  return await new Promise<{time:number;opaque:number;lit:number;checksum:number}[]>((resolve,reject)=>{
+   const samples:{time:number;opaque:number;lit:number;checksum:number}[]=[];let id:number;
    const timeout=setTimeout(()=>{v.cancelVideoFrameCallback(id);reject(new Error('No decoded native frame progress'));},8000);
    const draw=(_:number,frame:VideoFrameCallbackMetadata)=>{
     ctx.clearRect(0,0,96,96);ctx.drawImage(v,0,0,96,96);const pixels=ctx.getImageData(0,0,96,96).data;let opaque=0,lit=0;
     for(let i=0;i<pixels.length;i+=4)if(pixels[i+3]>=245){opaque++;if(pixels[i]+pixels[i+1]+pixels[i+2]>45)lit++;}
-    samples.push({time:frame.mediaTime,opaque,lit});
+    let checksum=2166136261;for(const channel of pixels)checksum=Math.imul(checksum^channel,16777619);
+    samples.push({time:frame.mediaTime,opaque,lit,checksum});
     if(samples.length===3){clearTimeout(timeout);resolve(samples);}else id=v.requestVideoFrameCallback(draw);
    };id=v.requestVideoFrameCallback(draw);
   });
  });
  expect(samples[2].time).toBeGreaterThan(samples[0].time);
+ expect(new Set(samples.map(frame=>frame.checksum)).size).toBe(1);
  for(const frame of samples){expect(frame.opaque).toBeGreaterThan(40);expect(frame.lit).toBeGreaterThan(20);}
  await natural(video);
 }
@@ -37,15 +39,15 @@ test('solid women draw naturally in the room with contact shadows retained',asyn
  await expect(page.locator('.resident-ground-shadows')).toHaveCount(1);
 });
 
-test('every solid room idle variant and reaction decodes naturally in the gallery',async({page})=>{
+test('women artwork previews are stable and honestly labeled',async({page})=>{
  test.setTimeout(90000);await openGallery(page);
  let wagers=0;page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/api/spin'))wagers++;});
  const balance=await page.locator('#balance').textContent();
- const variants=[{index:0,name:'queen-reaction'},{index:1,name:'medium-reaction'},
-  ...['queen','medium'].flatMap((key,k)=>['idle','alternate','character-idle',...(key==='queen'?['fringe','shiver']:['turn','neck'])].map((action,i)=>({index:7+k*5+i,name:`${key}-${action}`})))];
+ const variants=[{index:5,name:'queen-idle'},{index:6,name:'medium-idle'}];
+ await expect(page.getByText('The two maidens currently use still artwork. Their replacement acting is unfinished.')).toBeVisible();
  for(const variant of variants){
   await page.locator(`[data-character-preview="${variant.index}"]`).click();
-  const video=page.locator('.reaction-review');await expect(video).toHaveAttribute('src',`/video/parlor-women-solid-v1/${variant.name}.webm`);
+  const video=page.locator('.reaction-review');await expect(video).toHaveAttribute('src',`/video/parlor-women-solid-v2/${variant.name}.webm`);
   await decoded(video);await page.locator('#back-to-rare-animations').click();
  }
  expect(await page.locator('#balance').textContent()).toBe(balance);expect(wagers).toBe(0);

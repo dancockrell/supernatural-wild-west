@@ -27,4 +27,4 @@ This repository starts with the current version. Previous Git history, discarded
 
 ## Development status
 
-Playable prototype, not certified or award-winning. Remaining work includes character matte polish, distinct short event and hand acting, more idle variety, rigid chain snap/regrowth, sky wrap delivery, sustained sound/device/accessibility evaluation and independent review. Music and reduced motion controls are available in the game.
+Playable prototype, not certified or award-winning. The two foreground maidens currently use opaque still artwork; motion-transfer reconstructions were rejected and removed. Proper authored acting for them remains unfinished. Remaining work includes character matte polish, distinct short event and hand acting, more idle variety, rigid chain snap/regrowth, sky wrap delivery, sustained sound/device/accessibility evaluation and independent review. Music and reduced motion controls are available in the game.

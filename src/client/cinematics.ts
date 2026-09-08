@@ -121,7 +121,7 @@ export class FeatureCinematics {
         : kind === 'awaken' && location === 1 ? ['medium', 'saloon']
         : kind === 'awaken' && location === 3 ? ['queen', 'mine'] : null;
       if (solidFeature) {
-        spirit.src = `/video/parlor-women-solid-v1/${solidFeature[0]}-feature-${solidFeature[1]}.webm`;
+        spirit.src = `/video/parlor-women-solid-v2/${solidFeature[0]}-feature-${solidFeature[1]}.webm`;
         spirit.poster = spirit.src.replace('.webm', '.png');
       }
       this.stage.append(spirit);
@@ -223,7 +223,7 @@ export class FeatureCinematics {
       const duration = Number.isFinite(film.duration) ? film.duration : 0;
       const entry = ease(t / .4);
       const exit = duration ? ease((duration - t) / .55) : 1;
-      film.style.opacity = film.src.includes('/parlor-women-solid-v1/') ? '1' : String(entry * exit);
+      film.style.opacity = film.src.includes('/parlor-women-solid-v2/') ? '1' : String(entry * exit);
       caption.currentTime = t * 1000;
       const progress = duration ? Math.max(0, Math.min(1, t / duration)) : 0;
       fog.style.opacity = String(Math.sin(Math.PI * progress) * .6);
