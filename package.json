@@ -10,7 +10,8 @@
     "test": "vitest run",
     "simulate": "tsx scripts/simulate.ts",
     "replay": "tsx scripts/replay.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "build:demo": "tsc --noEmit && vite build --mode public-demo && tsx scripts/package-demo.ts"
   },
   "dependencies": {
     "@babylonjs/core": "^8.0.0",

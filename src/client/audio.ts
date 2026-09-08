@@ -1,3 +1,4 @@
+import { createAudio } from './media-element';
 export type EventScoreKey =
   | "hand-high-card"
   | "hand-pair"
@@ -46,7 +47,7 @@ export class SoundBus {
     try {
       this.prepare();
       void this.context!.resume();
-      const audio = new Audio(`/audio/event-scores-v1/${key}.mp3`);
+      const audio = createAudio(`/audio/event-scores-v1/${key}.mp3`);
       audio.preload = "auto";
       audio.preservesPitch = true;
       audio.volume = 0;
@@ -305,7 +306,7 @@ export class SoundBus {
     if (value) {
       this.prepare();
       void this.context!.resume();
-      this.score ||= new Audio(this.scorePath);
+      this.score ||= createAudio(this.scorePath);
       if (!this.scoreSource) {
         this.scoreSource = this.context!.createMediaElementSource(this.score);
         this.scoreSource.connect(this.musicFilter!);

@@ -1,3 +1,4 @@
+import { BrowserDemo } from './browser-demo';
 import type {
   RgsAdapter,
   GameState,
@@ -29,18 +30,20 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
   return data;
 }
 export class DemoRgsAdapter implements RgsAdapter {
+  private browser = import.meta.env.MODE === "public-demo" ? new BrowserDemo() : undefined;
   async connect() {
     return (await this.reconnect()).state;
   }
   spin(r: SpinRequest) {
-    return request<SpinResult>("spin", r);
+    return this.browser ? this.browser.spin(r) : request<SpinResult>("spin", r);
   }
   reconnect() {
+    if(this.browser)return this.browser.reconnect();
     return request<{ state: GameState; lastResult: SpinResult | null }>(
       "session",
     );
   }
   history() {
-    return request<SpinResult[]>("history");
+    return this.browser ? this.browser.history() : request<SpinResult[]>("history");
   }
 }

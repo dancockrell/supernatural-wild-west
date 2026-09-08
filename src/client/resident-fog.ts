@@ -1,3 +1,4 @@
+import { createVideo } from './media-element';
 /** Separate native atmosphere keeps a character's matte independent of smoke. */
 export class ResidentFog {
   private host = document.createElement('div');
@@ -10,7 +11,7 @@ export class ResidentFog {
     this.host.className = 'resident-fog';
     this.host.setAttribute('aria-hidden', 'true');
     for (const [side, offset] of [['left', .8], ['right', 5.3]] as const) {
-      const clip = document.createElement('video');
+      const clip = createVideo();
       clip.className = side;
       clip.src = source;
       clip.poster = source.replace(/\.(webm|mp4)$/, '.png');

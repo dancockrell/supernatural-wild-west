@@ -1,3 +1,4 @@
+import { createVideo } from './media-element';
 import { ResidentSequence } from './resident-sequence';
 import { exteriorNoticesPayout } from './resident-reactions';
 /** Independent observers of the hanging; only extraordinary payouts distract them. */
@@ -24,7 +25,7 @@ export class ExteriorResidents {
   for(const [name,offset] of [['condemned',1.3],['rider',4.2]] as const){
    const slot=document.createElement('div');slot.className=name;
    const film=(action:string,start=0)=>{
-    const v=document.createElement('video');
+    const v=createVideo();
     v.src=['palms','cold','pat','snort'].includes(action) ? `/video/parlor-idles-v2/${name}-${action}.webm` : action==='idle' ? `/video/parlor-exterior-actors-v2/${name}.webm` : `/video/parlor-exterior-stories-v1/${name}-${action}.webm`;
     v.poster=v.src.replace('.webm','.png');v.muted=true;v.playsInline=true;v.preload='auto';
     v.addEventListener('loadedmetadata',()=>{if(start&&Number.isFinite(v.duration)&&v.duration>0)v.currentTime=start%v.duration;},{once:true,signal:this.events.signal});

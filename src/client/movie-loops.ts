@@ -1,3 +1,4 @@
+import { createVideo } from './media-element';
 import { parlorResidentMedia } from './resident-media';
 export const MOVIES = {
   queen: parlorResidentMedia('queen').idle,
@@ -9,7 +10,7 @@ export const MOVIES = {
 } as const;
 export type MovieKey = keyof typeof MOVIES;
 export function movie(key: MovieKey, offset = 0, source: string = MOVIES[key]) {
-  const video = document.createElement("video");
+  const video = createVideo();
   video.src = source;
   video.poster = source.replace(/\.(webm|mp4)$/, ".png");
   video.muted = true;
@@ -49,6 +50,7 @@ export class MovieSymbols {
       if (resident) source.dataset.parlorResident = "true";
       this.sources.set(key, source);
       const poster = new Image();
+      if(import.meta.env.MODE === "public-demo")poster.crossOrigin="anonymous";
       poster.src = source.poster;
       this.posters.set(key, poster);
     });

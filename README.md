@@ -2,6 +2,10 @@
 
 Current playable supernatural Western slot prototype: fixed-aspect parlor, independent animated ghosts, fog and storm sky, five-by-five reels, progressive poker hands and an authoritative TypeScript server. Demo credits only.
 
+## Play online
+
+[Play the public demo](https://dancockrell.github.io/supernatural-wild-west/?parlor=1). Fictional credits only, saved in this browser. The public demo runs the same rules locally; it does not connect to the server ledger. `npm run build:demo` creates its static page with version-pinned media.
+
 ## Run
 
 Requires Node.js 22.12 or later.

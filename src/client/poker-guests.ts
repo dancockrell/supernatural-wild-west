@@ -1,3 +1,4 @@
+import { createVideo } from './media-element';
 import { ghostSprite, type GhostClip } from "./ghost-sprite";
 import { parlorResidentMedia } from "./resident-media";
 import { createGhostHand, drawGhostHand } from './ghost-hand';
@@ -98,7 +99,7 @@ export class PokerGuests {
     title.append(name,reward);this.stage.append(title);
     clips.forEach((clip,index)=>{
       const seat=document.createElement('div');seat.className=`poker-guest guest-${index}`;seat.dataset.cast=clip;
-      const video=authored?document.createElement('video'):ghostSprite(clip as GhostClip);
+      const video=authored?createVideo():ghostSprite(clip as GhostClip);
       if (['Pair','Two pair','Flush','Straight flush'].includes(rank)) video.dataset.femalePerformance='true';
       if(authored){
         seat.classList.add('authored-hand-v3');if(definition.character==='queen'||definition.character==='medium')seat.classList.add('resident-guest');video.className='ghost-sprite';video.src=definition.src;

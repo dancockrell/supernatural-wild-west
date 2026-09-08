@@ -1,3 +1,4 @@
+import { createVideo } from './media-element';
 import { ExteriorResidents } from './exterior-residents';
 import { NarrativeGambler } from './narrative-gambler';
 import { createParlorLight } from './parlor-light';
@@ -6,7 +7,7 @@ export class ParlorScene {
   private movies: HTMLVideoElement[] = [];
   private reduced = false;
   private disposed = false;
-  private fog = document.createElement('video');
+  private fog = createVideo();
   private night = false;
   private light = createParlorLight();
   private shown = 0;
@@ -17,7 +18,7 @@ export class ParlorScene {
   constructor(canvas: HTMLCanvasElement, sound: (cue:'ghost-deck',detail?:number)=>void=()=>{}) {
     document.documentElement.classList.add('unified-parlor');
     for(const name of ['environment-color','environment-color-night']) {
-      const v=document.createElement('video');
+      const v=createVideo();
       v.className='parlor-environment'; v.src=`/video/unified-parlor-loop-v2/${name}.mp4`;
       v.poster=`/video/unified-parlor-loop-v2/${name}.png`;
       v.muted=true; v.loop=true; v.playsInline=true; v.preload='auto';

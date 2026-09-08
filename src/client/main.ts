@@ -69,6 +69,7 @@ app.innerHTML = `<canvas id="frontier" aria-label="An animated cursed frontier s
 <dialog id="modal"><div class="dialog-top"><span id="dialog-kicker">HOW TO PLAY</span><button id="close-modal" aria-label="Close dialog">×</button></div><div id="modal-body"></div></dialog>`;
 const el = <T extends HTMLElement = HTMLElement>(id: string) =>
   document.getElementById(id) as T;
+if(import.meta.env.MODE === "public-demo" && !location.search) history.replaceState(null,"",`${location.pathname}?parlor=1`);
 const adapter = new DemoRgsAdapter(),
   audio = new SoundBus();
 const effects = new SpectralEffects();
@@ -890,7 +891,7 @@ async function startShowcase(feature = "ride") {
   if (busy || !state) return;
   const request = ++previewRequest;
   try {
-    const response = await fetch("/api/feature-gallery");
+    const response = await fetch(import.meta.env.MODE === "public-demo" ? `${import.meta.env.BASE_URL}feature-gallery.json` : "/api/feature-gallery");
     if (!response.ok) throw new Error("Preview unavailable");
     const result = (await response.json()).examples[feature] as SpinResult;
     if (request !== previewRequest || busy || !modal.open) return;
@@ -1039,7 +1040,7 @@ function showAnimationPreview() {
   el('modal-body').querySelectorAll<HTMLButtonElement>('[data-character-preview]').forEach(button=>button.onclick=()=>{
     previewRequest++;
     const [label,src]=characterPreviews[Number(button.dataset.characterPreview)];
-    openModal(`<h2>${label}</h2><video class="reaction-review" controls playsinline muted ${reduced?'':'autoplay'} src="${src}" poster="${src.replace('.webm','.png')}"></video><button id="back-to-rare-animations" class="action-button">Back to animations</button>`, 'CHARACTER PREVIEW · NO WAGER');
+    openModal(`<h2>${label}</h2><video crossorigin="anonymous" class="reaction-review" controls playsinline muted ${reduced?'':'autoplay'} src="${src}" poster="${src.replace('.webm','.png')}"></video><button id="back-to-rare-animations" class="action-button">Back to animations</button>`, 'CHARACTER PREVIEW · NO WAGER');
     if (label.startsWith('Lantern maiden') || label.startsWith('Brazier maiden')) el('modal-body').querySelector('video')!.style.filter='none';
     el('back-to-rare-animations').onclick=showAnimationPreview;
     if (label.startsWith('Condemned ghost') || label.startsWith('Mounted ghost')) el('modal-body').querySelector('video')!.style.filter='url(#exterior-mist-blend)';

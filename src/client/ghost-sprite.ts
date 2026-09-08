@@ -1,3 +1,4 @@
+import { createVideo } from './media-element';
 import { parlorResidentMedia } from './resident-media';
 export type GhostClip =
   | "rider-gallop"
@@ -7,7 +8,7 @@ export type GhostClip =
   | "preacher-book";
 /** Filled-silhouette alpha preserves dark clothing; no screen blending. */
 export function ghostSprite(clip: GhostClip) {
-  const video = document.createElement("video");
+  const video = createVideo();
   video.className = "ghost-sprite";
   video.dataset.ghost = clip;
   video.muted = true;

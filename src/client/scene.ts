@@ -1,3 +1,4 @@
+import { createVideo } from './media-element';
 /** The frontier is a generated film plate. No procedural particle or geometry animation. */
 import { FrontierFilm } from './frontier-framing';
 export class FrontierScene {
@@ -18,7 +19,7 @@ export class FrontierScene {
   constructor(private canvas: HTMLCanvasElement) {
     this.film = new FrontierFilm(canvas);
     for (const name of ["frontier-noon", "frontier-night"]) {
-      const video = document.createElement("video");
+      const video = createVideo();
       video.src = `/video/environment-loop-v2/${name}.mp4`;
       video.muted = true;
       video.loop = true;

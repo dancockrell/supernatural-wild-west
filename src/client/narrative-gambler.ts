@@ -1,10 +1,11 @@
+import { createVideo } from './media-element';
 import { ghostHandFog } from './ghost-hand';
 /** A quiet independent ritual, never an opponent or a gate on the spin lifecycle. */
 export class NarrativeGambler {
   private host = document.createElement('aside');
   // Two idle buffers keep the last frame visible while the other rewinds.
   private clips = ['idle','receive','idle','notice','loss','brim','knuckle'].map(name => {
-    const v = document.createElement('video');
+    const v = createVideo();
     v.dataset.performance = name;
     const family = 'parlor-gambler-hair-v1';
     v.src = name === 'receive' || name === 'loss'
