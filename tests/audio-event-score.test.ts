@@ -107,6 +107,31 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 describe("native-clock event score transport", () => {
+  it("reserves ducking during loading and keeps only one event soundtrack alive", async () => {
+    const bus=new SoundBus();bus.enabled=true;
+    bus.playEventScore("hand-pair",8);await tick();
+    const first=FakeAudio.all.at(-1)!;
+    bus.stopEventScore(250);
+    FakeAudio.pending=true;
+    bus.playEventScore("feature-mine",7);
+    expect(first.paused).toBe(true);
+    expect((bus as any).eventScoreVoices.size).toBe(1);
+    await vi.advanceTimersByTimeAsync(120);
+    expect(FakeAudio.all[0].volume).toBeCloseTo(.2*.18);
+    bus.enabled=false;
+  });
+  it("an incidental release cannot unduck the theme over the event fade tail", async () => {
+    const bus=new SoundBus();bus.enabled=true;
+    bus.playEventScore("hand-pair",8);await tick();
+    (bus as any).duckMusic(50,.5);
+    bus.stopEventScore(1500);
+    await vi.advanceTimersByTimeAsync(800);
+    expect(FakeAudio.all[0].volume).toBeCloseTo(.2*.18);
+    await vi.advanceTimersByTimeAsync(1500);
+    expect(FakeAudio.all[0].volume).toBeCloseTo(.2);
+    bus.enabled=false;
+  });
+
   it("uses distinct hand music and resumes at the native video offset with pitch preserved", async () => {
     const bus = new SoundBus();
     bus.enabled = true;

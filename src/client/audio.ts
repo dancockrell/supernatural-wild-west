@@ -40,7 +40,8 @@ export class SoundBus {
     durationSeconds = 10,
     offsetSeconds = 0,
   ): () => void {
-    this.stopEventScore(180);
+    // A replacement owns the music lane, including any older fading voices.
+    this.stopAllEventScores();
     if (!this.active || document.hidden) return () => {};
     try {
       this.prepare();
@@ -62,6 +63,8 @@ export class SoundBus {
       };
       this.eventScore = voice;
       this.eventScoreVoices.add(voice);
+      // Reserve the duck while audio loads, avoiding a full-volume theme burst.
+      this.fadeMusic(this.musicVolume * this.themeDuckScale(), 80);
       const span = Math.max(
         7,
         Math.min(10, Number.isFinite(durationSeconds) ? durationSeconds : 10),
@@ -320,12 +323,9 @@ export class SoundBus {
   }
   private themeDuckScale() {
     const incidental = performance.now() < this.duckUntil ? this.duckScale : 1;
-    const event =
-      this.eventScore &&
-      !this.eventScore.closing &&
-      this.eventScore.envelope > 0
-        ? 0.18
-        : 1;
+    // Loading and fading scores still own the lane. An incidental release must
+    // not bring the theme back over a score tail or a buffering restart.
+    const event = this.eventScoreVoices.size > 0 ? 0.18 : 1;
     return Math.min(incidental, event);
   }
   private duckMusic(milliseconds: number, depth = 0.63) {
@@ -577,7 +577,7 @@ export class SoundBus {
     if (["fortune", "awaken", "ride", "mine"].includes(event))
       this.quietFoleyUntil = performance.now() + 4500;
     if (
-      event === "ghost-deck" &&
+      ["ghost-deck", "lantern", "breath"].includes(event) &&
       (this.featureActive ||
         !!this.eventScore ||
         performance.now() < this.quietFoleyUntil)
