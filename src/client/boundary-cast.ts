@@ -29,31 +29,19 @@ export class BoundaryCast {
       <feComposite in="face" in2="softEdge" operator="arithmetic" k2="1" k3="1" result="balanced"/>
       <feComponentTransfer in="balanced" result="litBody"><feFuncR type="table" tableValues="0 .112 .221 .321 .419 .514 .607 .704 .801 .9 1"/><feFuncG type="table" tableValues="0 .112 .221 .321 .419 .514 .607 .704 .801 .9 1"/><feFuncB type="table" tableValues="0 .112 .221 .321 .419 .514 .607 .704 .801 .9 1"/></feComponentTransfer>
       <feMerge><feMergeNode in="litBody"/></feMerge>
+    </filter><filter id="women-clean" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2 2 3 0 -1.5" result="bakedColdEffect"/>
+      <feComponentTransfer in="SourceGraphic" result="quietColor"><feFuncR type="linear" slope=".45"/><feFuncG type="linear" slope=".45"/><feFuncB type="linear" slope=".38"/></feComponentTransfer>
+      <feComposite in="quietColor" in2="bakedColdEffect" operator="in" result="quietEffect"/>
+      <feComposite in="SourceGraphic" in2="bakedColdEffect" operator="out" result="untouchedBody"/>
+      <feComposite in="quietEffect" in2="untouchedBody" operator="arithmetic" k2="1" k3="1" result="cleanBody"/>
+      <feMorphology in="SourceAlpha" operator="erode" radius=".008 .004" result="bodyAlpha"/>
+      <feGaussianBlur in="bodyAlpha" stdDeviation=".002" result="softBodyAlpha"/>
+      <feComposite in="cleanBody" in2="softBodyAlpha" operator="in"/>
     </filter><filter id="mounted-fog-light" color-interpolation-filters="sRGB">
       <feColorMatrix type="saturate" values=".35"/>
       <feComponentTransfer><feFuncR type="linear" slope=".85"/><feFuncG type="linear" slope=".85"/><feFuncB type="linear" slope=".82"/></feComponentTransfer>
     </filter><filter id="resident-fog-color" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 .678 0 0 0 0 .765 0 0 0 0 .737 0 0 0 1 0"/></filter></defs></svg>`);
-    // Quiet the baked cold veil below the hands, with gentler shoulder correction.
-    // Warm skin/bronze and original alpha survive; the face stays outside the band.
-    const quietMedium=this.host.querySelector('#resident-soft-rim')!.cloneNode(true) as SVGElement;
-    quietMedium.id='medium-quiet-mist';
-    quietMedium.querySelector('feMerge')!.setAttribute('result','standard');
-    quietMedium.insertAdjacentHTML('beforeend', `<feFlood x="0" y=".44" width="1" height=".56" flood-color="white" result="lowerBody"/>
-      <feGaussianBlur in="lowerBody" stdDeviation=".025" result="lowerFade"/>
-      <feFlood x="0" y=".27" width="1" height=".20" flood-color="white" flood-opacity=".85" result="armBand"/>
-      <feGaussianBlur in="armBand" stdDeviation=".025" result="armFade"/>
-      <feComposite in="lowerFade" in2="armFade" operator="over" result="bodyZone"/>
-      <feFlood x=".47" y=".18" width=".43" height=".25" flood-color="white" result="brazierPlume"/>
-      <feGaussianBlur in="brazierPlume" stdDeviation=".018" result="plumeFade"/>
-      <feComposite in="bodyZone" in2="plumeFade" operator="out" result="bodyWithoutPlume"/>
-      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2 3 0 -.5" result="bodyCold"/>
-      <feComposite in="bodyCold" in2="bodyWithoutPlume" operator="in" result="bodyMist"/>
-      <feColorMatrix in="standard" type="saturate" values="1.18" result="clothColor"/>
-      <feComponentTransfer in="clothColor" result="quiet"><feFuncR type="linear" slope=".52"/><feFuncG type="linear" slope=".52"/><feFuncB type="linear" slope=".52"/></feComponentTransfer>
-      <feComposite in="quiet" in2="bodyMist" operator="in" result="quietMist"/>
-      <feComposite in="standard" in2="bodyMist" operator="out" result="unaffected"/>
-      <feComposite in="unaffected" in2="quietMist" operator="arithmetic" k2="1" k3="1"/>`);
-    this.host.querySelector('defs')!.append(quietMedium);
     const parlor = new URLSearchParams(location.search).has('parlor');
     for (const [key, side, offset] of [['queen','left',.35],['medium','right',2.1]] as const) {
       const slot = document.createElement('div');

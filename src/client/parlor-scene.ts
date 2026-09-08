@@ -1,6 +1,5 @@
 import { ExteriorResidents } from './exterior-residents';
 import { NarrativeGambler } from './narrative-gambler';
-import { ResidentFog } from './resident-fog';
 import { createParlorLight } from './parlor-light';
 /** Geometry-locked films: live overlays share the source image coordinates. */
 export class ParlorScene {
@@ -15,7 +14,6 @@ export class ParlorScene {
   private incoming?: number;
   private gambler: NarrativeGambler;
   private exterior: ExteriorResidents;
-  private residentFog: ResidentFog;
   constructor(canvas: HTMLCanvasElement, sound: (cue:'ghost-deck',detail?:number)=>void=()=>{}) {
     document.documentElement.classList.add('unified-parlor');
     for(const name of ['environment-color','environment-color-night']) {
@@ -43,7 +41,6 @@ export class ParlorScene {
     const stage=document.createElement('div'); stage.className='parlor-stage';
     stage.append(...Array.from(app.childNodes)); app.append(stage);
     for(const layer of document.querySelectorAll('.narrative-gambler,.parlor-foreground-fog')) stage.append(layer);
-    this.residentFog = new ResidentFog(stage, '/video/parlor-resident-fog-spectral-v3/resident-fog.webm');
     this.sync();
   }
   private sync=()=>{
@@ -78,7 +75,7 @@ export class ParlorScene {
     });
   };
   setPhase(night:boolean) { this.night=night; this.sync(); }
-  setReducedMotion(value:boolean) { this.reduced=value; this.gambler.setReduced(value); this.exterior.setReduced(value); this.residentFog.setReduced(value); this.sync(); }
+  setReducedMotion(value:boolean) { this.reduced=value; this.gambler.setReduced(value); this.exterior.setReduced(value); this.sync(); }
   pulse() {}
   noticeRound() { this.gambler.noticeRound(); }
   noticeCard(token:string,index:number,animate=true) { this.gambler.noticeCard(token,index,animate); }
@@ -89,7 +86,7 @@ export class ParlorScene {
     this.disposed=true;
     this.phaseAnimation?.cancel();
     document.removeEventListener('visibilitychange',this.sync);
-    this.gambler.dispose(); this.exterior.dispose(); this.residentFog.dispose();
+    this.gambler.dispose(); this.exterior.dispose();
     this.light.remove();
     for(const v of [this.fog,...this.movies]) {v.removeEventListener('loadeddata',this.sync);v.pause();v.removeAttribute('src');v.load();v.remove();}
   }

@@ -760,7 +760,7 @@
 .unified-parlor .boundary-cast .ghost-porch canvas,
 .unified-parlor .feature-ghost.parlor-feature-resident,
 .unified-parlor .poker-guest.resident-guest video {
-  filter: url(#resident-soft-rim);
+  filter: url(#women-clean);
 }
 /* A single authored hand performance occupies the theatre above the player controls.
    The runtime fits native media inside this box without enlarging its pixels. */
@@ -814,7 +814,7 @@
   background:radial-gradient(ellipse at 22% 65%,rgb(189 223 255 / calc(var(--hand-left,0) * .6)),transparent 26%),radial-gradient(ellipse at 50% 40%,rgb(234 228 206 / calc(var(--hand-center,0) * .6)),transparent 28%),radial-gradient(ellipse at 78% 65%,rgb(189 223 255 / calc(var(--hand-right,0) * .6)),transparent 26%);
 }
 .unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage .authored-hand-v3.resident-guest video {
-  filter:url(#resident-soft-rim);
+  filter:url(#women-clean);
 }
 /* A low, broad water memory belongs behind the lantern maiden, above the controls.
    Its envelope follows native seconds 2–6 and stops advancing with the film. */

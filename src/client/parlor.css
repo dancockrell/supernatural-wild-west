@@ -211,14 +211,17 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); 
 .narrative-gambler.table-plate-ready .gambler-table-plate { opacity:1; }
 
 /* Only neutralize baked cool spill; there is no added character aura. */
-.unified-parlor .ghost-porch video { filter:url(#resident-soft-rim); }
+.unified-parlor .ghost-porch video { filter:url(#women-clean); }
 
 .unified-parlor canvas[data-movie='queen'],
-.unified-parlor canvas[data-movie='medium'] { filter:url(#resident-soft-rim); }
+.unified-parlor canvas[data-movie='medium'] { filter:url(#women-clean); }
 .unified-parlor .ghost-porch.right video,
 .unified-parlor .ghost-porch.right canvas,
-.unified-parlor canvas[data-movie='medium'] { filter:url(#medium-quiet-mist); }
+.unified-parlor canvas[data-movie='medium'] { filter:url(#women-clean); }
 
 /* Diffuse the baked cyan contour into the same low fog as the residents. */
 .unified-parlor canvas[data-movie="preacher"],
 .unified-parlor .ghost-sprite[data-ghost="preacher-book"] { filter:url(#resident-soft-rim); }
+
+/* Keep the room-floor fog away from the two foreground women. */
+.unified-parlor .parlor-foreground-fog { clip-path:inset(0 0 0 38%); }
