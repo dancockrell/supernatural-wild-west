@@ -275,5 +275,6 @@
       "solid-women-room-4k.png"
     ],
     "otherCharacters": "Code and provenance audit found no active RGB motion transfer outside removed women family; existing mask tracking retains native actor RGB."
-  }
+  },
+  "status": "Superseded for room, feature and hand performances by women-performance-restoration.json; retained as evidence of the earlier fallback."
 }

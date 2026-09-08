@@ -1,13 +1,14 @@
 export type ResidentKey = 'queen' | 'medium';
 
-/** Authored lantern acting; clean artwork until a brazier performance passes review. */
+/** Original authored repertoire restored from morning build e836ec3. */
 export function parlorResidentMedia(key: ResidentKey) {
-  const base = `/video/${key === 'queen' ? 'parlor-women-authored-v1' : 'parlor-women-solid-v2'}/${key}`;
+  const base = `/video/parlor-maidens-v1/${key}`;
   return {
     idle: `${base}-idle.webm`,
-    reaction: `${base}-reaction.webm`,
-    characterIdle: `${base}-character-idle.webm`,
+    reaction: key === 'medium' ? '/video/rare-features-v4/medium-reaction.webm' : `${base}-reaction.webm`,
+    characterIdle: `${base}-${key === 'queen' ? 'listen' : 'whisper'}.webm`,
     alternate: `${base}-alternate.webm`,
-    quietVariants: [] as string[],
+    quietVariants: (key === 'queen' ? ['queen-fringe', 'queen-shiver'] : ['medium-turn', 'medium-neck'])
+      .map(name => `/video/parlor-idles-v2/${name}.webm`),
   };
 }

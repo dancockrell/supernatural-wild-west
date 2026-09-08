@@ -1,0 +1,216 @@
+{
+  "baseline": "e836ec3",
+  "roomPerformances": 12,
+  "featurePerformances": 4,
+  "handPerformances": 4,
+  "note": "Original native footage restored unchanged. Source-baked effects remain; no added body filters, fog, or motion transfer.",
+  "files": [
+    {
+      "path": "/video/parlor-maidens-v1/queen-idle.webm",
+      "sha256": "4fb5b589390b8df47ddfe059a48555eacd22e1b7f1da0b18f60918363c250cbd",
+      "morningGitBlob": "1007c62dfccd4aba3af0d47686ccf6f608254f75"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/queen-idle.png",
+      "sha256": "48967a3736f96b4407564db0e0e4fa280a067170fa3ba66e263c4937160510a1",
+      "morningGitBlob": "2ee8224f551942931a6192ab5835f8ecc944e80a"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/queen-alternate.webm",
+      "sha256": "2893acdf2ed6ad4bcc1efc122b352889cf4ea0285c005d952620ce24b43a1ac3",
+      "morningGitBlob": "17f27fc7693f2a5ca65accc0ce0d20ad3f6a1ea4"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/queen-alternate.png",
+      "sha256": "32e2072c02b86fc5b41afe34d4042190fe757b2a7f2ef920dac14e6ce8171719",
+      "morningGitBlob": "d9b55dee779b442a20f4ca167d2c771973e315d5"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/queen-listen.webm",
+      "sha256": "70d1bba2f46598a51987fe054e0f47145e5900025329716787c1f91b84bccfd1",
+      "morningGitBlob": "27bca50dce390b5e312e97332a7880f4f8067b72"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/queen-listen.png",
+      "sha256": "dfc2eddadc4d8b579a601611227225839a509b46f51b6904b1d1cb32c98899e8",
+      "morningGitBlob": "1866fb74da4504a034236c4b5e8bc50b0185c59d"
+    },
+    {
+      "path": "/video/parlor-idles-v2/queen-fringe.webm",
+      "sha256": "bede083a242bd2ee7a95e0dec42ba033d65296e1f696dc14f1e810b763dd13f6",
+      "morningGitBlob": "4e0ebb800a7ca00d9bccb2453bc97cd7b4abde68"
+    },
+    {
+      "path": "/video/parlor-idles-v2/queen-fringe.png",
+      "sha256": "2a51a88ed035a686ae3bc914ccd62ad04e8f8c2b45054b5259a8e47959e07eb0",
+      "morningGitBlob": "8a591bf4d608033b835b2136e31c7857553137c8"
+    },
+    {
+      "path": "/video/parlor-idles-v2/queen-shiver.webm",
+      "sha256": "b64adff932aa70edf1fe5669296fe46e2f4c765d8003897765226bec95c24320",
+      "morningGitBlob": "04b88265e01a1a6be8f31040807768ee55eb17db"
+    },
+    {
+      "path": "/video/parlor-idles-v2/queen-shiver.png",
+      "sha256": "cb5cde47aeb7d661602928e05353c036fa2c74f0ea8f6cfa914f2317dfedfaed",
+      "morningGitBlob": "7338204b3e57eac34645e8a49552fbb68f917ca7"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/queen-reaction.webm",
+      "sha256": "cc77fe64611f48a3f0c8b434884cb453fe69e37b658f7d527c141eb9d6666209",
+      "morningGitBlob": "36f1013422dcc9448222291a947aa1d74320cfab"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/queen-reaction.png",
+      "sha256": "25f5c19ada755f207912c5cc9b38745733f017ce86ff92ec6ee62bfde85b26a2",
+      "morningGitBlob": "dba1eea727c38b6674af94b6ff3688a5374ca56d"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/medium-idle.webm",
+      "sha256": "8de5185a1144dd7677f8508ce1030df00807ce743799df6ba3751ff20aa5b538",
+      "morningGitBlob": "851ec87222e9f302add1b53b72ee8760b89a3d50"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/medium-idle.png",
+      "sha256": "e61952ec7e133be22ad9e148e40d4ad4e0c8d7a1c1d34bebb535d0f992c8517d",
+      "morningGitBlob": "f69ddd00d560768bff76987ddcaca91f788a6686"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/medium-alternate.webm",
+      "sha256": "7ec8fb8834ec7e9f996d5468cf6e39808f37292510dfbd24a3a793c60d7f96a3",
+      "morningGitBlob": "e706e55d14c691610ff987c9805d1327fa754a7f"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/medium-alternate.png",
+      "sha256": "eef68aa32f3373240a6aefbc122ec3c78a79eec51d5ff05b4412ef857d039d98",
+      "morningGitBlob": "1d45395244b228ac39817adb0e4b8bca89fd0489"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/medium-whisper.webm",
+      "sha256": "1eb1583f4ebdb0c46948d109bda75758de71fda3533a071414e93da6bbbebe89",
+      "morningGitBlob": "dfd4b4a1c7313a3d4d592fced8e4081064cc9c1f"
+    },
+    {
+      "path": "/video/parlor-maidens-v1/medium-whisper.png",
+      "sha256": "7df322e281554249e424c25a35d46943198a1d569828962af4e5090191362800",
+      "morningGitBlob": "cb8e3e2c28bf74398c01ed84dd0832ff1ee8fba0"
+    },
+    {
+      "path": "/video/parlor-idles-v2/medium-turn.webm",
+      "sha256": "1592ccc290843d714316ad1ddfe31ed3badfb676399d22d52fde4a22c279cc46",
+      "morningGitBlob": "c7076c46ca057a0321f7011096c4e5ad333aea8d"
+    },
+    {
+      "path": "/video/parlor-idles-v2/medium-turn.png",
+      "sha256": "f6ece2f2fc30a4dec034c202599f9ad919fad56d9e99ac665f95fdda7a078a71",
+      "morningGitBlob": "08992ad34b3f857aa5edd3447a90b101c6da0137"
+    },
+    {
+      "path": "/video/parlor-idles-v2/medium-neck.webm",
+      "sha256": "5ec58adf00db414c94a667e6451d9a32580f2fd87da17d290935e835794c5d63",
+      "morningGitBlob": "049aba38c96a72a3e9838bd7dea44da19aa97e0b"
+    },
+    {
+      "path": "/video/parlor-idles-v2/medium-neck.png",
+      "sha256": "7fa80c6e26baeb9bd08c256d9969a67f24278c3df9963cd8ad009e635d985a62",
+      "morningGitBlob": "575f61db7b58117cb0ec7305dde5516dfd6a7539"
+    },
+    {
+      "path": "/video/rare-features-v4/medium-reaction.webm",
+      "sha256": "52858d2c70ba6c8255f69d5f90d7f84a3ba2076de41900471c0c9989454aa1b4",
+      "morningGitBlob": "5238c1dd5847a80915e10f3010627ca04b479460"
+    },
+    {
+      "path": "/video/rare-features-v4/medium-reaction.png",
+      "sha256": "4285971c18963791f221eeb1b80453b391ca5937eeb73ee6d2eb20e9cb67432e",
+      "morningGitBlob": "bebbe6b036b8a899a658697bd0abfe0400ec8336"
+    },
+    {
+      "path": "/video/feature-performances-v2/witch.webm",
+      "sha256": "6c8514198e666cd357c7fdd39876365c7cf5cd9d203247dc5871029690e4c523",
+      "morningGitBlob": "f99780cd49485ce2d2c3f8da2f03491778d6337d"
+    },
+    {
+      "path": "/video/feature-performances-v2/witch.png",
+      "sha256": "60e17e0e445b95073225bef531883cbc13a8a0350e6d6bb9bf14143015c26d83",
+      "morningGitBlob": "8a135be4a17900a7ed5da7dc721b84317847415f"
+    },
+    {
+      "path": "/video/feature-performances-v2/saloon.webm",
+      "sha256": "a36badd49d73400e1962fb23eaba77822796f10034e8e93008ba8efb666fce5e",
+      "morningGitBlob": "099ed204b202519df85f1d97374579b6847a6a43"
+    },
+    {
+      "path": "/video/feature-performances-v2/saloon.png",
+      "sha256": "91842d5afb954e3a9f5f10ab36e3c11ddaefa5663a317bbca378a76d2406e0f6",
+      "morningGitBlob": "2bc72930f07c6c1375b4a817307844750ee80608"
+    },
+    {
+      "path": "/video/feature-performances-v2/mine.webm",
+      "sha256": "e7733a205e8248f3b6605d8bd10164bee7a8ee2e0fe1300c2f69139f86355e0e",
+      "morningGitBlob": "f7f7b2073dc48d6516f615575cb47ee1f3989b3a"
+    },
+    {
+      "path": "/video/feature-performances-v2/mine.png",
+      "sha256": "55c2cf39b1675e18c3e422ded19da83b1c1720ecd3ec8fc943649cfcd1b8dbad",
+      "morningGitBlob": "503ff37a172fc49f041209e70d791c75c42f44ed"
+    },
+    {
+      "path": "/video/rare-features-v4/fortune.webm",
+      "sha256": "5d756632082397b73fd8dc23062409ee4b4a4ce7cf4511bdedfb4e8b86fce554",
+      "morningGitBlob": "dfa01a36a12caf6a265e53aef91e62307c93a769"
+    },
+    {
+      "path": "/video/rare-features-v4/fortune.png",
+      "sha256": "27919dcbf3f1a71addbd05efa18841d3a0fe01b75194e36f8c9ae9c8dbe1f1ba",
+      "morningGitBlob": "053fb9916577a7d67f26027b553c4314a688d02e"
+    },
+    {
+      "path": "/video/hand-performances-v3/pair.webm",
+      "sha256": "bdce66dcff12339118e91952a1306fb89dc994ad9b418e172779d2e751c6e46d",
+      "morningGitBlob": "2eec64a71b8e8516482a023eff3d1de1f115fd8d"
+    },
+    {
+      "path": "/video/hand-performances-v3/pair.png",
+      "sha256": "787d5b6de83f965e3a3ca05547fcb1ade639868fb65fe6da1e06ebd9e647c3af",
+      "morningGitBlob": "f376e30d0391e6ea6806b16a2e652db815aec6f6"
+    },
+    {
+      "path": "/video/hand-performances-v3/two-pair.webm",
+      "sha256": "45e9143218197ffef86b12d705919d6fa1a2a8f635fa419f4c40cca7a90f396d",
+      "morningGitBlob": "be4afffb7bfca85f101bfa184d0424b158ac91f6"
+    },
+    {
+      "path": "/video/hand-performances-v3/two-pair.png",
+      "sha256": "9812c08746d45e4c4c54fcf41ce63ca3a4d8444e11df72c10eb75950de9d3ce3",
+      "morningGitBlob": "154b3d6c54ca11e55774645e46da8b4f8a33047b"
+    },
+    {
+      "path": "/video/hand-performances-v3/flush.webm",
+      "sha256": "2d32a2b7697450e846975f9fcc2fd6bb4207681a5baee62e42a4461bd25f2ab8",
+      "morningGitBlob": "dc998631d24f49dd32a4f71d456032df65633bf1"
+    },
+    {
+      "path": "/video/hand-performances-v3/flush.png",
+      "sha256": "5f968b6e13c27dca66d07f562c086d3828a68a9dc59576e751a7c96a81805d73",
+      "morningGitBlob": "5e712da1f7dbf1d3c9ea64796ec362381e6dfa49"
+    },
+    {
+      "path": "/video/hand-performances-v3/straight-flush.webm",
+      "sha256": "83ae8ec02ff1488ddd59351f5412aa1a8dfe656762691c201c873792f45ad841",
+      "morningGitBlob": "3f37f817a87a2401b23494ae9d33089f2d13358b"
+    },
+    {
+      "path": "/video/hand-performances-v3/straight-flush.png",
+      "sha256": "bbf36990414cb213b1dcf5479f5ba99f192e35339bbadea266462eb141856a19",
+      "morningGitBlob": "c4c7c26ac36dfefc0a3545cf8dc59cbbe42194a5"
+    }
+  ],
+  "validation": {
+    "build": "passed",
+    "unitTests": 67,
+    "browserTests": 12,
+    "native4k": "Both full five-idle cycles retain fixed placement; all twelve gallery films and eight female event/hand routes show decoded motion. Four female hand films complete at native speed with scores, no wagering and less than 1.1% dropped frames.",
+    "visualLimit": "Original baked blue/purple ribbons remain visible, especially in medium Two pair and Straight flush. No new masking or relighting claimed."
+  }
+}

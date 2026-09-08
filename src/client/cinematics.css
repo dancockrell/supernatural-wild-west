@@ -931,3 +931,16 @@
 .unified-parlor .feature-stage .feature-ghost[src*="/parlor-women-solid-v2/"] {
  filter:none; mix-blend-mode:normal; mask-image:none; animation:none;
 }
+
+/* Restored native female films: no extra body relighting, masks or fog. */
+.unified-parlor video[data-female-performance],
+.unified-parlor .boundary-cast .ghost-porch video[data-movie] {
+ filter:none; opacity:1; mix-blend-mode:normal; mask-image:none;
+}
+.unified-parlor .feature-stage:has(video[data-female-performance]) .performance-fog,
+.unified-parlor .feature-stage:has(video[data-female-performance]) .apparition-light { display:none; }
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage:has(video[data-female-performance])::before,
+.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage:has(video[data-female-performance])::after { content:none; }
+.unified-parlor .feature-stage .feature-ghost[data-female-performance] {
+ filter:none; mix-blend-mode:normal; mask-image:none; animation:none;
+}

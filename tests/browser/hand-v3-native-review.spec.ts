@@ -30,6 +30,24 @@ for(const [rank,id] of ranks)test(`4K no-wager ${rank} plays its entire native f
  await expect(page.locator('#spin')).toBeDisabled();
  const scoreId=id==='three-kind'?'trips':id==='four-kind'?'quads':id;
  await expect.poll(()=>page.evaluate(scoreId=>{const a=(window as any).eventScores as HTMLAudioElement[];return a.some(e=>e.src.endsWith(`/audio/event-scores-v1/hand-${scoreId}.mp3`)&&!e.paused&&e.currentTime>0);},scoreId)).toBe(true);
+ if(['pair','two-pair','flush','straight-flush'].includes(id)){
+   // A timestamp advancing through a repeated still is not restored acting.
+   // Compare opaque picture interiors, excluding transparent smoke and the stage.
+   const sample=()=>v.evaluate((e:HTMLVideoElement)=>{
+     const c=document.createElement('canvas');c.width=144;c.height=160;
+     const ctx=c.getContext('2d')!;ctx.drawImage(e,0,0,c.width,c.height);
+     return Array.from(ctx.getImageData(0,0,c.width,c.height).data);
+   });
+   const before=await sample();
+   await expect.poll(()=>v.evaluate((e:HTMLVideoElement)=>e.currentTime),{timeout:10000}).toBeGreaterThan(3.5);
+   const after=await sample();let opaque=0,changed=0;
+   for(let i=0;i<before.length;i+=4){
+     if(before[i+3]<245||after[i+3]<245)continue;
+     opaque++;if(Math.abs(before[i]-after[i])+Math.abs(before[i+1]-after[i+1])+Math.abs(before[i+2]-after[i+2])>24)changed++;
+   }
+   expect(opaque).toBeGreaterThan(100);
+   expect(changed/opaque,'The maiden must perform rather than play a duplicate still').toBeGreaterThan(.05);
+ }
  await page.screenshot({path:`docs/hand-v3-${id}-4k.png`});
  await expect.poll(()=>page.evaluate(()=>(window as any).handEnded),{timeout:25000}).toBe(true);
  const final=await page.evaluate(()=>(window as any).handFinal);console.log(id,JSON.stringify({native,final}));expect(final.time).toBeGreaterThanOrEqual(native.duration-.1);expect(final.quality.droppedVideoFrames/Math.max(1,final.quality.totalVideoFrames)).toBeLessThan(.05);

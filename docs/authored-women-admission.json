@@ -1,9 +1,9 @@
 {
-  "status": "Brazier appearance restored exactly from db5006f; lantern native acting retained",
+  "status": "Superseded for room, feature and hand performances by women-performance-restoration.json; retained as evidence of the earlier fallback.",
   "method": "Original source RGB geometry and timing, tracked alpha only, selective cool-spill color correction. No RGB remapping, motion transfer, mesh movement or synthetic body animation.",
   "queenSourceFamily": "cast-replacement-v1/queen-{idle,alternate,listen,reaction}-source.mp4",
   "smoke": "Recorded bowl plume, neutral #adc3bc, max alpha 56/255; excludes all opaque actor pixels.",
-  "remaining": "Brazier performances contain baked moving haze on skin and were rejected, including the late saloon sequence. Women major event and hand films still use opaque artwork. No new paid generation this pass.",
+  "remaining": "The earlier corrected brazier experiment remains rejected. Original morning films are now restored unchanged; consult women-performance-restoration.json for active performance coverage.",
   "assets": [
     {
       "path": "/video/parlor-women-authored-v1/brazier-smoke.png",

@@ -22,16 +22,16 @@ const HAND_BEATS:Record<string,HandBeat[]>={
 };
 const HAND_PERFORMANCES: Record<string,HandPerformance> = Object.fromEntries([
   ['High card','high-card','gambler','A rueful look at an unremarkable hand'],
-  ['Pair','pair','queen','A quiet lantern vigil'],
-  ['Two pair','two-pair','medium','A quiet moment over her brazier'],
+  ['Pair','pair','queen','Two answering lights in her lantern'],
+  ['Two pair','two-pair','medium','A greeting and answering bow'],
   ['Three of a kind','three-kind','gambler','One knock answered by three ghost bells'],
   ['Straight','straight','gunslinger','Tracing a spectral path'],
-  ['Flush','flush','queen','A sustained lantern vigil'],
+  ['Flush','flush','queen','Remembering the flood through her lantern'],
   ['Full house','full-house','preacher','Opening a book as shelter'],
   ['Four of a kind','four-kind','gunslinger','Four spectral cartridges presented in turn'],
-  ['Straight flush','straight-flush','medium','A sustained moment of remembrance'],
+  ['Straight flush','straight-flush','medium','A continuous spiral of fortunate smoke'],
   ['Royal flush','royal-flush','gambler','A grand hat bow and impossible royal flourish'],
-].map(([rank,id,character,action])=>[rank,{id,character,action,src:character==='queen'||character==='medium' ? `/video/parlor-women-solid-v2/${character}-hand-${id}.webm` : `/video/hand-performances-v3/${id}.webm`,minimumDuration:7,beats:HAND_BEATS[id]}]));
+].map(([rank,id,character,action])=>[rank,{id,character,action,src:`/video/hand-performances-v3/${id}.webm`,minimumDuration:7,beats:HAND_BEATS[id]}]));
 // Admit only after native alpha, acting, duration, and stage review. Staged paths are never fetched.
 const ADMITTED_V3_HANDS = new Set<string>(['high-card','pair','two-pair','three-kind','straight','flush','full-house','four-kind','straight-flush','royal-flush']);
 const LEGACY_CASTS: Record<string,GhostClip[]> = {
@@ -99,6 +99,7 @@ export class PokerGuests {
     clips.forEach((clip,index)=>{
       const seat=document.createElement('div');seat.className=`poker-guest guest-${index}`;seat.dataset.cast=clip;
       const video=authored?document.createElement('video'):ghostSprite(clip as GhostClip);
+      if (['Pair','Two pair','Flush','Straight flush'].includes(rank)) video.dataset.femalePerformance='true';
       if(authored){
         seat.classList.add('authored-hand-v3');if(definition.character==='queen'||definition.character==='medium')seat.classList.add('resident-guest');video.className='ghost-sprite';video.src=definition.src;
       }else{

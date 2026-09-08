@@ -115,15 +115,11 @@ export class FeatureCinematics {
         spirit.classList.add('authored-feature', 'parlor-feature-resident');
         if (kind === 'ride') spirit.classList.add('rare-mounted-performance');
       }
-      // Repaired women must stay on their solid source in event previews too.
-      const solidFeature = kind === 'witch' ? ['medium', 'witch']
-        : kind === 'fortune' ? ['medium', 'fortune']
-        : kind === 'awaken' && location === 1 ? ['medium', 'saloon']
-        : kind === 'awaken' && location === 3 ? ['queen', 'mine'] : null;
-      if (solidFeature) {
-        spirit.src = `/video/parlor-women-solid-v2/${solidFeature[0]}-feature-${solidFeature[1]}.webm`;
-        spirit.poster = spirit.src.replace('.webm', '.png');
-      }
+      // Keep the original recorded feature acting. The marker keeps added stage
+      // haze and body filters off these performances without substituting stills.
+      const femaleFeature = kind === 'witch' || kind === 'fortune' ||
+        (kind === 'awaken' && (location === 1 || location === 3));
+      if (femaleFeature) spirit.dataset.femalePerformance = 'true';
       this.stage.append(spirit);
       const beats: [
         number,
@@ -223,7 +219,7 @@ export class FeatureCinematics {
       const duration = Number.isFinite(film.duration) ? film.duration : 0;
       const entry = ease(t / .4);
       const exit = duration ? ease((duration - t) / .55) : 1;
-      film.style.opacity = film.src.includes('/parlor-women-solid-v2/') ? '1' : String(entry * exit);
+      film.style.opacity = film.dataset.femalePerformance === 'true' ? '1' : String(entry * exit);
       caption.currentTime = t * 1000;
       const progress = duration ? Math.max(0, Math.min(1, t / duration)) : 0;
       fog.style.opacity = String(Math.sin(Math.PI * progress) * .6);
