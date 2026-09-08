@@ -33,15 +33,23 @@ export class BoundaryCast {
       <feColorMatrix type="saturate" values=".35"/>
       <feComponentTransfer><feFuncR type="linear" slope=".85"/><feFuncG type="linear" slope=".85"/><feFuncB type="linear" slope=".82"/></feComponentTransfer>
     </filter><filter id="resident-fog-color" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 .678 0 0 0 0 .765 0 0 0 0 .737 0 0 0 1 0"/></filter></defs></svg>`);
-    // Quiet the baked cold veil below the hands, preserving the brazier and face.
+    // Quiet the baked cold veil below the hands, with gentler shoulder correction.
+    // Warm skin/bronze and original alpha survive; the face stays outside the band.
     const quietMedium=this.host.querySelector('#resident-soft-rim')!.cloneNode(true) as SVGElement;
     quietMedium.id='medium-quiet-mist';
     quietMedium.querySelector('feMerge')!.setAttribute('result','standard');
     quietMedium.insertAdjacentHTML('beforeend', `<feFlood x="0" y=".44" width="1" height=".56" flood-color="white" result="lowerBody"/>
       <feGaussianBlur in="lowerBody" stdDeviation=".025" result="lowerFade"/>
+      <feFlood x="0" y=".27" width="1" height=".20" flood-color="white" flood-opacity=".85" result="armBand"/>
+      <feGaussianBlur in="armBand" stdDeviation=".025" result="armFade"/>
+      <feComposite in="lowerFade" in2="armFade" operator="over" result="bodyZone"/>
+      <feFlood x=".47" y=".18" width=".43" height=".25" flood-color="white" result="brazierPlume"/>
+      <feGaussianBlur in="brazierPlume" stdDeviation=".018" result="plumeFade"/>
+      <feComposite in="bodyZone" in2="plumeFade" operator="out" result="bodyWithoutPlume"/>
       <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3 2 3 0 -.5" result="bodyCold"/>
-      <feComposite in="bodyCold" in2="lowerFade" operator="in" result="bodyMist"/>
-      <feComponentTransfer in="standard" result="quiet"><feFuncR type="linear" slope=".65"/><feFuncG type="linear" slope=".65"/><feFuncB type="linear" slope=".65"/></feComponentTransfer>
+      <feComposite in="bodyCold" in2="bodyWithoutPlume" operator="in" result="bodyMist"/>
+      <feColorMatrix in="standard" type="saturate" values="1.18" result="clothColor"/>
+      <feComponentTransfer in="clothColor" result="quiet"><feFuncR type="linear" slope=".52"/><feFuncG type="linear" slope=".52"/><feFuncB type="linear" slope=".52"/></feComponentTransfer>
       <feComposite in="quiet" in2="bodyMist" operator="in" result="quietMist"/>
       <feComposite in="standard" in2="bodyMist" operator="out" result="unaffected"/>
       <feComposite in="unaffected" in2="quietMist" operator="arithmetic" k2="1" k3="1"/>`);

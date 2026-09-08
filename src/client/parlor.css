@@ -123,7 +123,7 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); 
 .resident-fog { position:absolute; inset:0; pointer-events:none; z-index:1; }
 .resident-fog video { position:absolute; object-fit:contain; opacity:.25; filter:url(#resident-fog-color); mask-image:linear-gradient(#000 80%,transparent 100%); }
 .resident-fog .left { left:13cqw; top:21cqw; width:19.69cqw; height:35cqw; }
-.resident-fog .right { left:0cqw; top:23cqw; width:18cqw; height:32cqw; }
+.resident-fog .right { left:0cqw; top:23cqw; width:18cqw; height:32cqw; opacity:.035; }
 
 
 /* One authored coordinate system. Letterboxing preserves every spatial relationship. */

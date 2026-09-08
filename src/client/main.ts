@@ -285,7 +285,16 @@ function showSpectacle(
       spectacleTimer = setTimeout(close, 250);
     }, {once:true});
     nativePerformance.addEventListener("error", close, {once:true});
-    // Failure watchdog, not an animation duration. Native films finish themselves.
+    // Fifteen seconds without decoded progress is a failure; a film that is
+    // still advancing must not lose its ending after a slow initial load.
+    let lastNativeProgress = -1;
+    nativePerformance.addEventListener('timeupdate', () => {
+      if (sequence !== spectacleSequence || nativePerformance.ended || el('spectacle').hidden) return;
+      if (nativePerformance.currentTime <= lastNativeProgress) return;
+      lastNativeProgress = nativePerformance.currentTime;
+      clearTimeout(spectacleTimer);
+      spectacleTimer = setTimeout(close, 15000);
+    }, {signal:spectacleAudioEvents.signal});
     spectacleTimer = setTimeout(close, 15000);
   } else {
     spectacleTimer = setTimeout(close, reduced ? 900 : kind === "ride" ? 8000 : (kind === "noon" || kind === "brand") ? 7200 : 5700);

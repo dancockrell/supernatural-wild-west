@@ -7,8 +7,11 @@ export class FeatureCinematics {
   private stage = document.createElement("div");
   private reduced = false;
   private observer: MutationObserver;
+  private performance?: AbortController;
+  private nativeAnimations = new WeakSet<Animation>();
   private syncPlayback = () => {
     for (const animation of this.stage.getAnimations({ subtree: true })) {
+      if (this.nativeAnimations.has(animation)) continue;
       if (this.host.hidden || document.hidden || this.reduced) animation.pause();
       else animation.play();
     }
@@ -41,6 +44,8 @@ export class FeatureCinematics {
       this.host.getAnimations({ subtree: true }).forEach((a) => a.cancel());
   }
   play(kind: FeatureScene, location = 0) {
+    this.performance?.abort();
+    this.performance = new AbortController();
     this.stage.querySelectorAll("video").forEach((v) => v.pause());
     this.host.dataset.scene = kind;
     const reel = document
@@ -168,8 +173,8 @@ export class FeatureCinematics {
       "--caption-top",
       `${Math.min(cabinet.bottom, document.querySelector(".controls")!.getBoundingClientRect().top) - card.offsetHeight - 36}px`,
     );
-    if (!document.body.classList.contains("reduced-motion"))
-      card.animate(
+    if (!document.body.classList.contains("reduced-motion")) {
+      const caption = card.animate(
         [
           { opacity: 0, transform: "translateY(25px) scale(.9)" },
           { opacity: 1, transform: "none" },
@@ -177,12 +182,60 @@ export class FeatureCinematics {
         {
           delay: kind === "ride" ? 550 : 350,
           duration: 650,
-          fill: "backwards",
+          fill: "both",
           easing: "cubic-bezier(.12,.8,.2,1)",
         },
       );
+      const film = this.stage.querySelector<HTMLVideoElement>('.feature-ghost');
+      const fog = this.stage.querySelector<HTMLElement>('.performance-fog');
+      if (film && fog) this.followNativeFilm(film, fog, caption, this.performance.signal);
+    }
+  }
+  private followNativeFilm(film: HTMLVideoElement, fog: HTMLElement, caption: Animation, signal: AbortSignal) {
+    // No bright poster flash while the decoder warms up, and no separate fog or
+    // caption clock drifting ahead of a buffered/paused performance.
+    film.preload = 'auto';
+    film.style.animation = 'none';
+    fog.style.animation = 'none';
+    caption.pause();
+    this.nativeAnimations.add(caption);
+    let request: number | undefined;
+    const native = typeof film.requestVideoFrameCallback === 'function';
+    const cancel = () => {
+      if (request !== undefined) {
+        if (native) film.cancelVideoFrameCallback(request); else cancelAnimationFrame(request);
+        request = undefined;
+      }
+    };
+    const draw = () => {
+      if (signal.aborted) return;
+      const t = film.currentTime;
+      const ease = (x: number) => { const v = Math.max(0, Math.min(1, x)); return v * v * (3 - 2 * v); };
+      const duration = Number.isFinite(film.duration) ? film.duration : 0;
+      const entry = ease(t / .4);
+      const exit = duration ? ease((duration - t) / .55) : 1;
+      film.style.opacity = String(entry * exit);
+      caption.currentTime = t * 1000;
+      const progress = duration ? Math.max(0, Math.min(1, t / duration)) : 0;
+      fog.style.opacity = String(Math.sin(Math.PI * progress) * .6);
+      fog.style.transform = `translateX(${-3 + progress * 8}%) scaleX(${.94 + progress * .14})`;
+    };
+    const schedule = () => {
+      if (signal.aborted || film.paused || film.ended || this.host.hidden || document.hidden || request !== undefined) return;
+      const frame = () => { request = undefined; draw(); schedule(); };
+      request = native ? film.requestVideoFrameCallback(frame) : requestAnimationFrame(frame);
+    };
+    film.addEventListener('playing', schedule, { signal });
+    film.addEventListener('pause', cancel, { signal });
+    film.addEventListener('waiting', cancel, { signal });
+    film.addEventListener('timeupdate', draw, { signal });
+    film.addEventListener('seeked', draw, { signal });
+    film.addEventListener('ended', () => { cancel(); draw(); }, { signal });
+    signal.addEventListener('abort', () => { cancel(); caption.cancel(); this.nativeAnimations.delete(caption); }, { once: true });
+    draw(); schedule();
   }
   dispose() {
+    this.performance?.abort();
     this.stage.querySelectorAll("video").forEach((v) => v.pause());
     this.observer.disconnect();
     document.removeEventListener("visibilitychange", this.syncPlayback);

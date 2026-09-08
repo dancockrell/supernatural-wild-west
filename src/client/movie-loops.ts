@@ -35,6 +35,7 @@ export class MovieSymbols {
   private sources = new Map<MovieKey, HTMLVideoElement>();
   private posters = new Map<MovieKey, HTMLImageElement>();
   private tiles: { canvas: HTMLCanvasElement; key: MovieKey }[] = [];
+  private decodedTiles = new WeakMap<HTMLCanvasElement, MovieKey>();
   private reduced = false;
   private dirty = true;
   private previous = 0;
@@ -81,13 +82,25 @@ export class MovieSymbols {
     for (const { canvas, key } of this.tiles) {
       const source = this.sources.get(key);
       const poster = this.posters.get(key);
+      const decoded = source && !source.seeking && source.readyState >= 2 &&
+        source.videoWidth > 0 && source.videoHeight > 0;
+      // Decoder gaps at a loop boundary must not flash the opening poster.
+      // Keep this tile's last native frame, but never keep a different symbol.
+      if (!decoded && this.decodedTiles.get(canvas) === key) continue;
       const frame =
-        source && source.readyState >= 2
+        decoded
           ? source
           : poster?.complete && poster.naturalWidth
             ? poster
             : undefined;
-      if (!frame) continue;
+      if (!frame) {
+        if (this.decodedTiles.has(canvas) && this.decodedTiles.get(canvas) !== key) {
+          canvas.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height);
+          this.decodedTiles.delete(canvas);
+          delete canvas.dataset.ready;
+        }
+        continue;
+      }
       const ctx = canvas.getContext("2d");
       if (!ctx) continue;
       if (canvas.width !== 320) {
@@ -111,6 +124,8 @@ export class MovieSymbols {
         } else ctx.drawImage(frame, w * 0.25, 0, w * 0.5, h * 0.65, 0, 0, 320, 240);
       } else ctx.drawImage(frame, 0, 0, 320, 240);
       canvas.dataset.ready = frame === source ? "true" : "poster";
+      if (frame === source) this.decodedTiles.set(canvas, key);
+      else this.decodedTiles.delete(canvas);
     }
   };
 }
