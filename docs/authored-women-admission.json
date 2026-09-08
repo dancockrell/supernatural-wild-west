@@ -1,0 +1,192 @@
+{
+  "status": "native lantern acting and isolated prop smoke; brazier acting remains unadmitted",
+  "method": "Original source RGB geometry and timing, tracked alpha only, selective cool-spill color correction. No RGB remapping, motion transfer, mesh movement or synthetic body animation.",
+  "queenSourceFamily": "cast-replacement-v1/queen-{idle,alternate,listen,reaction}-source.mp4",
+  "smoke": "Recorded bowl plume, neutral #adc3bc, max alpha 56/255; excludes all opaque actor pixels.",
+  "remaining": "Brazier performances contain baked moving haze on skin and were rejected, including the late saloon sequence. Women major event and hand films still use opaque artwork. No new paid generation this pass.",
+  "assets": [
+    {
+      "path": "/video/parlor-women-authored-v1/brazier-smoke.png",
+      "sha256": "88719bc0ddcf5b51ee0c3356c9f06b6283ba5c87e573bbb4664daf95b33352c8",
+      "bytes": 14144
+    },
+    {
+      "path": "/video/parlor-women-authored-v1/brazier-smoke.webm",
+      "sha256": "7bab8ba3553ef6c1039eb36e49fa10aa194adfbda4afc419ff0d9e4986ba3efc",
+      "bytes": 447237,
+      "width": 720,
+      "height": 1280,
+      "frames": 97,
+      "fps": 24.0,
+      "method": "Recorded source intensity only; static bounded soft ROI above rim; admitted clean opaque actor silhouette subtracted. Neutral fog color, no sourceRGB, body pixels, synthetic motion or RGB warping.",
+      "validation": {
+        "decodedFrames": 97,
+        "uniqueRGBAFrames": 97,
+        "maxDecodedAlpha": 56,
+        "maxAlphaOnOpaqueActor": 0,
+        "minimumNearRimPeakAlpha": 56,
+        "actualBoundsUnion": [
+          206,
+          260,
+          330,
+          424
+        ]
+      }
+    },
+    {
+      "path": "/video/parlor-women-authored-v1/queen-alternate.png",
+      "sha256": "f35ec0c7eb2750632c393c13668296b5103d8f7c27b13b298d28c3fd5771a7c4",
+      "bytes": 549467
+    },
+    {
+      "path": "/video/parlor-women-authored-v1/queen-alternate.webm",
+      "sha256": "fa3ef133fb3297461a8245f0ffd296702730cf89ee25e8abbd98b29f526f405a",
+      "bytes": 3710655,
+      "width": 720,
+      "height": 1280,
+      "frames": 145,
+      "fps": 24.0,
+      "duration": 6.041666666666667,
+      "method": "Every native source RGB frame preserved at original geometry and cadence; only tracked opaque-body alpha and cool-spill RGB correction applied. Optical flow tracks matte only; no RGB remapping or synthesized movement."
+    },
+    {
+      "path": "/video/parlor-women-authored-v1/queen-character-idle.png",
+      "sha256": "1c6316ad57979d07a8ca10e2a079114c0308b42643dc28617dec026abe12fef6",
+      "bytes": 547728
+    },
+    {
+      "path": "/video/parlor-women-authored-v1/queen-character-idle.webm",
+      "sha256": "b688d8049f4c90c3e9b924a14c4279a4bbc61700aba0dd36ac276116fd869387",
+      "bytes": 2465783,
+      "width": 720,
+      "height": 1280,
+      "frames": 97,
+      "fps": 24.0,
+      "duration": 4.041666666666667,
+      "method": "Every native source RGB frame preserved at original geometry and cadence; only tracked opaque-body alpha and cool-spill RGB correction applied. Optical flow tracks matte only; no RGB remapping or synthesized movement."
+    },
+    {
+      "path": "/video/parlor-women-authored-v1/queen-idle.png",
+      "sha256": "2982268adc6bdfc7ea5bf08ff9a4d0abc2ff621e23da1e22335c480c0cc02a43",
+      "bytes": 584351
+    },
+    {
+      "path": "/video/parlor-women-authored-v1/queen-idle.webm",
+      "sha256": "cf96ffd39f60ef382dffd47425e00886a948568c6adbe86b8607427097dc1af6",
+      "bytes": 2775530,
+      "width": 720,
+      "height": 1280,
+      "frames": 121,
+      "fps": 24.0,
+      "duration": 5.041666666666667,
+      "method": "Every native source RGB frame preserved at original geometry and cadence; only tracked opaque-body alpha and cool-spill RGB correction applied. Optical flow tracks matte only; no RGB remapping or synthesized movement."
+    },
+    {
+      "path": "/video/parlor-women-authored-v1/queen-reaction.png",
+      "sha256": "8705814436e85ab507c6864e8c7dc50ba7200fa3116ecdc2d646fa268a241762",
+      "bytes": 552275
+    },
+    {
+      "path": "/video/parlor-women-authored-v1/queen-reaction.webm",
+      "sha256": "a112385a6fed805b55e363f018884fc5e131eab99f478df8741ad915f922a2ce",
+      "bytes": 2634423,
+      "width": 720,
+      "height": 1280,
+      "frames": 97,
+      "fps": 24.0,
+      "duration": 4.041666666666667,
+      "method": "Every native source RGB frame preserved at original geometry and cadence; only tracked opaque-body alpha and cool-spill RGB correction applied. Optical flow tracks matte only; no RGB remapping or synthesized movement."
+    }
+  ],
+  "queenDecoded": [
+    {
+      "name": "idle",
+      "decodedFrames": 121,
+      "alphaOpaqueFractionMin": 0.29750868055555557,
+      "alphaEmptyFractionMin": 0.6447808159722223,
+      "opaqueSamples": {
+        "face": 255,
+        "chest": 255,
+        "coat": 255,
+        "pants": 255,
+        "boot": 255,
+        "lantern": 255,
+        "corner": 0
+      },
+      "loopRgbaMAE": 1.0531315104166667,
+      "adjacentMAEMean": 0.7364678050853588,
+      "adjacentMAEP95": 1.3154917534722221,
+      "allFramesContainTransparency": true
+    },
+    {
+      "name": "alternate",
+      "decodedFrames": 145,
+      "alphaOpaqueFractionMin": 0.29918294270833334,
+      "alphaEmptyFractionMin": 0.6293337673611111,
+      "opaqueSamples": {
+        "face": 255,
+        "chest": 255,
+        "coat": 255,
+        "pants": 255,
+        "boot": 255,
+        "lantern": 255,
+        "corner": 0
+      },
+      "loopRgbaMAE": 1.1737242296006944,
+      "adjacentMAEMean": 0.9152442291636527,
+      "adjacentMAEP95": 2.0549058024088542,
+      "allFramesContainTransparency": true
+    },
+    {
+      "name": "character-idle",
+      "decodedFrames": 97,
+      "alphaOpaqueFractionMin": 0.28745225694444443,
+      "alphaEmptyFractionMin": 0.6501529947916667,
+      "opaqueSamples": {
+        "face": 255,
+        "chest": 255,
+        "coat": 255,
+        "pants": 255,
+        "boot": 255,
+        "lantern": 255,
+        "corner": 0
+      },
+      "loopRgbaMAE": 1.0808140733506943,
+      "adjacentMAEMean": 1.3168634739628546,
+      "adjacentMAEP95": 3.0593975830078124,
+      "allFramesContainTransparency": true
+    },
+    {
+      "name": "reaction",
+      "decodedFrames": 97,
+      "alphaOpaqueFractionMin": 0.3020822482638889,
+      "alphaEmptyFractionMin": 0.6439485677083333,
+      "opaqueSamples": {
+        "face": 255,
+        "chest": 255,
+        "coat": 255,
+        "pants": 255,
+        "boot": 255,
+        "lantern": 255,
+        "corner": 0
+      },
+      "loopRgbaMAE": 1.1815201822916668,
+      "adjacentMAEMean": 0.9116818180790652,
+      "adjacentMAEP95": 1.7855483669704861,
+      "allFramesContainTransparency": true
+    }
+  ],
+  "validation": {
+    "build": "passed",
+    "nativeChromeBrowserTests": 6,
+    "viewport": "3840x2160",
+    "coverage": [
+      "Full lantern idle cycle with fixed stage placement",
+      "Opaque decoded actor bodies and restrained smoke bounds",
+      "Four lantern gallery performances without wagers",
+      "Resident handoffs and visibility interruptions",
+      "Existing women feature and hand artwork retains no surrounding haze"
+    ],
+    "reviewImage": "docs/solid-women-room-4k.png"
+  }
+}

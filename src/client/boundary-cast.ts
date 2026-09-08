@@ -7,6 +7,8 @@ import { parlorResidentMedia } from './resident-media';
 export class BoundaryCast {
   private host = document.createElement('aside');
   private residents = new Map<'queen' | 'medium', ResidentSequence>();
+  private plume?: HTMLVideoElement;
+  private reduced = false;
   constructor(shell: Element, sound: (cue: 'lantern' | 'breath') => void) {
     this.host.className = 'boundary-cast';
     this.host.setAttribute('aria-hidden', 'true');
@@ -40,11 +42,20 @@ export class BoundaryCast {
       const media = parlorResidentMedia(key);
       const idle = movie(key, offset, media.idle);
       const reaction = movie(key, 0, media.reaction);
-      const alternateIdles = parlor
+      const alternateIdles = parlor && key === 'queen'
         ? [movie(key, 0, media.alternate), movie(key, 0, media.characterIdle),
            ...media.quietVariants.map(src => movie(key, 0, src))]
         : [];
       slot.append(idle); this.host.append(slot);
+      if (parlor && key === 'medium') {
+        const plume = document.createElement('video');
+        plume.className = 'brazier-plume';
+        plume.src = '/video/parlor-women-authored-v1/brazier-smoke.webm';
+        plume.poster = plume.src.replace('.webm', '.png');
+        plume.muted = true; plume.loop = true; plume.playsInline = true;
+        plume.preload = 'auto';
+        slot.append(plume); this.plume = plume;
+      }
       this.residents.set(key, new ResidentSequence(slot, idle, reaction,
         () => document.getElementById('spectacle')?.hidden !== false,
         () => sound(key === 'queen' ? 'lantern' : 'breath'), alternateIdles));
@@ -55,10 +66,15 @@ export class BoundaryCast {
     this.sync();
   }
   private sync = () => {
+    if (this.plume) {
+      if (document.hidden || this.reduced) this.plume.pause();
+      else void this.plume.play().catch(() => {});
+    }
     for (const resident of this.residents.values())
       resident.setPaused(document.hidden || (!new URLSearchParams(location.search).has('parlor') && matchMedia('(max-width: 900px)').matches));
   };
   setReduced(value: boolean) {
+    this.reduced = value;
     for (const resident of this.residents.values()) resident.setReduced(value);
     this.sync();
   }

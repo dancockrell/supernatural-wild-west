@@ -914,6 +914,7 @@
 /* Opaque women retain natural source color and silhouette in every presentation.
    Contact and cast shadows belong to the floor and remain separate. */
 .unified-parlor video[src*="/parlor-women-solid-v2/"],
+.unified-parlor video[src*="/parlor-women-authored-v1/"],
 .unified-parlor .boundary-cast .ghost-porch canvas,
 .unified-parlor canvas[data-movie="queen"],
 .unified-parlor canvas[data-movie="medium"] {
