@@ -237,8 +237,11 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); 
 .narrative-gambler.table-plate-ready video { clip-path:inset(0 0 50% 0); }
 .narrative-gambler.table-plate-ready .gambler-table-plate { opacity:1; }
 
-/* Foreground women use their admitted natural color with no shader. */
-.unified-parlor .ghost-porch video { filter:none; }
+/* Foreground women keep their admitted natural colour: this filter touches the
+   alpha channel only, so no shader is applied to the picture. It fades the
+   spectral ribbons, which live in the partially transparent fringe, and leaves
+   her body alone because that is solid alpha. --wisp-fade drops it to `none`. */
+.unified-parlor .ghost-porch video { filter:var(--wisp-fade, url(#ghost-wisp-fade)); }
 .unified-parlor .ghost-porch .brazier-plume { position:absolute; z-index:1; pointer-events:none; opacity:1; mix-blend-mode:normal; }
 
 .unified-parlor canvas[data-movie='queen'],

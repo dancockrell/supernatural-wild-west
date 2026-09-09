@@ -756,11 +756,18 @@
 }
 
 /* Draw admitted foreground women directly, without a character shader. */
-.unified-parlor .boundary-cast .ghost-porch video,
 .unified-parlor .boundary-cast .ghost-porch canvas,
 .unified-parlor .feature-ghost.parlor-feature-resident,
 .unified-parlor .poker-guest.resident-guest video {
   filter: none;
+}
+/* Same intent for the resident clips, with the wisp fade as the one exception.
+   That is not a character shader: it bends the alpha curve only, so the picture
+   is untouched and her body, being solid alpha, does not thin. It lives here
+   rather than in parlor.css because this selector is more specific and was
+   silently winning. Set --wisp-fade to `none` for the full-strength ribbons. */
+.unified-parlor .boundary-cast .ghost-porch video {
+  filter: var(--wisp-fade, url(#ghost-wisp-fade));
 }
 /* A single authored hand performance occupies the theatre above the player controls.
    The runtime fits native media inside this box without enlarging its pixels. */
@@ -920,9 +927,17 @@
 }
 
 /* Restored native female films: no extra body relighting, masks or fog. */
-.unified-parlor video[data-female-performance],
-.unified-parlor .boundary-cast .ghost-porch video[data-movie] {
+.unified-parlor video[data-female-performance] {
  filter:none; opacity:1; mix-blend-mode:normal; mask-image:none;
+}
+/* The residents get the same treatment, with the wisp fade as the one
+   exception. It is not body relighting: it touches the alpha channel only, so
+   the picture is untouched and her body, being solid alpha, does not thin. This
+   selector is the most specific of the several that set `filter` on these
+   clips, which is why the fade has to be declared here to take effect.
+   Set --wisp-fade to `none` to get the full-strength ribbons back. */
+.unified-parlor .boundary-cast .ghost-porch video[data-movie] {
+ filter:var(--wisp-fade, url(#ghost-wisp-fade)); opacity:1; mix-blend-mode:normal; mask-image:none;
 }
 .unified-parlor .feature-stage:has(video[data-female-performance]) .performance-fog,
 .unified-parlor .feature-stage:has(video[data-female-performance]) .apparition-light { display:none; }

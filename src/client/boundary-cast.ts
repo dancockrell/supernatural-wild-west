@@ -32,7 +32,15 @@ export class BoundaryCast {
     </filter><filter id="mounted-fog-light" color-interpolation-filters="sRGB">
       <feColorMatrix type="saturate" values=".35"/>
       <feComponentTransfer><feFuncR type="linear" slope=".85"/><feFuncG type="linear" slope=".85"/><feFuncB type="linear" slope=".82"/></feComponentTransfer>
-    </filter><filter id="resident-fog-color" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 .678 0 0 0 0 .765 0 0 0 0 .737 0 0 0 1 0"/></filter></defs></svg>`);
+    </filter><filter id="resident-fog-color" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 .678 0 0 0 0 .765 0 0 0 0 .737 0 0 0 1 0"/></filter><filter id="ghost-wisp-fade" color-interpolation-filters="sRGB">
+      <!-- Fades the spectral ribbons without thinning the women themselves.
+           It works because of where the two live in the alpha channel: her
+           body is solid (alpha above 230, about 88k pixels of this frame) and
+           the wisps are the partially transparent fringe (41k pixels). Bending
+           the alpha curve down in the middle takes the effect and leaves her.
+           The last table value stays 1 so nothing opaque is touched. -->
+      <feComponentTransfer><feFuncA type="table" tableValues="0 0.12 0.30 0.58 0.85 1"/></feComponentTransfer>
+    </filter></defs></svg>`);
     const parlor = new URLSearchParams(location.search).has('parlor');
     for (const [key, side, offset] of [['queen','left',.35],['medium','right',2.1]] as const) {
       const slot = document.createElement('div');
