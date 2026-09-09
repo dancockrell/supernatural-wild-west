@@ -913,23 +913,10 @@
 
 /* Opaque women retain natural source color and silhouette in every presentation.
    Contact and cast shadows belong to the floor and remain separate. */
-.unified-parlor video[src*="/parlor-women-solid-v2/"],
-.unified-parlor video[src*="/parlor-women-authored-v1/"],
 .unified-parlor .boundary-cast .ghost-porch canvas,
 .unified-parlor canvas[data-movie="queen"],
 .unified-parlor canvas[data-movie="medium"] {
  filter:none; opacity:1; mix-blend-mode:normal; mask-image:none;
-}
-.unified-parlor .feature-stage:has(video[src*="/parlor-women-solid-v2/"]) .performance-fog,
-.unified-parlor .feature-stage:has(video[src*="/parlor-women-solid-v2/"]) .apparition-light {
- display:none;
-}
-.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage:has(video[src*="/parlor-women-solid-v2/"])::before,
-.unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage:has(video[src*="/parlor-women-solid-v2/"])::after {
- content:none;
-}
-.unified-parlor .feature-stage .feature-ghost[src*="/parlor-women-solid-v2/"] {
- filter:none; mix-blend-mode:normal; mask-image:none; animation:none;
 }
 
 /* Restored native female films: no extra body relighting, masks or fog. */
