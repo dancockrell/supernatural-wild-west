@@ -44,6 +44,15 @@ export class BoundaryCast {
         ? [movie(key, 0, media.alternate), movie(key, 0, media.characterIdle),
            ...media.quietVariants.map(src => movie(key, 0, src))]
         : [];
+      // Contact shadow. The gambler has had one since narrative-gambler.ts,
+      // and without it these two read as pasted onto the floor rather than
+      // standing on it. Placed against the boots in the running scene, not
+      // against the frame: the clips carry a spectral trail below the feet,
+      // so the lowest opaque pixel is well under where the figure touches.
+      const contact = document.createElement('div');
+      contact.className = 'resident-contact-shadow';
+      contact.setAttribute('aria-hidden', 'true');
+      slot.append(contact);
       slot.append(idle); this.host.append(slot);
       this.residents.set(key, new ResidentSequence(slot, idle, reaction,
         () => document.getElementById('spectacle')?.hidden !== false,
