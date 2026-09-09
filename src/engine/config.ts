@@ -44,7 +44,7 @@ export const CONFIG = {
       ).map((n) => Math.round(n * 14.125)),
     ]),
   ) as Record<Regular, number[]>,
-  payoutScale: 0.34,
+  payoutScale: 0.34541,
   strips: Array.from({ length: 5 }, (_, i) => [
     ...strip.slice(i * 9),
     ...strip.slice(0, i * 9),
