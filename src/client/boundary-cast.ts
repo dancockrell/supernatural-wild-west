@@ -53,7 +53,28 @@ export class BoundaryCast {
       contact.className = 'resident-contact-shadow';
       contact.setAttribute('aria-hidden', 'true');
       slot.append(contact);
-      slot.append(idle); this.host.append(slot);
+      slot.append(idle);
+
+      // The practical each one carries, throwing light. Both women hold a lit
+      // thing - a lantern, a burning bowl - and neither was lit by it: the
+      // footage has them lit flat from the front, so a bright source sat in
+      // frame emitting nothing and they read as pasted over the room.
+      //
+      // Deliberately not clipped to her silhouette. A lantern lights the wall
+      // and the balustrade behind it too, and letting the pool fall on the
+      // room is both cheaper and more correct than masking it to her edge.
+      //
+      // This lives here rather than being baked into the clips because the
+      // alpha round trip through ffmpeg destroys the cutout - measured, the
+      // transparent share fell from 72% to 48% and the magenta test field
+      // showed straight through her. Compositing in the browser is free,
+      // lossless, and leaves the strength a number somebody can tune.
+      const glow = document.createElement('div');
+      glow.className = `resident-practical-light ${key}`;
+      glow.setAttribute('aria-hidden', 'true');
+      slot.append(glow);
+
+      this.host.append(slot);
       this.residents.set(key, new ResidentSequence(slot, idle, reaction,
         () => document.getElementById('spectacle')?.hidden !== false,
         () => sound(key === 'queen' ? 'lantern' : 'breath'), alternateIdles));
