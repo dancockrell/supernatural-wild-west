@@ -119,11 +119,11 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); 
 @media(min-width:0px) {
  .unified-parlor .shell { position:absolute; left:0; top:0; }
 }
-/* Foreground haze sits over the whole room, so it is the one layer that costs
-   contrast everywhere at once. At full strength it greyed the reel symbols and
-   buried the gambler at the right-hand table. The resident fog beside it has
-   run at .25 all along; this had no opacity at all. */
-.parlor-foreground-fog { position:absolute; left:0; top:0; width:100%; height:auto; pointer-events:none; z-index:1; opacity:var(--foreground-fog, .45); }
+/* Full strength on purpose. This was dimmed to .45 on 9 Sep 2026 and Dan put
+   it straight back: the floor fog was never the problem. What reads as "too
+   bright" is the pink and blue rim baked into the resident footage itself,
+   which no rule here can reach. Leave this alone. */
+.parlor-foreground-fog { position:absolute; left:0; top:0; width:100%; height:auto; pointer-events:none; z-index:1; }
 /* Where each resident meets the floor. Percentages are of her own slot and were
    read off the running scene: the queen stands a little lower in frame than the
    medium, and both clips carry a spectral trail below the boots, so these are
