@@ -40,11 +40,40 @@ class FakeAudio {
     this.paused = true;
   }
 }
+/**
+ * Stand-in for an AudioParam.
+ *
+ * `setValueAtTime` and `linearRampToValueAtTime` are here because the music
+ * duck is now a ramp scheduled on the audio thread rather than a main-thread
+ * timer stepping `score.volume`. Without them this mock did not model the API
+ * the code calls, and every test in this file threw on the first duck.
+ *
+ * The ramp lands immediately: these tests drive fake timers and assert where a
+ * level ends up, not the shape of the curve on the way there.
+ */
 const param = () => ({
   value: 0,
   cancelScheduledValues() {},
   setTargetAtTime() {},
+  setValueAtTime(this: { value: number }, next: number) {
+    this.value = next;
+  },
+  linearRampToValueAtTime(this: { value: number }, next: number) {
+    this.value = next;
+  },
 });
+/**
+ * What the theme actually sounds like.
+ *
+ * The player's chosen level lives on the media element and the duck envelope
+ * lives on a gain node, so neither one alone is the level you hear. Asserting
+ * their product keeps these tests about the audible result rather than about
+ * which of the two the duck happens to be implemented on.
+ */
+const heard = (bus: unknown) => {
+  const inner = bus as { score?: { volume: number }; musicGain?: { gain: { value: number } } };
+  return (inner.score?.volume ?? 0) * (inner.musicGain?.gain.value ?? 1);
+};
 const node = () => ({
   gain: param(),
   frequency: param(),
@@ -117,7 +146,7 @@ describe("native-clock event score transport", () => {
     expect(first.paused).toBe(true);
     expect((bus as any).eventScoreVoices.size).toBe(1);
     await vi.advanceTimersByTimeAsync(120);
-    expect(FakeAudio.all[0].volume).toBeCloseTo(.2*.18);
+    expect(heard(bus)).toBeCloseTo(.2*.18);
     bus.enabled=false;
   });
   it("an incidental release cannot unduck the theme over the event fade tail", async () => {
@@ -126,9 +155,9 @@ describe("native-clock event score transport", () => {
     (bus as any).duckMusic(50,.5);
     bus.stopEventScore(1500);
     await vi.advanceTimersByTimeAsync(800);
-    expect(FakeAudio.all[0].volume).toBeCloseTo(.2*.18);
+    expect(heard(bus)).toBeCloseTo(.2*.18);
     await vi.advanceTimersByTimeAsync(1500);
-    expect(FakeAudio.all[0].volume).toBeCloseTo(.2);
+    expect(heard(bus)).toBeCloseTo(.2);
     bus.enabled=false;
   });
 
@@ -158,7 +187,7 @@ describe("native-clock event score transport", () => {
     oldStop();
     await vi.advanceTimersByTimeAsync(800);
     expect(latest.paused).toBe(false);
-    expect(FakeAudio.all[0].volume).toBeCloseTo(0.2 * 0.18);
+    expect(heard(bus)).toBeCloseTo(0.2 * 0.18);
     bus.enabled = false;
   });
   it("mute cancels pending playback even if its play promise resolves afterwards", async () => {
@@ -238,9 +267,9 @@ describe("native-clock event score transport", () => {
     (bus as any).duckMusic(2000, 0.5);
     stop();
     await vi.advanceTimersByTimeAsync(1000);
-    expect(FakeAudio.all[0].volume).toBeCloseTo(0.1);
+    expect(heard(bus)).toBeCloseTo(0.1);
     await vi.advanceTimersByTimeAsync(1800);
-    expect(FakeAudio.all[0].volume).toBeCloseTo(0.2);
+    expect(heard(bus)).toBeCloseTo(0.2);
     bus.enabled = false;
   });
 });

@@ -220,6 +220,7 @@ export class SoundBus {
   private machine?: GainNode;
   private compressor?: DynamicsCompressorNode;
   private musicFilter?: BiquadFilterNode;
+  private musicGain?: GainNode;
   private scoreSource?: MediaElementAudioSourceNode;
   private duckUntil = 0;
   private quietFoleyUntil = 0;
@@ -275,7 +276,13 @@ export class SoundBus {
     this.musicFilter.type = "lowpass";
     this.musicFilter.Q.value = 0.55;
     this.musicFilter.frequency.value = this.night ? 3400 : 10000;
-    this.musicFilter.connect(this.compressor);
+    // Ducking envelope, between the filter and the bus. It exists so the duck
+    // can be a scheduled ramp on the audio thread instead of a main-thread
+    // timer stepping `score.volume`; see fadeMusic. Starts open at 1.
+    this.musicGain = this.context.createGain();
+    this.musicGain.gain.value = 1;
+    this.musicFilter.connect(this.musicGain);
+    this.musicGain.connect(this.compressor);
   }
   private night = false;
   private get scorePath() {
@@ -294,6 +301,21 @@ export class SoundBus {
   private score?: HTMLAudioElement;
   private restoreMusicTimer?: ReturnType<typeof setTimeout>;
   private musicFadeTimer?: ReturnType<typeof setInterval>;
+  /**
+   * Cancel any scheduled duck and open the envelope immediately.
+   *
+   * Every place that drops duck state has to call this. Clearing `duckScale`
+   * alone used to be enough because the duck lived in `score.volume`, which the
+   * same code paths reset. Now that a ramp can be sitting in the audio thread's
+   * schedule, a suspend or a disable in the middle of one would otherwise leave
+   * the theme quiet with nothing left running to bring it back.
+   */
+  private openMusicEnvelope() {
+    if (!this.musicGain || !this.context) return;
+    const now = this.context.currentTime;
+    this.musicGain.gain.cancelScheduledValues(now);
+    this.musicGain.gain.setValueAtTime(1, now);
+  }
   get enabled() {
     return this.active;
   }
@@ -303,6 +325,7 @@ export class SoundBus {
     clearInterval(this.musicFadeTimer);
     this.duckUntil = 0;
     this.duckScale = 1;
+    this.openMusicEnvelope();
     if (value) {
       this.prepare();
       void this.context!.resume();
@@ -343,9 +366,36 @@ export class SoundBus {
       this.fadeMusic(this.musicVolume * this.themeDuckScale(), 650);
     }, this.duckUntil - performance.now());
   }
+  /**
+   * Ride the theme to `target` over `milliseconds`.
+   *
+   * Prefers the gain node, because that ramp is scheduled on the audio thread
+   * and holds its shape whatever the main thread is doing. The fallback below
+   * steps `score.volume` from a 20ms `setInterval`, which is main-thread work:
+   * while the decoder is busy those ticks arrive late and unevenly, so a duck
+   * that should glide instead lurches or stalls part way down. It goes wrong
+   * exactly when a lot is happening on screen, which is when ducking matters.
+   *
+   * The fallback stays for the case where there is no audio graph yet.
+   */
   private fadeMusic(target: number, milliseconds: number) {
     clearInterval(this.musicFadeTimer);
     if (!this.score) return;
+    const gain = this.musicGain;
+    if (gain && this.context) {
+      // The element carries the player's chosen level and the node carries the
+      // envelope. Splitting the two is what lets the ramp leave this thread.
+      const scale = this.musicVolume > 0 ? target / this.musicVolume : 0;
+      this.score.volume = this.musicVolume;
+      const now = this.context.currentTime;
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.linearRampToValueAtTime(
+        Math.max(0, Math.min(1, scale)),
+        now + Math.max(0.001, milliseconds / 1000),
+      );
+      return;
+    }
     const startVolume = this.score.volume;
     const startedAt = performance.now();
     this.musicFadeTimer = setInterval(() => {
@@ -823,6 +873,7 @@ export class SoundBus {
     clearInterval(this.musicFadeTimer);
     this.duckUntil = 0;
     this.duckScale = 1;
+    this.openMusicEnvelope();
     if (this.score) this.score.volume = this.musicVolume;
     this.stopVoices();
     this.score?.pause();
