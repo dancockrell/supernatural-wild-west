@@ -35,8 +35,11 @@ export function initialState(balance = CONFIG.initialBalance): GameState {
   };
 }
 export function evaluateWays(grid: Grid, bet: number): Win[] {
-  if (grid.length !== 5 || grid.some((r) => r.length !== CONFIG.rows))
-    throw new Error("Expected 5 × 4 grid");
+  if (
+    grid.length !== CONFIG.reels ||
+    grid.some((r) => r.length !== CONFIG.rows)
+  )
+    throw new Error(`Expected ${CONFIG.reels} × ${CONFIG.rows} grid`);
   const wins: Win[] = [];
   for (const symbol of REGULAR) {
     let ways = 1;
@@ -71,21 +74,70 @@ export function evaluateWays(grid: Grid, bet: number): Win[] {
   }
   return wins;
 }
+const isBet = (n: unknown) => CONFIG.bets.includes(n as number);
+const isCredits = (n: unknown) => Number.isSafeInteger(n) && (n as number) >= 0;
+/** A bounded, whole feature counter: 0 ≤ n ≤ max. */
+const isCounter = (n: unknown, max: number) =>
+  Number.isInteger(n) && (n as number) >= 0 && (n as number) <= max;
+/** A set of distinct row/location indices inside [0, max). */
+const isIndexSet = (v: unknown, max: number) =>
+  Array.isArray(v) &&
+  v.length <= max &&
+  new Set(v).size === v.length &&
+  v.every((n) => Number.isInteger(n) && n >= 0 && n < max);
+/**
+ * Every field a spin reads, checked before it is read.
+ *
+ * This is a trust boundary, not a formality: `src/client/browser-demo.ts`
+ * restores a whole GameState out of localStorage on nothing but a
+ * configVersion string match, so a state written by an older build — or by
+ * hand — reaches this function directly. Each condition below was verified
+ * to hold over 300,000 states of real seeded play before being enforced, so
+ * nothing the engine itself produces can be rejected here.
+ *
+ * The phase clauses are the load-bearing ones. A phase has to be both
+ * enterable and leavable, and two restored shapes were neither:
+ * `witching` with `witchSpins <= 0` never expired (the counter ran negative
+ * without bound), and `witching` with a `roundBet` that is not on the
+ * table's list refused every legal wager forever, so the session could
+ * never spin again. Both now fail immediately, naming the state, instead of
+ * deadlocking a player who cannot see why.
+ *
+ * The held poker hand is deliberately NOT re-checked here: settleBoard
+ * already validates it and throws "Invalid held hand", and two checks
+ * answering one question drift apart.
+ */
 function assertState(s: GameState) {
   if (s.configVersion !== CONFIG.version || s.schemaVersion !== 1)
     throw new Error("Config version mismatch");
   if (
-    !Number.isSafeInteger(s.balance) ||
-    s.balance < 0 ||
-    !Number.isSafeInteger(s.sequence) ||
-    s.sequence < 0
+    !isCredits(s.balance) ||
+    !isCredits(s.sequence) ||
+    !isCredits(s.roundWin) ||
+    !isCredits(s.bonusWin) ||
+    !(s.roundBet === 0 || isBet(s.roundBet)) ||
+    !(s.bonusBet === 0 || isBet(s.bonusBet))
   )
     throw new Error("Invalid ledger state");
+  if (!["noon", "witching", "bonus"].includes(s.phase))
+    throw new Error(`Unknown phase '${s.phase}'`);
   if (
-    s.phase === "bonus" &&
-    (s.freeSpins < 1 || !CONFIG.bets.includes(s.bonusBet))
+    !isCounter(s.witchSpins, CONFIG.witchDuration) ||
+    !isCounter(s.freeSpins, CONFIG.maxFreeSpins) ||
+    !isCounter(s.bonusAwarded, CONFIG.maxFreeSpins)
   )
+    throw new Error("Invalid feature counters");
+  if (
+    !isIndexSet(s.awakened, LOCATIONS.length) ||
+    !isIndexSet(s.sticky, CONFIG.rows)
+  )
+    throw new Error("Invalid frontier state");
+  if (s.phase === "witching" && (s.witchSpins < 1 || !isBet(s.roundBet)))
+    throw new Error("Invalid witching state");
+  if (s.phase === "bonus" && (s.freeSpins < 1 || !isBet(s.bonusBet)))
     throw new Error("Invalid bonus state");
+  if (s.phase !== "bonus" && s.freeSpins > 0)
+    throw new Error("Free spins outside a bonus");
 }
 export function resolveSpin(
   before: GameState,
@@ -250,20 +302,29 @@ export function resolveSpin(
     (poker?.amount || 0) +
     gold.amount;
   const remaining = Math.max(0, s.roundBet * CONFIG.maxExposure - s.roundWin);
-  const payout = Math.min(uncapped, remaining);
-  gold.amount = Math.min(gold.amount, payout);
+  // One sequential allocation against the round's remaining exposure, so what
+  // the result reports adds up to what it actually credited. Each part used to
+  // be clamped independently — ways not at all, gold against the final payout,
+  // poker against the leftover — which on a capped round made the components
+  // sum to MORE than the payout: at roundWin 999,204 of a 1,000,000 ceiling, a
+  // 796-credit ways win and a 500-credit gold line reported 1,296 against a
+  // 796-credit payout, and the client reads those figures as credited awards
+  // (src/client/effects.ts computes payout - poker.amount for the reel award).
+  let budget = remaining;
+  const award = (amount: number) => {
+    const granted = Math.min(amount, budget);
+    budget -= granted;
+    return granted;
+  };
+  for (const win of wins) win.amount = award(win.amount);
+  gold.amount = award(gold.amount);
+  if (poker) poker.amount = award(poker.amount);
+  const payout = remaining - budget;
   const goldEvent = events.find((e) => e.type === "gold-strike");
   if (goldEvent) goldEvent.value = gold.amount;
   if (poker) {
-    poker.amount = Math.min(
-      poker.amount,
-      Math.max(
-        0,
-        remaining - gold.amount - wins.reduce((sum, w) => sum + w.amount, 0),
-      ),
-    );
-    const award = events.find((e) => e.type === "poker-win");
-    if (award) award.value = poker.amount;
+    const pokerEvent = events.find((e) => e.type === "poker-win");
+    if (pokerEvent) pokerEvent.value = poker.amount;
   }
   s.roundWin += payout;
   s.balance += payout - debit;
@@ -308,13 +369,23 @@ export function resolveSpin(
     });
   } else if (phase === "witching") {
     s.witchSpins--;
-    if (!s.witchSpins) {
+    // `<= 0`, not `!s.witchSpins`: a restored state holding witchSpins 0 used
+    // to decrement forever, never satisfying the falsy test, so the hour never
+    // ended and the wager stayed locked. assertState now rejects that shape at
+    // the door as well, and this keeps the counter bounded either way.
+    if (s.witchSpins <= 0) {
       s.phase = "noon";
       s.awakened = [];
       s.sticky = [];
     }
   }
-  if (payout === remaining) {
+  // The round is over when the ceiling actually truncated an award, or when it
+  // had already been reached before this spin. `payout === remaining` also
+  // fired when a win landed EXACTLY on the ceiling with nothing truncated: at
+  // roundWin 983,982 of a 1,000,000 ceiling a 16,018-credit win paid in full
+  // and still ended the bonus, costing the player the three free spins left,
+  // while the same win one credit under the ceiling kept them.
+  if (uncapped > remaining || remaining === 0) {
     events.push({
       type: "cap",
       value: CONFIG.maxExposure,
