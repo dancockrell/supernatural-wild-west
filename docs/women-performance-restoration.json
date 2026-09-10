@@ -7,9 +7,9 @@
   "files": [
     {
       "path": "/video/parlor-maidens-v1/queen-idle.webm",
-      "sha256": "9acd5310e1996ece2686e0f6f8798a42f8801e298d5b1a2ded9a1e422ae703b8",
+      "sha256": "dff62456148577431abac8fd39bbda02d6a4e417f9d80fb29d8becda065e1428",
       "morningGitBlob": "1007c62dfccd4aba3af0d47686ccf6f608254f75",
-      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs): same footage, smaller file. Checked frame-for-frame against the pre-re-encode git bytes at three representative clips spanning this category of file (parlor-maidens-v1/queen-idle, hand-performances-v3/straight-flush, feature-performances-v2/witch); this file was one of the three individually spot-checked. Not the morningGitBlob bytes; the poster beside this entry still is."
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size --crf 26): second generation, so a lower CRF. The colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate; the matte is despeckled and anything under alpha 24 floored to zero. Dimensions, duration and frame rate unchanged, verified frame by frame against the previous bytes."
     },
     {
       "path": "/video/parlor-maidens-v1/queen-idle.png",
@@ -29,9 +29,9 @@
     },
     {
       "path": "/video/parlor-maidens-v1/queen-listen.webm",
-      "sha256": "5582d87118bdf5bf98d25b6bb5cd1dcfd5fe4b5b401d927d01b825f0d4b775ce",
+      "sha256": "ccf4c7cdc9faa852fef7d270680d69bd8adf1c26318af9be1b030bff015bd041",
       "morningGitBlob": "27bca50dce390b5e312e97332a7880f4f8067b72",
-      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs): same footage, smaller file. Checked frame-for-frame against the pre-re-encode git bytes at three representative clips spanning this category of file (parlor-maidens-v1/queen-idle, hand-performances-v3/straight-flush, feature-performances-v2/witch); this specific file was not individually re-checked beyond that sample. Not the morningGitBlob bytes; the poster beside this entry still is."
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size --crf 26): second generation, so a lower CRF. The colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate; the matte is despeckled and anything under alpha 24 floored to zero. Dimensions, duration and frame rate unchanged, verified frame by frame against the previous bytes."
     },
     {
       "path": "/video/parlor-maidens-v1/queen-listen.png",
@@ -40,8 +40,9 @@
     },
     {
       "path": "/video/parlor-idles-v2/queen-fringe.webm",
-      "sha256": "bede083a242bd2ee7a95e0dec42ba033d65296e1f696dc14f1e810b763dd13f6",
-      "morningGitBlob": "4e0ebb800a7ca00d9bccb2453bc97cd7b4abde68"
+      "sha256": "4642641a22fc25a472ce932c2f4652cb6042353cf3b7e93d2d4750f2ef8907b4",
+      "morningGitBlob": "4e0ebb800a7ca00d9bccb2453bc97cd7b4abde68",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/parlor-idles-v2/queen-fringe.png",
@@ -50,8 +51,9 @@
     },
     {
       "path": "/video/parlor-idles-v2/queen-shiver.webm",
-      "sha256": "b64adff932aa70edf1fe5669296fe46e2f4c765d8003897765226bec95c24320",
-      "morningGitBlob": "04b88265e01a1a6be8f31040807768ee55eb17db"
+      "sha256": "70a82c3403315c92e3a91dc950e6ef81b5c38605841a8b4661f8470794110a01",
+      "morningGitBlob": "04b88265e01a1a6be8f31040807768ee55eb17db",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/parlor-idles-v2/queen-shiver.png",
@@ -71,9 +73,9 @@
     },
     {
       "path": "/video/parlor-maidens-v1/medium-idle.webm",
-      "sha256": "a9ea9f2f99901df867865e11ff8f79a8cb1610ed9b5ac6eb41f6c0425801a7d7",
+      "sha256": "272c28cf5d8f6ce6e4bd6bbc15a305430d0a46a7425380cca8a6baed2874b2e6",
       "morningGitBlob": "851ec87222e9f302add1b53b72ee8760b89a3d50",
-      "note": "Re-encoded 10 Sep 2026 (scripts/close-loops.mjs then scripts/reencode-video.mjs): same footage, loop seam closed (40.5 -> 4.9) and file 4.9x smaller. Not the morningGitBlob bytes; the poster beside this entry still is."
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size --crf 26): second generation, so a lower CRF. The colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate; the matte is despeckled and anything under alpha 24 floored to zero. Dimensions, duration and frame rate unchanged, verified frame by frame against the previous bytes."
     },
     {
       "path": "/video/parlor-maidens-v1/medium-idle.png",
@@ -82,9 +84,9 @@
     },
     {
       "path": "/video/parlor-maidens-v1/medium-alternate.webm",
-      "sha256": "d6140caddfda8a5f17ce1e8fe2d1a041fddbf377ce502c504f56557c6f54af15",
+      "sha256": "d50dbec9cfc614cc46349be58efdb7a8c385649c1e99c1b8eca8744ee8336cbf",
       "morningGitBlob": "e706e55d14c691610ff987c9805d1327fa754a7f",
-      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs): same footage, smaller file. Checked frame-for-frame against the pre-re-encode git bytes at three representative clips spanning this category of file (parlor-maidens-v1/queen-idle, hand-performances-v3/straight-flush, feature-performances-v2/witch); this specific file was not individually re-checked beyond that sample. Not the morningGitBlob bytes; the poster beside this entry still is."
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size --crf 26): second generation, so a lower CRF. The colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate; the matte is despeckled and anything under alpha 24 floored to zero. Dimensions, duration and frame rate unchanged, verified frame by frame against the previous bytes."
     },
     {
       "path": "/video/parlor-maidens-v1/medium-alternate.png",
@@ -93,9 +95,9 @@
     },
     {
       "path": "/video/parlor-maidens-v1/medium-whisper.webm",
-      "sha256": "7586a464b4a888d153c17932dd9cd8adf8aeac777cc982733b469167021da6f1",
+      "sha256": "2e653cf26c19530795342ecf670c5e5aa4081eacc6ebc9faaf42669f8c74c020",
       "morningGitBlob": "dfd4b4a1c7313a3d4d592fced8e4081064cc9c1f",
-      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs): same footage, smaller file. Checked frame-for-frame against the pre-re-encode git bytes at three representative clips spanning this category of file (parlor-maidens-v1/queen-idle, hand-performances-v3/straight-flush, feature-performances-v2/witch); this specific file was not individually re-checked beyond that sample. Not the morningGitBlob bytes; the poster beside this entry still is."
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size --crf 26): second generation, so a lower CRF. The colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate; the matte is despeckled and anything under alpha 24 floored to zero. Dimensions, duration and frame rate unchanged, verified frame by frame against the previous bytes."
     },
     {
       "path": "/video/parlor-maidens-v1/medium-whisper.png",
@@ -104,8 +106,9 @@
     },
     {
       "path": "/video/parlor-idles-v2/medium-turn.webm",
-      "sha256": "1592ccc290843d714316ad1ddfe31ed3badfb676399d22d52fde4a22c279cc46",
-      "morningGitBlob": "c7076c46ca057a0321f7011096c4e5ad333aea8d"
+      "sha256": "ba8af121107caa564e30cd98e1c99cddce6484c94dc2f4f3be9e362c3a20ac10",
+      "morningGitBlob": "c7076c46ca057a0321f7011096c4e5ad333aea8d",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/parlor-idles-v2/medium-turn.png",
@@ -114,8 +117,9 @@
     },
     {
       "path": "/video/parlor-idles-v2/medium-neck.webm",
-      "sha256": "5ec58adf00db414c94a667e6451d9a32580f2fd87da17d290935e835794c5d63",
-      "morningGitBlob": "049aba38c96a72a3e9838bd7dea44da19aa97e0b"
+      "sha256": "e297d37bcd57200d51afd0e5830f2a09b7fa9c69abc7c83054730f8f1fe6959b",
+      "morningGitBlob": "049aba38c96a72a3e9838bd7dea44da19aa97e0b",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/parlor-idles-v2/medium-neck.png",
@@ -124,8 +128,9 @@
     },
     {
       "path": "/video/rare-features-v4/medium-reaction.webm",
-      "sha256": "52858d2c70ba6c8255f69d5f90d7f84a3ba2076de41900471c0c9989454aa1b4",
-      "morningGitBlob": "5238c1dd5847a80915e10f3010627ca04b479460"
+      "sha256": "c895d55ec9474538374690d9087607f946528ea4ad649c8c86a0b817ae0e3365",
+      "morningGitBlob": "5238c1dd5847a80915e10f3010627ca04b479460",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/rare-features-v4/medium-reaction.png",
@@ -134,8 +139,9 @@
     },
     {
       "path": "/video/feature-performances-v2/witch.webm",
-      "sha256": "6c8514198e666cd357c7fdd39876365c7cf5cd9d203247dc5871029690e4c523",
-      "morningGitBlob": "f99780cd49485ce2d2c3f8da2f03491778d6337d"
+      "sha256": "22ea4edabf5c83142c133b6e6ab1bc39ae3f7027411d6e691c92f1320c399f41",
+      "morningGitBlob": "f99780cd49485ce2d2c3f8da2f03491778d6337d",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/feature-performances-v2/witch.png",
@@ -144,8 +150,9 @@
     },
     {
       "path": "/video/feature-performances-v2/saloon.webm",
-      "sha256": "a36badd49d73400e1962fb23eaba77822796f10034e8e93008ba8efb666fce5e",
-      "morningGitBlob": "099ed204b202519df85f1d97374579b6847a6a43"
+      "sha256": "10327d26ee283cf54ee1b5c7ad4bf705f5ee7394b9ab793c5ce9fc046aa3a63d",
+      "morningGitBlob": "099ed204b202519df85f1d97374579b6847a6a43",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/feature-performances-v2/saloon.png",
@@ -154,8 +161,9 @@
     },
     {
       "path": "/video/feature-performances-v2/mine.webm",
-      "sha256": "e7733a205e8248f3b6605d8bd10164bee7a8ee2e0fe1300c2f69139f86355e0e",
-      "morningGitBlob": "f7f7b2073dc48d6516f615575cb47ee1f3989b3a"
+      "sha256": "6f5db1d3018dfe97b07a6a96ed67ff257b7b700e31981fb5f211537832e0858d",
+      "morningGitBlob": "f7f7b2073dc48d6516f615575cb47ee1f3989b3a",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/feature-performances-v2/mine.png",
@@ -164,8 +172,9 @@
     },
     {
       "path": "/video/rare-features-v4/fortune.webm",
-      "sha256": "5d756632082397b73fd8dc23062409ee4b4a4ce7cf4511bdedfb4e8b86fce554",
-      "morningGitBlob": "dfa01a36a12caf6a265e53aef91e62307c93a769"
+      "sha256": "04856ef9d779aba71fc4560103577190a0d78c0ceaa1b5e3fb60b8f2bf8d43aa",
+      "morningGitBlob": "dfa01a36a12caf6a265e53aef91e62307c93a769",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/rare-features-v4/fortune.png",
@@ -174,8 +183,9 @@
     },
     {
       "path": "/video/hand-performances-v3/pair.webm",
-      "sha256": "bdce66dcff12339118e91952a1306fb89dc994ad9b418e172779d2e751c6e46d",
-      "morningGitBlob": "2eec64a71b8e8516482a023eff3d1de1f115fd8d"
+      "sha256": "070b73fb768c38214658d7c964007885f9d6856528fcb4d9c9104822e20bca3b",
+      "morningGitBlob": "2eec64a71b8e8516482a023eff3d1de1f115fd8d",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/hand-performances-v3/pair.png",
@@ -184,8 +194,9 @@
     },
     {
       "path": "/video/hand-performances-v3/two-pair.webm",
-      "sha256": "45e9143218197ffef86b12d705919d6fa1a2a8f635fa419f4c40cca7a90f396d",
-      "morningGitBlob": "be4afffb7bfca85f101bfa184d0424b158ac91f6"
+      "sha256": "7dc89358f45a2e8a28e1d576448108037a1c2fc6b018bb96918cc9ee95999d3a",
+      "morningGitBlob": "be4afffb7bfca85f101bfa184d0424b158ac91f6",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/hand-performances-v3/two-pair.png",
@@ -194,8 +205,9 @@
     },
     {
       "path": "/video/hand-performances-v3/flush.webm",
-      "sha256": "2d32a2b7697450e846975f9fcc2fd6bb4207681a5baee62e42a4461bd25f2ab8",
-      "morningGitBlob": "dc998631d24f49dd32a4f71d456032df65633bf1"
+      "sha256": "a0bdc4d7d6416fadf23467f319c65d1f615de895e15f8ce6693232e8cc3e1c57",
+      "morningGitBlob": "dc998631d24f49dd32a4f71d456032df65633bf1",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/hand-performances-v3/flush.png",
@@ -204,8 +216,9 @@
     },
     {
       "path": "/video/hand-performances-v3/straight-flush.webm",
-      "sha256": "83ae8ec02ff1488ddd59351f5412aa1a8dfe656762691c201c873792f45ad841",
-      "morningGitBlob": "3f37f817a87a2401b23494ae9d33089f2d13358b"
+      "sha256": "485f097481af52f2b33ec610b94eee6f1a442fc844e4e6f435d032dca85e7df1",
+      "morningGitBlob": "3f37f817a87a2401b23494ae9d33089f2d13358b",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs --matte --keep-size): the colour plane under this clip's transparent pixels was random per-frame noise, invisible on screen and costing most of the bitrate. The matte is despeckled and anything under alpha 24 is floored to zero and painted black. Pixel dimensions, duration and frame rate are unchanged; verified by compositing against the previous bytes frame by frame."
     },
     {
       "path": "/video/hand-performances-v3/straight-flush.png",
