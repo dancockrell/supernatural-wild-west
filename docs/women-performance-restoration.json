@@ -7,8 +7,9 @@
   "files": [
     {
       "path": "/video/parlor-maidens-v1/queen-idle.webm",
-      "sha256": "4fb5b589390b8df47ddfe059a48555eacd22e1b7f1da0b18f60918363c250cbd",
-      "morningGitBlob": "1007c62dfccd4aba3af0d47686ccf6f608254f75"
+      "sha256": "9acd5310e1996ece2686e0f6f8798a42f8801e298d5b1a2ded9a1e422ae703b8",
+      "morningGitBlob": "1007c62dfccd4aba3af0d47686ccf6f608254f75",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs): same footage, smaller file. Checked frame-for-frame against the pre-re-encode git bytes at three representative clips spanning this category of file (parlor-maidens-v1/queen-idle, hand-performances-v3/straight-flush, feature-performances-v2/witch); this file was one of the three individually spot-checked. Not the morningGitBlob bytes; the poster beside this entry still is."
     },
     {
       "path": "/video/parlor-maidens-v1/queen-idle.png",
@@ -17,8 +18,9 @@
     },
     {
       "path": "/video/parlor-maidens-v1/queen-alternate.webm",
-      "sha256": "2893acdf2ed6ad4bcc1efc122b352889cf4ea0285c005d952620ce24b43a1ac3",
-      "morningGitBlob": "17f27fc7693f2a5ca65accc0ce0d20ad3f6a1ea4"
+      "sha256": "a986e29f18d0bc49cb18b2a48e6fe0f16d6715f82919f9d55dffdc5e6b17721a",
+      "morningGitBlob": "17f27fc7693f2a5ca65accc0ce0d20ad3f6a1ea4",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs): same footage, smaller file. Checked frame-for-frame against the pre-re-encode git bytes at three representative clips spanning this category of file (parlor-maidens-v1/queen-idle, hand-performances-v3/straight-flush, feature-performances-v2/witch); this specific file was not individually re-checked beyond that sample. Not the morningGitBlob bytes; the poster beside this entry still is."
     },
     {
       "path": "/video/parlor-maidens-v1/queen-alternate.png",
@@ -27,8 +29,9 @@
     },
     {
       "path": "/video/parlor-maidens-v1/queen-listen.webm",
-      "sha256": "70d1bba2f46598a51987fe054e0f47145e5900025329716787c1f91b84bccfd1",
-      "morningGitBlob": "27bca50dce390b5e312e97332a7880f4f8067b72"
+      "sha256": "5582d87118bdf5bf98d25b6bb5cd1dcfd5fe4b5b401d927d01b825f0d4b775ce",
+      "morningGitBlob": "27bca50dce390b5e312e97332a7880f4f8067b72",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs): same footage, smaller file. Checked frame-for-frame against the pre-re-encode git bytes at three representative clips spanning this category of file (parlor-maidens-v1/queen-idle, hand-performances-v3/straight-flush, feature-performances-v2/witch); this specific file was not individually re-checked beyond that sample. Not the morningGitBlob bytes; the poster beside this entry still is."
     },
     {
       "path": "/video/parlor-maidens-v1/queen-listen.png",
@@ -57,8 +60,9 @@
     },
     {
       "path": "/video/parlor-maidens-v1/queen-reaction.webm",
-      "sha256": "cc77fe64611f48a3f0c8b434884cb453fe69e37b658f7d527c141eb9d6666209",
-      "morningGitBlob": "36f1013422dcc9448222291a947aa1d74320cfab"
+      "sha256": "cacbcf2698ab14a21925e14208dd626b6ed843a2accaba674510a4051e54cc19",
+      "morningGitBlob": "36f1013422dcc9448222291a947aa1d74320cfab",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs): same footage, smaller file. Checked frame-for-frame against the pre-re-encode git bytes at three representative clips spanning this category of file (parlor-maidens-v1/queen-idle, hand-performances-v3/straight-flush, feature-performances-v2/witch); this specific file was not individually re-checked beyond that sample. Not the morningGitBlob bytes; the poster beside this entry still is."
     },
     {
       "path": "/video/parlor-maidens-v1/queen-reaction.png",
@@ -67,8 +71,9 @@
     },
     {
       "path": "/video/parlor-maidens-v1/medium-idle.webm",
-      "sha256": "8de5185a1144dd7677f8508ce1030df00807ce743799df6ba3751ff20aa5b538",
-      "morningGitBlob": "851ec87222e9f302add1b53b72ee8760b89a3d50"
+      "sha256": "a9ea9f2f99901df867865e11ff8f79a8cb1610ed9b5ac6eb41f6c0425801a7d7",
+      "morningGitBlob": "851ec87222e9f302add1b53b72ee8760b89a3d50",
+      "note": "Re-encoded 10 Sep 2026 (scripts/close-loops.mjs then scripts/reencode-video.mjs): same footage, loop seam closed (40.5 -> 4.9) and file 4.9x smaller. Not the morningGitBlob bytes; the poster beside this entry still is."
     },
     {
       "path": "/video/parlor-maidens-v1/medium-idle.png",
@@ -77,8 +82,9 @@
     },
     {
       "path": "/video/parlor-maidens-v1/medium-alternate.webm",
-      "sha256": "7ec8fb8834ec7e9f996d5468cf6e39808f37292510dfbd24a3a793c60d7f96a3",
-      "morningGitBlob": "e706e55d14c691610ff987c9805d1327fa754a7f"
+      "sha256": "d6140caddfda8a5f17ce1e8fe2d1a041fddbf377ce502c504f56557c6f54af15",
+      "morningGitBlob": "e706e55d14c691610ff987c9805d1327fa754a7f",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs): same footage, smaller file. Checked frame-for-frame against the pre-re-encode git bytes at three representative clips spanning this category of file (parlor-maidens-v1/queen-idle, hand-performances-v3/straight-flush, feature-performances-v2/witch); this specific file was not individually re-checked beyond that sample. Not the morningGitBlob bytes; the poster beside this entry still is."
     },
     {
       "path": "/video/parlor-maidens-v1/medium-alternate.png",
@@ -87,8 +93,9 @@
     },
     {
       "path": "/video/parlor-maidens-v1/medium-whisper.webm",
-      "sha256": "1eb1583f4ebdb0c46948d109bda75758de71fda3533a071414e93da6bbbebe89",
-      "morningGitBlob": "dfd4b4a1c7313a3d4d592fced8e4081064cc9c1f"
+      "sha256": "7586a464b4a888d153c17932dd9cd8adf8aeac777cc982733b469167021da6f1",
+      "morningGitBlob": "dfd4b4a1c7313a3d4d592fced8e4081064cc9c1f",
+      "note": "Re-encoded 10 Sep 2026 (scripts/reencode-video.mjs): same footage, smaller file. Checked frame-for-frame against the pre-re-encode git bytes at three representative clips spanning this category of file (parlor-maidens-v1/queen-idle, hand-performances-v3/straight-flush, feature-performances-v2/witch); this specific file was not individually re-checked beyond that sample. Not the morningGitBlob bytes; the poster beside this entry still is."
     },
     {
       "path": "/video/parlor-maidens-v1/medium-whisper.png",

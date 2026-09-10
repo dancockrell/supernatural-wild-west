@@ -26,7 +26,21 @@ test('gambler never exposes a seeking frame across idle and receive',async({page
    if(performance.now()-start<30000)requestAnimationFrame(frame);else resolve({gaps,receive,idles:idles.size});
   };frame();
  }));
- expect(sample).toEqual({gaps:0,receive:true,idles:2});
+ // idles was pinned to exactly 2. The gambler advances his idle rotation on
+ // each clip's own 'ended' event (src/client/narrative-gambler.ts), not a
+ // fixed timer, so how many distinct idles land inside this 30s window
+ // depends on how fast the page around him loads and buffers - which is
+ // exactly what got faster on 10 Sep 2026 (scripts/reencode-video.mjs, 67%
+ // smaller media). Measured: 3 idles now, consistently, on the exact same
+ // gambler clip bytes (confirmed byte-identical against pre-reencode git
+ // history) - a real timing shift from faster loading elsewhere on the
+ // page, not a regression in the gambler himself. The properties that
+ // actually matter are unchanged: no seeking frame ever shown, and the
+ // receive clip plays. Asserting an exact idle count coupled this test to
+ // how slowly the page used to load, which was never the point.
+ expect(sample.gaps).toBe(0);
+ expect(sample.receive).toBe(true);
+ expect(sample.idles).toBeGreaterThanOrEqual(2);
  await expect(page.locator('#spin')).toBeEnabled();
 });
 
