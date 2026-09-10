@@ -268,9 +268,155 @@ def profile_steps(profile: Sequence[float], threshold: float, min_sep: int = 24,
     return kept
 
 
+# --- media -----------------------------------------------------------------
+
+# Every media element the page actually mounts, with the numbers that say
+# whether it arrived. Reported raw: whether readyState 1 is acceptable is the
+# check's call, not the probe's.
+MEDIA_JS = """
+() => {
+  const abs = (u) => { try { return new URL(u, location.href).href; } catch { return ''; } };
+  const short = (u) => (u || '').split('?')[0].split('/').slice(-2).join('/');
+  const out = [];
+  for (const el of document.querySelectorAll('img, video, source')) {
+    const owner = el.tagName === 'SOURCE' ? el.parentElement : el;
+    if (!owner) continue;
+    const cs = getComputedStyle(owner);
+    const rect = owner.getBoundingClientRect();
+    const raw = el.currentSrc || el.getAttribute('src') || '';
+    const url = abs(raw);
+    const rec = {
+      tag: el.tagName,
+      cls: (typeof owner.className === 'string' ? owner.className : '').slice(0, 80),
+      src: url, file: short(url) || null, hasSrc: !!raw,
+      mounted: document.contains(el),
+      // "painted" is deliberately separate from "mounted": a preloaded clip
+      // sitting display:none is legitimately allowed to be undecoded, while
+      // one the player is looking at is not.
+      painted: cs.display !== 'none' && cs.visibility !== 'hidden' && !owner.hidden
+        && parseFloat(cs.opacity || '1') > 0.01 && rect.width > 1 && rect.height > 1,
+      size: [Math.round(rect.width), Math.round(rect.height)],
+    };
+    if (el.tagName === 'IMG') {
+      rec.complete = el.complete;
+      rec.naturalWidth = el.naturalWidth;
+      rec.naturalHeight = el.naturalHeight;
+    } else if (el.tagName === 'VIDEO') {
+      rec.readyState = el.readyState;
+      rec.networkState = el.networkState;
+      rec.videoWidth = el.videoWidth;
+      rec.paused = el.paused;
+      rec.currentTime = +el.currentTime.toFixed(2);
+      rec.hasPoster = !!el.getAttribute('poster');
+      rec.errorCode = el.error ? el.error.code : null;
+      rec.errorMessage = el.error ? String(el.error.message || '').slice(0, 140) : null;
+    }
+    out.push(rec);
+  }
+  return out;
+}
+"""
+
+# Media `error` events do not bubble, but they do reach a capture-phase
+# listener on window. Without this an element that failed and was then swapped
+# away leaves no trace at all, and its absence reads exactly like health.
+MEDIA_WATCH_JS = """
+() => {
+  if (!window.__botMediaErrors) window.__botMediaErrors = [];
+  if (window.__botMediaWatch) return window.__botMediaErrors.length;
+  window.__botMediaWatch = (e) => {
+    const t = e.target;
+    if (!t || !t.tagName || !['IMG', 'VIDEO', 'AUDIO', 'SOURCE'].includes(t.tagName)) return;
+    window.__botMediaErrors.push({
+      tag: t.tagName,
+      src: (t.currentSrc || t.getAttribute('src') || '').split('?')[0],
+      code: t.error ? t.error.code : null,
+      at: Math.round(performance.now()),
+    });
+  };
+  window.addEventListener('error', window.__botMediaWatch, true);
+  return 0;
+}
+"""
+
+MEDIA_ERRORS_JS = "() => window.__botMediaErrors || []"
+
+# Ask the server whether each src is really there.
+#
+# A status check on its own is not enough and reads as a clean bill of health:
+# the Vite dev server answers a missing /video/x.webm with 200 and the SPA
+# index.html. Measured, not assumed — curl on a nonexistent .webm returns
+# `200 Content-Type: text/html`. So the content type is the load-bearing half,
+# and a media URL that answers text/html is a missing file.
+MEDIA_HEAD_JS = """
+async (urls) => {
+  const out = {};
+  for (const u of urls) {
+    try {
+      const r = await fetch(u, {method: 'HEAD', cache: 'no-store'});
+      out[u] = {status: r.status, type: (r.headers.get('content-type') || '').split(';')[0],
+                length: r.headers.get('content-length')};
+    } catch (e) {
+      out[u] = {status: null, type: null, error: String(e).slice(0, 100)};
+    }
+  }
+  return out;
+}
+"""
+
+# A census of what is playing, plus the counters that would grow without bound
+# if pending work piled up while the tab was away.
+PLAYBACK_JS = """
+() => {
+  const vids = [...document.querySelectorAll('video')];
+  const visible = vids.filter(v => {
+    const cs = getComputedStyle(v);
+    return !v.hidden && cs.display !== 'none' && cs.visibility !== 'hidden';
+  });
+  return {
+    hidden: document.hidden,
+    visibilityState: document.visibilityState,
+    videosTotal: vids.length,
+    videosVisible: visible.length,
+    animations: document.getAnimations().length,
+    animationsRunning: document.getAnimations().filter(a => a.playState === 'running').length,
+    nodes: document.getElementsByTagName('*').length,
+    videos: visible.map(v => ({
+      file: (v.currentSrc || v.getAttribute('src') || '').split('?')[0].split('/').slice(-2).join('/'),
+      paused: v.paused, ended: v.ended, readyState: v.readyState,
+      currentTime: +v.currentTime.toFixed(3), loop: v.loop,
+      errorCode: v.error ? v.error.code : null,
+    })),
+  };
+}
+"""
+
+# Hide or show the tab. CDP's Emulation.setPageVisibilityOverride was tried
+# first and this build of Chromium does not have it ("wasn't found"), so the
+# override below is the mechanism, and it returns which one was used rather
+# than letting the caller assume.
+VISIBILITY_JS = """
+(hidden) => {
+  // The redefine can legitimately fail — something else may hold the property
+  // non-configurable. Reporting the state we asked for instead of the state
+  // the document actually has is how a check ends up certifying a tab it
+  // never managed to hide, so the failure is returned rather than thrown away.
+  let applied = true, reason = null;
+  try {
+    Object.defineProperty(document, 'hidden', {configurable: true, get: () => hidden});
+    Object.defineProperty(document, 'visibilityState', {configurable: true,
+      get: () => (hidden ? 'hidden' : 'visible')});
+  } catch (e) { applied = false; reason = String(e).slice(0, 140); }
+  document.dispatchEvent(new Event('visibilitychange'));
+  return {applied, reason, hidden: document.hidden,
+          visibilityState: document.visibilityState};
+}
+"""
+
+
 # Rendered font size and contrast for text a player has to read. Reported as
 # numbers only: whether 9px is too small is the check's call, not the probe's.
-TEXT_JS = """
+TEXT_JS = r"""
 (selectors) => {
   const parse = (c) => {
     const m = (c || '').match(/[\d.]+/g);

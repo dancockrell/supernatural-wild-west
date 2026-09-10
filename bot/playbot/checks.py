@@ -28,6 +28,20 @@ def check(name: str) -> Callable[[Check], Check]:
     return wrap
 
 
+def undetermined(check_name: str, title: str, detail: str, repro: dict[str, Any] | None = None,
+                 **evidence: Any) -> Complaint:
+    """"I could not determine this", said out loud.
+
+    A check has to be able to say three things, not two. Folding "could not
+    measure" into either "clean" or "broken" is where the lie enters, and the
+    selftest deliberately refuses to let a note count as catching anything —
+    so a note can never be mistaken for a pass.
+    """
+    return Complaint(check=check_name, severity="note", title=title,
+                     detail=detail + " Treat this as unknown, not clean.",
+                     evidence=evidence, repro=repro or {})
+
+
 # --- layout -----------------------------------------------------------------
 
 PLAYABLE = ["#spin", ".controls", ".game", ".player-play-space", "#balance", "#bet", "#help"]
@@ -698,6 +712,586 @@ def leaks(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
     return out
 
 
+# --- assets -----------------------------------------------------------------
+
+_IMAGE_TYPES = ("image/",)
+_VIDEO_TYPES = ("video/", "audio/", "application/octet-stream")
+
+
+@check("assets")
+def assets(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
+    """Every media element the page actually mounts has to load.
+
+    Three independent instruments, because each one is blind to something:
+
+    * the DOM (`readyState`, `naturalWidth`, `video.error`) says whether the
+      browser could decode what it was given;
+    * `error` events caught at window in the capture phase say so even for a
+      clip that failed and was then swapped away, which the DOM no longer
+      remembers;
+    * a HEAD request per referenced URL says whether the file is there at all.
+
+    The HEAD half needs the content type, not just the status, and that is not
+    a nicety. Measured on this dev server: `GET /video/bot-does-not-exist.webm`
+    answers **200** with `Content-Type: text/html`, because Vite falls back to
+    the SPA index for anything it cannot find. A status-only check would have
+    called every missing clip in the game healthy.
+    """
+    settle_ms = int(cfg.get("settle_ms", 2500))
+    floor = int(cfg.get("min_media", 6))
+    verify_paths = cfg.get("verify_paths", True)
+
+    sess.wait_for_spectacle()
+    sess.watch_media_errors()
+    first = sess.media()
+    sess.page.wait_for_timeout(settle_ms)
+    second = sess.media()
+
+    def key(rec: dict[str, Any]) -> tuple[str, str, str]:
+        return (rec["tag"], rec.get("cls") or "", rec.get("src") or "")
+
+    earlier = {key(r): r for r in first}
+    out: list[Complaint] = []
+    examined = 0
+
+    for rec in second:
+        if not rec["mounted"] or not rec["hasSrc"]:
+            continue
+        examined += 1
+        was = earlier.get(key(rec))
+        name = rec.get("file") or rec.get("src") or "?"
+        where = "on screen" if rec["painted"] else "preloaded off screen"
+
+        if rec["tag"] == "IMG":
+            # naturalWidth 0 on a *complete* image means the bytes arrived and
+            # decoded to nothing. An incomplete image is still in flight and is
+            # not a finding.
+            if rec.get("complete") and rec.get("naturalWidth") == 0:
+                out.append(Complaint(
+                    check="assets", severity="blocker" if rec["painted"] else "major",
+                    title=f"<img> {name} finished loading with no pixels in it",
+                    detail=("This image reports itself complete and decoded to nothing, so there is a "
+                            "hole where it should be painting."),
+                    evidence={"file": name, "src": rec["src"], "naturalWidth": 0,
+                              "complete": True, "cssClass": rec["cls"], "elementSize": rec["size"],
+                              "painted": rec["painted"]},
+                    repro={"viewport": sess.viewport.name},
+                    shot=str(sess.shot("assets-img-empty")),
+                ))
+            continue
+
+        if rec["tag"] != "VIDEO":
+            continue  # a <source> is judged through the <video> that owns it
+
+        if rec.get("errorCode") is not None:
+            out.append(Complaint(
+                check="assets", severity="blocker" if rec["painted"] else "major",
+                title=f"<video> {name} failed with media error {rec['errorCode']}",
+                detail=(f"This clip is mounted {where} and the browser could not use it. A poster is a "
+                        "legitimate fallback while a clip loads; a clip that errors never decodes at all."),
+                evidence={"file": name, "src": rec["src"], "mediaErrorCode": rec["errorCode"],
+                          "mediaErrorMessage": rec.get("errorMessage"),
+                          "readyState": rec.get("readyState"), "networkState": rec.get("networkState"),
+                          "hasPoster": rec.get("hasPoster"), "painted": rec["painted"],
+                          "cssClass": rec["cls"]},
+                repro={"viewport": sess.viewport.name, "selector": f"video[src$='{name}']"},
+                shot=str(sess.shot("assets-video-error")),
+            ))
+            continue
+
+        # readyState 0 is HAVE_NOTHING. One sample of that is ordinary — a clip
+        # mounted a moment ago has not loaded yet. Two samples settle_ms apart
+        # is a clip that is never going to arrive.
+        if rec.get("readyState") == 0 and was is not None and was.get("readyState") == 0:
+            out.append(Complaint(
+                check="assets", severity="blocker" if rec["painted"] else "major",
+                title=f"<video> {name} never got past readyState 0",
+                detail=(f"Mounted {where} and still holding nothing after {settle_ms}ms. Nothing can "
+                        "decode from it, so either the poster is standing in permanently or the "
+                        "element is empty."),
+                evidence={"file": name, "src": rec["src"], "readyStateBoth": 0,
+                          "settleMs": settle_ms, "networkState": rec.get("networkState"),
+                          "hasPoster": rec.get("hasPoster"), "painted": rec["painted"],
+                          "cssClass": rec["cls"]},
+                repro={"viewport": sess.viewport.name},
+                shot=str(sess.shot("assets-video-stalled")),
+            ))
+
+    # -- the file really being there ----------------------------------------
+    urls = sorted({r["src"] for r in second
+                   if r["mounted"] and r["hasSrc"] and r["src"].startswith("http")})
+    kind = {r["src"]: r["tag"] for r in second if r.get("src")}
+    verified = 0
+    head: dict[str, Any] = {}
+    if verify_paths and urls:
+        head = sess.head(urls)
+        for url, res in head.items():
+            if res.get("status") is None:
+                continue  # the request itself failed; counted as unverified below
+            verified += 1
+            ctype = (res.get("type") or "").lower()
+            wanted = _IMAGE_TYPES if kind.get(url) == "IMG" else _VIDEO_TYPES
+            bad_status = res["status"] >= 400
+            wrong_type = not any(ctype.startswith(w) for w in wanted)
+            if not (bad_status or wrong_type):
+                continue
+            short = url.split("?")[0].split("/")[-2:]
+            out.append(Complaint(
+                check="assets", severity="major",
+                title=f"{'/'.join(short)} is referenced but not on the server",
+                detail=("A media element points at this path and the server does not have it. "
+                        "The dev server answers a missing file with 200 and the SPA index.html, so "
+                        "the content type is what gives it away — a clip served as text/html is a "
+                        "clip that does not exist."),
+                evidence={"url": url, "status": res["status"], "contentType": res.get("type"),
+                          "contentLength": res.get("length"), "element": kind.get(url),
+                          "expectedTypePrefixes": list(wanted)},
+                repro={"viewport": sess.viewport.name,
+                       "command": f"curl -sI {url}"},
+            ))
+
+    unverifiable = [u for u, r in head.items() if r.get("status") is None]
+    if unverifiable:
+        out.append(undetermined(
+            "assets", f"{len(unverifiable)} media URLs could not be checked against the server",
+            "The HEAD request for these did not complete, so I do not know whether the files exist.",
+            repro={"viewport": sess.viewport.name},
+            urls=unverifiable[:8], errors={u: head[u].get("error") for u in unverifiable[:8]}))
+
+    # -- error events, including for clips already swapped away -------------
+    events = sess.media_errors()
+    if events:
+        out.append(Complaint(
+            check="assets", severity="major",
+            title=f"{len(events)} media elements fired an error event while I played",
+            detail=("Some of these may have been swapped away since, which is exactly why the DOM no "
+                    "longer shows them. They still failed."),
+            evidence={"events": events[:10], "total": len(events)},
+            repro={"viewport": sess.viewport.name},
+        ))
+
+    media_responses = [r for r in sess.bad_responses
+                       if any(s in r["url"] for s in cfg.get("media_paths", ["/video/", "/art/", "/audio/", "/fonts/"]))]
+    if media_responses:
+        out.append(Complaint(
+            check="assets", severity="major",
+            title=f"{len(media_responses)} media requests were refused by the server",
+            detail="These arrived as real HTTP failures, so whatever asked for them got nothing.",
+            evidence={"responses": media_responses[:10], "total": len(media_responses)},
+            repro={"viewport": sess.viewport.name},
+        ))
+
+    # -- the denominator ----------------------------------------------------
+    if examined < floor:
+        return out + [undetermined(
+            "assets", f"only {examined} mounted media elements were examined",
+            f"That is below the floor of {floor}, which means the probe found almost nothing to look "
+            "at. An empty census and a healthy game produce the same silence, so this run proves "
+            "nothing about the game's assets.",
+            repro={"viewport": sess.viewport.name},
+            mediaExamined=examined, floor=floor, urlsVerified=verified,
+            sampleOfWhatWasSeen=[r.get("file") for r in second[:6]])]
+
+    if not out:
+        out.append(praise("assets", f"all {examined} mounted media elements loaded at {sess.viewport.name}",
+                          "Every img and video the page has mounted has real pixels or a decoded "
+                          "stream, none fired an error, and every referenced file answered the "
+                          "server with a media content type.",
+                          mediaExamined=examined, urlsVerified=verified,
+                          videosPainted=sum(1 for r in second if r["tag"] == "VIDEO" and r["painted"]),
+                          settleMs=settle_ms))
+    return out
+
+
+# --- resilience -------------------------------------------------------------
+
+@check("resilience")
+def resilience(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
+    """The client has to stay usable when the server misbehaves.
+
+    Three faults, injected one at a time into /api/spin: a 500, a network
+    abort, and a reply held past the client's own 12s AbortSignal. After each
+    one the game must (a) tell the player something they can read and (b) let
+    them play again. A game left with a permanently disabled spin button is
+    bricked and gets a blocker; one that recovers but says nothing gets a
+    major, because from the player's side a spin that silently did nothing is
+    indistinguishable from a stolen stake.
+
+    The fault counter is the denominator and it is not optional. If the route
+    never fired, this check has proved nothing and says so — a version that
+    assumed the click landed would report a healthy game whenever the spin
+    button happened to be busy.
+    """
+    modes = cfg.get("modes") or ["status500", "abort", "delay"]
+    delay_ms = int(cfg.get("delay_ms", 14000))
+    settle_ms = int(cfg.get("settle_ms", 5000))
+    recover_ms = int(cfg.get("recover_ms", 9000))
+    min_font = float(cfg.get("min_message_px", 10))
+    # The seam that makes the "fault never fired" branch reachable on purpose:
+    # aim it at a route the game never calls and the check must report
+    # undetermined rather than praise. A branch nobody can trigger is a branch
+    # nobody can prove they fixed.
+    fault_path = cfg.get("fault_path", "**/api/spin")
+    out: list[Complaint] = []
+    exercised: list[str] = []
+    log: dict[str, Any] = {}
+
+    for mode in modes:
+        sess.wait_for_spectacle()
+        if not sess.spin_ready(int(cfg.get("ready_ms", 25000))):
+            out.append(undetermined(
+                "resilience", f"could not press spin, so the {mode} fault was never injected",
+                "The spin button never became pressable, so the game was not put under this fault at all.",
+                repro={"viewport": sess.viewport.name},
+                mode=mode, state=sess.status_line()))
+            continue
+        before = sess.status_line()
+        fault = sess.fault_route(mode, delay_ms, fault_path)
+        try:
+            # A click that reports a timeout has not necessarily failed to
+            # press: the first press can register and the retry loop then time
+            # out against a button the press itself disabled. An earlier version
+            # bailed out here saying "the fault never reached the client" while
+            # the 500 had already landed — a false claim, and it left the game
+            # offline for every check that ran afterwards. The fault counter is
+            # what decides, not the click.
+            click_error = None
+            try:
+                sess.page.locator("#spin").click(timeout=6000)
+            except Exception as exc:
+                click_error = f"{type(exc).__name__}: {str(exc)[:160]}"
+            sess.page.wait_for_timeout(settle_ms + (delay_ms if mode == "delay" else 0))
+            if not fault["fired"]:
+                out.append(undetermined(
+                    "resilience", f"the injected {mode} fault never reached the client",
+                    f"The route was armed and {fault['path']} was never called through it, so nothing "
+                    "about the game's behaviour under this fault was measured.",
+                    repro={"viewport": sess.viewport.name},
+                    mode=mode, route=fault["path"], faultError=fault.get("error"),
+                    clickError=click_error, state=sess.status_line()))
+                continue
+            exercised.append(mode)
+            after = sess.status_line()
+
+            # Did the game say anything a player can actually read?
+            said = (after["text"] or "").strip()
+            spoke = bool(said) and said != (before["text"] or "").strip() and after["visible"]
+            legible = bool(after["fontPx"] and after["fontPx"] >= min_font)
+
+            # Is the game playable again, and by what route?
+            restored_by = None
+            recover_error = None
+            recover_hit = None
+            if sess.spin_ready(recover_ms):
+                restored_by = "by itself"
+            elif after["recoverVisible"] and not after["recoverDisabled"]:
+                # Record whether the press was refused and what is actually on
+                # top of the control. Swallowing this made the evidence unable
+                # to tell "the click never landed" from "it landed and did
+                # nothing", which are different bugs in different files.
+                recover_hit = sess.hit_test("#recover")
+                try:
+                    sess.page.locator("#recover").click(timeout=5000)
+                except Exception as exc:
+                    recover_error = f"{type(exc).__name__}: {str(exc)[:200]}"
+                if sess.spin_ready(recover_ms):
+                    restored_by = "the RECONNECT control"
+            stuck = sess.status_line()
+            log[mode] = {"faultsFired": fault["fired"], "afterFault": after,
+                         "restoredBy": restored_by, "messageLegible": legible,
+                         "clickError": click_error}
+
+            if restored_by is None:
+                out.append(Complaint(
+                    check="resilience", severity="blocker",
+                    title=f"a {mode} on /api/spin leaves the game unusable",
+                    detail=("The spin button never came back and nothing on screen offers a way "
+                            "forward, so the player is stuck looking at a dead game. A server fault "
+                            "has to be recoverable without a reload."),
+                    evidence={"mode": mode, "faultsFired": fault["fired"], "before": before,
+                              "afterFault": after, "afterRecoveryAttempt": stuck,
+                              "recoverWaitMs": recover_ms,
+                              "recoverClickError": recover_error,
+                              "whatIsOnTopOfRecover": recover_hit,
+                              "spinLabelStuckOn": stuck["spinLabel"]},
+                    repro={"viewport": sess.viewport.name,
+                           "how": f"route **/api/spin once with {mode}, then press spin"},
+                    shot=str(sess.shot(f"resilience-bricked-{mode}")),
+                ))
+                continue
+
+            if not spoke:
+                out.append(Complaint(
+                    check="resilience", severity="major",
+                    title=f"a {mode} on /api/spin fails silently",
+                    detail=("The stake went out, the round did not happen, and the game never told me. "
+                            "A player sees a spin that did nothing at all."),
+                    evidence={"mode": mode, "faultsFired": fault["fired"],
+                              "statusBefore": before["text"], "statusAfter": after["text"],
+                              "statusVisible": after["visible"], "restoredBy": restored_by},
+                    repro={"viewport": sess.viewport.name},
+                    shot=str(sess.shot(f"resilience-silent-{mode}")),
+                ))
+            elif legible and any(p.lower() in said.lower() for p in cfg.get("platform_errors") or
+                     ["Failed to fetch", "signal timed out", "NetworkError",
+                      "Load failed", "The user aborted a request"]):
+                # Matched against exact platform strings rather than a guess at
+                # what "technical" reads like: the client rethrows the fetch
+                # DOMException's own message, so the player is shown wording
+                # written for a developer console.
+                out.append(Complaint(
+                    check="resilience", severity="minor",
+                    title=f"the {mode} failure shows the player a browser error string",
+                    detail=("The game does recover, and what it says is a raw platform message rather "
+                            "than anything about the game. A player reads it as a fault in their own "
+                            "machine."),
+                    evidence={"mode": mode, "text": said, "role": after["role"],
+                              "matched": [p for p in (cfg.get("platform_errors") or
+                                          ["Failed to fetch", "signal timed out", "NetworkError",
+                                           "Load failed", "The user aborted a request"])
+                                          if p.lower() in said.lower()]},
+                    repro={"viewport": sess.viewport.name,
+                           "how": f"route **/api/spin once with {mode}, then press spin"},
+                ))
+            elif not legible:
+                out.append(Complaint(
+                    check="resilience", severity="minor",
+                    title=f"the {mode} failure message renders at {after['fontPx']:.0f}px",
+                    detail="The game does say what went wrong, but not at a size a player can read.",
+                    evidence={"mode": mode, "text": said, "fontPx": after["fontPx"], "floorPx": min_font},
+                    repro={"viewport": sess.viewport.name},
+                ))
+
+            # A message and a live button still are not a working game.
+            round_before = sess.status_line()["round"]
+            sess.spin()
+            if not sess.round_advanced(round_before, int(cfg.get("round_ms", 15000))):
+                round_after = sess.status_line()["round"]
+                out.append(Complaint(
+                    check="resilience", severity="blocker",
+                    title=f"after a {mode} the next spin is a silent no-op",
+                    detail=("The button was pressable again and pressing it did not advance a round. "
+                            "The game looks alive and is not."),
+                    evidence={"mode": mode, "roundBefore": round_before, "roundAfter": round_after,
+                              "restoredBy": restored_by, "state": sess.status_line()},
+                    repro={"viewport": sess.viewport.name},
+                    shot=str(sess.shot(f"resilience-noop-{mode}")),
+                ))
+        finally:
+            fault["unroute"]()
+            # Hand the game back before the next mode — and before every check
+            # that runs after this one. The first sweep proved why: a 500 that
+            # was injected and then left un-recovered took the game OFFLINE,
+            # every later mode reported "could not press spin", and the
+            # backgrounding check filed a blocker against a game this check had
+            # bricked. Cleaning up after yourself is part of the measurement.
+            if not sess.spin_ready(2000):
+                try:
+                    recover = sess.page.locator("#recover")
+                    if recover.count() and recover.is_visible():
+                        recover.click(timeout=4000)
+                except Exception:
+                    pass
+                if not sess.spin_ready(int(cfg.get("recover_ms", 9000))):
+                    sess.page.reload(wait_until="load")
+                    sess.open()
+
+    if not exercised:
+        return out + [undetermined(
+            "resilience", "no fault was actually injected, so nothing was tested",
+            "Every mode failed to reach the client. This check contributed no evidence at all "
+            "about how the game behaves under a server fault.",
+            repro={"viewport": sess.viewport.name},
+            modesRequested=modes, modesExercised=[])]
+
+    # Praise only when nothing at all was left unmeasured: a note beside a
+    # praise line reads as a clean bill of health with a footnote, and the
+    # footnote is the part that matters.
+    if not [f for f in out if f.severity != "praise"]:
+        out.append(praise("resilience", f"the game survives every server fault I could inject at {sess.viewport.name}",
+                          "For each fault it showed the player a readable message and handed the spin "
+                          "button back, and the next spin really played a round.",
+                          modesExercised=exercised, perMode=log))
+    return out
+
+
+# --- backgrounding ----------------------------------------------------------
+
+@check("backgrounding")
+def backgrounding(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
+    """Coming back to a tab that was in the background must not leave it broken.
+
+    This game pauses every clip on `visibilitychange` on purpose, in half a
+    dozen modules. That is right, and it means the restore path is the one that
+    can rot silently: a clip that never gets played again looks like a still
+    frame, which is nearly what it should look like.
+
+    Two things make this measurable rather than a guess. Only clips that were
+    *playing before* the hide are judged, so the one sprite that is legitimately
+    parked does not read as a defect. And playback is proved by `currentTime`
+    advancing between two samples, not by `paused === false` — a video can be
+    unpaused and still frozen, which is exactly what the sabotage produces.
+    """
+    hidden_ms = int(cfg.get("hidden_ms", 6000))
+    restore_ms = int(cfg.get("restore_ms", 3000))
+    sample_gap_ms = int(cfg.get("sample_gap_ms", 1200))
+    max_new_videos = int(cfg.get("max_new_videos", 4))
+    max_new_animations = int(cfg.get("max_new_animations", 6))
+
+    sess.wait_for_spectacle()
+    # Do not inherit somebody else's wreckage and file it as this check's
+    # finding. A previous sweep had this check report "the game will not take a
+    # spin after the tab comes back" about a game the resilience check had left
+    # offline several minutes earlier — a blocker aimed at the wrong code.
+    if not sess.spin_ready(int(cfg.get("ready_ms", 20000))):
+        return [undetermined(
+            "backgrounding", "the game was already not accepting spins before I hid the tab",
+            "Whatever state it was left in, it was not this check's doing and nothing about "
+            "backgrounding was measured.",
+            repro={"viewport": sess.viewport.name},
+            stateBefore=sess.status_line())]
+
+    before = sess.playback()
+    playing = {v["file"]: v for v in before["videos"] if not v["paused"] and not v["ended"]}
+
+    hide = sess.set_page_hidden(True)
+    sess.page.wait_for_timeout(hidden_ms)
+    during = sess.playback()
+    show = sess.set_page_hidden(False)
+    sess.page.wait_for_timeout(restore_ms)
+    after = sess.playback()
+    sess.page.wait_for_timeout(sample_gap_ms)
+    later = sess.playback()
+
+    out: list[Complaint] = []
+
+    # Before judging the game, establish that the tab really went away and that
+    # the app noticed. An override that the app never saw would let every
+    # assertion below pass while testing nothing.
+    if not during["hidden"]:
+        # Visibility was already restored above, before any of these
+        # judgements — the next check never inherits a hidden tab.
+        return [undetermined(
+            "backgrounding", "the tab could not be put into the background",
+            f"document.hidden stayed false with the {hide['mechanism']} mechanism, so the game was "
+            "never backgrounded and nothing here was tested.",
+            repro={"viewport": sess.viewport.name},
+            mechanism=hide["mechanism"], overrideApplied=hide.get("applied"),
+            overrideError=hide.get("reason"), during=during)]
+    reacted = (sum(1 for v in during["videos"] if v["paused"]) > sum(1 for v in before["videos"] if v["paused"])
+               or during["animationsRunning"] < before["animationsRunning"])
+    if not reacted:
+        out.append(undetermined(
+            "backgrounding", "hiding the tab changed nothing the probe can see",
+            "Neither playback nor animations reacted, so I cannot tell whether the app received the "
+            "event at all. Everything below may be measuring an override the game ignored.",
+            repro={"viewport": sess.viewport.name},
+            mechanism=hide["mechanism"],
+            pausedBefore=sum(1 for v in before["videos"] if v["paused"]),
+            pausedDuring=sum(1 for v in during["videos"] if v["paused"]),
+            animationsRunningBefore=before["animationsRunning"],
+            animationsRunningDuring=during["animationsRunning"]))
+
+    by_file_after = {v["file"]: v for v in after["videos"]}
+    by_file_later = {v["file"]: v for v in later["videos"]}
+    swapped: list[str] = []
+    for name in playing:
+        a, b = by_file_after.get(name), by_file_later.get(name)
+        if not a or not b:
+            swapped.append(name)  # the scene moved on; sprite_motion owns handoffs
+            continue
+        if b.get("errorCode") is not None or b["readyState"] == 0:
+            out.append(Complaint(
+                check="backgrounding", severity="major",
+                title=f"{name} came back from the background with nothing to decode",
+                detail="This clip was playing before I hid the tab and cannot paint after I showed it again.",
+                evidence={"file": name, "before": playing[name], "afterRestore": a, "later": b},
+                repro={"viewport": sess.viewport.name},
+                shot=str(sess.shot("backgrounding-undecoded")),
+            ))
+            continue
+        if b["ended"]:
+            continue  # a clip that genuinely finished is not stalled
+        looped = b["loop"] and b["currentTime"] < a["currentTime"] - 0.01
+        advanced = looped or b["currentTime"] > a["currentTime"] + 0.01
+        if b["paused"] or not advanced:
+            out.append(Complaint(
+                check="backgrounding", severity="major",
+                title=f"{name} never resumed after the tab came back",
+                detail=("This clip was playing before the tab went into the background and is frozen "
+                        "afterwards. The room reads as a still photograph of itself, with no error "
+                        "anywhere to say why."),
+                evidence={"file": name, "playingBefore": playing[name],
+                          "pausedAfterRestore": b["paused"],
+                          "currentTimeAtRestore": a["currentTime"],
+                          f"currentTimeAfter{sample_gap_ms}ms": b["currentTime"],
+                          "advanced": advanced, "loop": b["loop"], "ended": b["ended"],
+                          "readyState": b["readyState"], "hiddenMs": hidden_ms},
+                repro={"viewport": sess.viewport.name,
+                       "how": "dispatch visibilitychange with document.hidden true, wait, then restore"},
+                shot=str(sess.shot("backgrounding-stalled")),
+            ))
+
+    grew = {"videos": later["videosTotal"] - before["videosTotal"],
+            "animations": later["animations"] - before["animations"],
+            "nodes": later["nodes"] - before["nodes"]}
+    if grew["videos"] > max_new_videos or grew["animations"] > max_new_animations:
+        out.append(Complaint(
+            check="backgrounding", severity="major",
+            title=f"the background trip left {grew['videos']} extra videos and {grew['animations']} extra animations behind",
+            detail=("Work queued up while the tab was away and was not collapsed on the way back. "
+                    "A player who alt-tabs a few times pays for every one of them."),
+            evidence={"before": {k: before[k] for k in ("videosTotal", "animations", "nodes")},
+                      "after": {k: later[k] for k in ("videosTotal", "animations", "nodes")},
+                      "growth": grew, "limits": {"videos": max_new_videos, "animations": max_new_animations}},
+            repro={"viewport": sess.viewport.name},
+        ))
+
+    if not sess.spin_ready(int(cfg.get("ready_ms", 20000))):
+        out.append(Complaint(
+            check="backgrounding", severity="blocker",
+            title="the game will not take a spin after the tab comes back",
+            detail="Returning to the tab left the spin button unusable, so the session is dead.",
+            evidence={"state": sess.status_line(), "playback": later},
+            repro={"viewport": sess.viewport.name},
+            shot=str(sess.shot("backgrounding-nospin")),
+        ))
+    else:
+        round_before = sess.status_line()["round"]
+        sess.spin()
+        if not sess.round_advanced(round_before, int(cfg.get("round_ms", 15000))):
+            out.append(Complaint(
+                check="backgrounding", severity="blocker",
+                title="the first spin after coming back does nothing",
+                detail="The button was live and pressing it did not advance a round.",
+                evidence={"roundBefore": round_before, "state": sess.status_line()},
+                repro={"viewport": sess.viewport.name},
+                shot=str(sess.shot("backgrounding-noop")),
+            ))
+
+    if not playing:
+        return out + [undetermined(
+            "backgrounding", "nothing was playing before I hid the tab, so resume was not tested",
+            "Zero clips were running when the measurement started. Whatever the restore path does, "
+            "this run did not exercise it.",
+            repro={"viewport": sess.viewport.name},
+            videosVisible=before["videosVisible"], videosTotal=before["videosTotal"],
+            mechanism=hide["mechanism"])]
+
+    # Praise only when nothing at all was left unmeasured: a note beside a
+    # praise line reads as a clean bill of health with a footnote, and the
+    # footnote is the part that matters.
+    if not [f for f in out if f.severity != "praise"]:
+        out.append(praise("backgrounding", f"the game survives a trip to the background at {sess.viewport.name}",
+                          "Every clip that was playing before is playing again with its clock moving, "
+                          "nothing piled up while the tab was away, and a spin still plays.",
+                          clipsWatched=sorted(playing), clipsSwappedMidWatch=swapped,
+                          hiddenMs=hidden_ms, mechanism=hide["mechanism"],
+                          pausedWhileHidden=sum(1 for v in during["videos"] if v["paused"]),
+                          growth=grew, restoredTo=show))
+    return out
+
+
 # --- health -----------------------------------------------------------------
 
 @check("health")
@@ -723,7 +1317,11 @@ def health(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
         ))
     if not out:
         out.append(praise("health", "no console errors and no failed requests",
-                          "Nothing broke in the background while I played."))
+                          "Nothing broke in the background while I played. Faults the bot injected "
+                          "itself are counted separately rather than dropped, so this is a claim "
+                          "about the game and not about what the bot could not see.",
+                          botInjectedFaults=len(sess.injected_failures),
+                          botInjectedSample=sess.injected_failures[:4]))
     return out
 
 

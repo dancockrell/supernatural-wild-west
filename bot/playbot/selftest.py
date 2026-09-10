@@ -21,6 +21,13 @@ class Sabotage:
     apply: Callable[[GameSession], None]
     undo: Callable[[GameSession], None]
     cfg: dict[str, Any]
+    # What the new complaint must say. A check that goes red for some other
+    # reason has not proved it can see this defect: the sabotage may have
+    # tripped something upstream and never reached the branch it was aimed at.
+    # An earlier case in this very file did exactly that — it blocked the
+    # clicks the check needed, the check skipped, and the run read as a pass.
+    # Optional, because the older cases predate it; required for anything new.
+    expect_title: str | None = None
 
 
 def _style(sess: GameSession, css: str) -> None:
@@ -132,6 +139,71 @@ CASES: list[Sabotage] = [
         undo=lambda s: s.page.reload(wait_until="load"),
         cfg={"panels": ["help"]},
     ),
+    Sabotage(
+        check="assets",
+        what="point the fog clip at a file that does not exist",
+        # /video/bot-does-not-exist.webm is served by Vite as 200 text/html —
+        # the SPA fallback — so this also exercises the content-type half of
+        # the check, which is the only half that can see a missing media file
+        # on this dev server.
+        apply=lambda s: s.page.evaluate(
+            "() => { const v = document.querySelector('video.parlor-foreground-fog');"
+            " if (!v) throw new Error('no fog video to sabotage');"
+            " window.__botAssetSrc = v.getAttribute('src');"
+            " v.setAttribute('src', '/video/bot-does-not-exist.webm'); v.load(); }"),
+        undo=lambda s: s.page.evaluate(
+            "() => { const v = document.querySelector('video.parlor-foreground-fog');"
+            " if (v && window.__botAssetSrc) { v.setAttribute('src', window.__botAssetSrc); v.load();"
+            " void v.play().catch(() => {}); } }"),
+        cfg={"settle_ms": 1500, "min_media": 6},
+        expect_title="bot-does-not-exist.webm",
+    ),
+    Sabotage(
+        check="resilience",
+        # The check's whole point is the branch where recovery is impossible,
+        # and that branch has to be reachable on purpose or nobody can prove it
+        # works. This brick engages ONLY once the game has gone OFFLINE, which
+        # is after the fault has been injected — pinning the spin button
+        # disabled from the start would have blocked the very click the check
+        # needs and turned the case into a silent skip.
+        what="brick recovery once the fault lands, so the game genuinely stays stuck",
+        apply=lambda s: s.page.evaluate(
+            "() => { window.__botBrick = setInterval(() => {"
+            " const conn = document.getElementById('connection');"
+            " if (!conn || !/OFFLINE/.test(conn.textContent || '')) return;"
+            " const spin = document.getElementById('spin'); if (spin) spin.disabled = true;"
+            " const rec = document.getElementById('recover');"
+            " if (rec) { rec.hidden = true; rec.disabled = true; } }, 40); }"),
+        undo=lambda s: (s.page.evaluate("() => clearInterval(window.__botBrick)"),
+                        s.page.reload(wait_until="load"), s.open()),
+        cfg={"modes": ["status500"], "settle_ms": 4000, "recover_ms": 5000},
+        expect_title="leaves the game unusable",
+    ),
+    Sabotage(
+        check="backgrounding",
+        what="pin the room plate paused across the restore",
+        # play() is replaced rather than the element paused outright: the check
+        # only judges clips that were playing *before* the hide, so a video
+        # already stopped when the baseline is taken would be excluded by
+        # design and the case would prove nothing. parlor-scene.ts resumes with
+        # v.play(), so a no-op play is what a real regression looks like.
+        apply=lambda s: s.page.evaluate(
+            "() => { window.__botPinVis = () => { if (!document.hidden) return;"
+            " const v = document.querySelector('video.parlor-environment:not([hidden])');"
+            " if (!v) return; window.__botPinned = v; v.play = () => Promise.resolve(); v.pause(); };"
+            " document.addEventListener('visibilitychange', window.__botPinVis); }"),
+        undo=lambda s: s.page.evaluate(
+            "() => { document.removeEventListener('visibilitychange', window.__botPinVis);"
+            " const v = window.__botPinned; if (v) { delete v.play; void v.play().catch(() => {}); } }"),
+        cfg={"hidden_ms": 3500, "restore_ms": 2500, "sample_gap_ms": 1200},
+        # "environment-color" rather than "environment-color.mp4": the stage
+        # holds a day plate and a night plate and swaps which one is unhidden,
+        # so pinning "the shown plate" can legitimately pin either. Asserting
+        # the day file made this case report WRONG-DEFECT after an earlier case
+        # had pushed the game into night — the check was right and the
+        # assertion was wrong. No other clip in the game carries this stem.
+        expect_title="environment-color",
+    ),
 ]
 
 
@@ -160,7 +232,13 @@ def run(sess: GameSession) -> list[dict[str, Any]]:
             # non-zero baseline, and a check that caps how many it reports simply
             # displaces an old finding with the new one, holding the count flat.
             was = {f.title for f in baseline}
-            caught = any(f.title not in was for f in is_complaint(after))
+            fresh = [f for f in is_complaint(after) if f.title not in was]
+            caught = bool(fresh)
+            # And it has to be the right defect. "Something went red" is the
+            # weaker claim, and it is satisfied by a sabotage that tripped an
+            # unrelated branch on its way past the one it was aimed at.
+            if caught and case.expect_title:
+                caught = any(case.expect_title in f.title for f in fresh)
         except Exception as exc:
             caught = False
             after = []
@@ -170,11 +248,20 @@ def run(sess: GameSession) -> list[dict[str, Any]]:
             if case.check == "panels":
                 sess.open()
 
-        verdict = "OK" if caught else "BLIND"
+        fresh_titles = [f.title for f in is_complaint(after) if f.title not in {b.title for b in baseline}]
+        if caught:
+            verdict = "OK"
+        elif fresh_titles and case.expect_title:
+            # It complained, about something else. That is not the same as
+            # catching this defect and must not read as a pass.
+            verdict = "WRONG-DEFECT"
+        else:
+            verdict = "BLIND"
         results.append({
             "check": case.check,
             "sabotage": case.what,
             "verdict": verdict,
+            "expectedTitleToContain": case.expect_title,
             "newComplaints": [f.title for f in is_complaint(after) if f.title not in {b.title for b in baseline}],
             "complaintsWhenBroken": [f.title for f in is_complaint(after)],
             "complaintsWhenHealthy": [f.title for f in baseline],
