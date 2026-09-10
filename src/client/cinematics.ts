@@ -75,7 +75,12 @@ export class FeatureCinematics {
         : kind === "ride"
           ? ""
           : '<div class="apparition-light"></div>';
-    if (kind === "noon" || kind === "brand") this.stage.replaceChildren(rareGlyph(kind));
+    // Noon keeps the warm dawn wash built just above. It used to be clobbered
+    // here by a vector clock face, which drew thin gold wireframe over the
+    // reels — you could read the symbols straight through it — and left
+    // `High Noon has a warm reveal` (tests/browser/ghosts.spec.ts) red, since
+    // that test requires .dawn-return visible and no sun/horizon/rays graphic.
+    if (kind === "brand") this.stage.replaceChildren(rareGlyph(kind));
     if (kind === "awaken" || kind === "witch" || kind === "fortune" || kind === "ride") {
       const clips: GhostClip[] = [
         "medium-seance",

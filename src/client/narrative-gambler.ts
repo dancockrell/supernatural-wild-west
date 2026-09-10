@@ -42,14 +42,28 @@ export class NarrativeGambler {
     contact.classList.add('gambler-contact-shadow');
     // Foot positions come from the same authored silhouette used in video extraction.
     // This lies behind the table, above the floor/dress, with no actor-wide dark halo.
-    contact.innerHTML = `<defs><filter id="gambler-contact-soften" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="12"/></filter><filter id="gambler-foot-soften" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="2"/></filter></defs>
-      <g fill="#080b0d">
-        <path d="M210 500 L800 540 L805 640 L767 650 L534 739 L120 674 L119 629Z" opacity=".84" filter="url(#gambler-contact-soften)"/>
-        <g filter="url(#gambler-foot-soften)" opacity=".94">
-          <ellipse cx="221" cy="589" rx="39" ry="10" transform="rotate(17 221 589)"/>
-          <ellipse cx="552" cy="692" rx="47" ry="11" transform="rotate(-8 552 692)"/>
-          <ellipse cx="787" cy="616" rx="25" ry="8" transform="rotate(-18 787 616)"/>
-        </g>
+    // This was a 686 x 239 straight-edged polygon at opacity .84 blurred by 12.
+    // At that size the corners survived the blur, so it read as an angular dark
+    // plate lying on the boards rather than a shadow. Replaced rather than
+    // stacked on: it is the same idea the residents already have (a soft radial
+    // ellipse centred on the contact line, .resident-contact-shadow in
+    // parlor.css), just scaled up for a desk, so there is one mechanism for
+    // grounding a thing on this floor instead of two. The three foot ellipses
+    // stay tight underneath it — those are the actual contact points and are
+    // what sell the weight.
+    contact.innerHTML = `<defs>
+        <radialGradient id="gambler-ground-fade">
+          <stop offset="0" stop-color="#03050a" stop-opacity=".92"/>
+          <stop offset=".42" stop-color="#03050a" stop-opacity=".6"/>
+          <stop offset="1" stop-color="#03050a" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="gambler-foot-soften" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="3"/></filter>
+      </defs>
+      <ellipse cx="500" cy="650" rx="392" ry="88" fill="url(#gambler-ground-fade)"/>
+      <g fill="#080b0d" filter="url(#gambler-foot-soften)" opacity=".8">
+        <ellipse cx="221" cy="589" rx="39" ry="10" transform="rotate(17 221 589)"/>
+        <ellipse cx="552" cy="692" rx="47" ry="11" transform="rotate(-8 552 692)"/>
+        <ellipse cx="787" cy="616" rx="25" ry="8" transform="rotate(-18 787 616)"/>
       </g>`;
     this.cards = document.createElementNS('http://www.w3.org/2000/svg','svg');
     this.cards.setAttribute('viewBox','0 0 960 720');
