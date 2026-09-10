@@ -1,16 +1,36 @@
 import {test,expect} from '@playwright/test';
 import {preview} from './preview';
 
-test('Witching Hour uses the approved brazier maiden performance',async({page})=>{
+// STALE CLIP, CORRECTED. This required Witching Hour to be the brazier maiden's
+// short room reaction (parlor-maidens-v1/medium-reaction.webm, ~4s) and to be
+// gone within 4s. Two separate decisions moved past that. a708b73 gave the
+// scene its own dedicated film - cinematics.ts:110-115 sets
+// /video/feature-performances-v2/witch.webm for kind 'witch', after and over
+// the resident-media assignment above it - and the maiden's own win reaction
+// itself moved to /video/rare-features-v4/medium-reaction.webm (resident-media.ts:8),
+// so neither half of the old expectation names anything the product still has.
+// Measured: feature-performances-v2/witch.webm, 8.084s.
+//
+// witch-feature-review.spec.ts owns the 4K upscaling and full-length review of
+// this same film. What this keeps is the default-viewport in-game pass: the
+// right film, framed inside the window, closing on its own.
+test('Witching Hour uses the dedicated native performance',async({page})=>{
  await page.goto('/?parlor=1');
  await preview(page,'witch');
  const clip=page.locator('.feature-stage video');
- await expect(clip).toHaveAttribute('src',/parlor-maidens-v1\/medium-reaction.webm/);
+ await expect(clip).toHaveAttribute('src','/video/feature-performances-v2/witch.webm');
  await expect.poll(()=>clip.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThanOrEqual(2);
- expect(await clip.evaluate((v:HTMLVideoElement)=>v.duration)).toBeCloseTo(4,0);
+ expect(await clip.evaluate((v:HTMLVideoElement)=>v.duration)).toBeCloseTo(8.08,1);
+ const box=await clip.evaluate((v:HTMLVideoElement)=>{const r=v.getBoundingClientRect();return {x:r.x,y:r.y,right:r.right,bottom:r.bottom,w:r.width,h:r.height,vw:innerWidth,vh:innerHeight};});
+ expect(box.w).toBeGreaterThan(100);
+ expect(box.x).toBeGreaterThanOrEqual(0);expect(box.right).toBeLessThanOrEqual(box.vw);
+ expect(box.bottom).toBeLessThanOrEqual(box.vh+1);
  await page.waitForTimeout(900);
  await page.screenshot({path:'docs/witch-summon-in-game.png'});
- await expect(page.locator('#spectacle')).toBeHidden({timeout:4000});
+ // 8.084s film; the overlay closes 250ms after `ended` (main.ts:301) and the
+ // no-progress watchdog on the same path is 15000ms, so this still reds on a
+ // performance that never finishes.
+ await expect(page.locator('#spectacle')).toBeHidden({timeout:12000});
 });
 
 test('gambler never exposes a seeking frame across idle and receive',async({page})=>{

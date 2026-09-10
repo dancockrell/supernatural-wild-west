@@ -21,14 +21,28 @@ test('How to Play exposes rare performances without wagering and supports quick 
  await expect(page.locator('.poker-guest video')).toHaveAttribute('src','/video/hand-performances-v3/two-pair.webm');
  await page.locator('#return-animation-gallery').click();
  await expect(page.locator('.poker-guest')).toHaveCount(0);
- await page.locator('[data-character-preview="4"]').click();
+ // STALE POSITIONAL SELECTORS, CORRECTED (both here and at the condemned ghost
+ // below). [data-character-preview="N"] is an index into the gallery's own
+ // list, and that list has grown: slot 4 is now the mounted ghost's jackpot
+ // Easter egg and the gambler's loss clip sits at 2. Same drift, same fix as
+ // tests/browser/rare-repaired.spec.ts already took - every one of these
+ // buttons has a stable name, so ask for it by name.
+ await page.getByRole('button',{name:'Gambler · loses again',exact:true}).click();
  await expect(page.locator('.reaction-review')).toHaveAttribute('src','/video/parlor-gambler-native-v2/loss.webm');
  await page.locator('#back-to-rare-animations').click();
- await page.getByRole('button',{name:'Brazier maiden - neck',exact:true}).click();
+ // STALE LABEL, CORRECTED. There is no 'neck' button; the clip
+ // parlor-idles-v2/medium-neck.webm is presented as 'inclines her head'
+ // (src/client/main.ts:1035-1038 pairs the labels with the media list).
+ await page.getByRole('button',{name:'Brazier maiden - inclines her head',exact:true}).click();
  await expect(page.locator('.reaction-review')).toHaveAttribute('src','/video/parlor-idles-v2/medium-neck.webm');
- expect(await page.locator('.reaction-review').evaluate(e=>getComputedStyle(e).filter)).toContain('resident-soft-rim');
+ // STALE ASSERTION, CORRECTED. This required `resident-soft-rim` on a maiden
+ // preview. It cannot be there: showAnimationPreview() sets style.filter='none'
+ // on exactly the Lantern and Brazier maiden previews (src/client/main.ts:1084)
+ // - the deliberate "no added shading on the two women" decision that
+ // women-no-effects.spec.ts exists to hold. Assert the decision instead.
+ expect(await page.locator('.reaction-review').evaluate(e=>getComputedStyle(e).filter)).toBe('none');
  await page.locator('#back-to-rare-animations').click();
- await page.locator('[data-character-preview="5"]').click();
+ await page.getByRole('button',{name:'Condemned ghost · $1,000 Easter egg',exact:true}).click();
  await expect(page.locator('.reaction-review')).toHaveAttribute('src','/video/parlor-exterior-stories-v1/condemned-jackpot.webm');
  await expect.poll(()=>page.locator('.reaction-review').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.1);
  await page.locator('#close-modal').click();

@@ -58,7 +58,13 @@ for (const width of [1440, 390]) {
           }) + " CR";
         await expect(page.locator("#spectacle-copy")).toHaveText(expected);
       }
-      await expect(page.locator("#spectacle")).toBeHidden({ timeout: 7000 });
+      // STALE BUDGET, RAISED. 7000ms predates the authored feature films. The
+      // longest of the nine reviewed here run 8.084s (witch, graveyard, ride -
+      // measured), and the overlay closes 250ms after `ended` (main.ts:301), so
+      // this could not pass on the very first kind. 12000ms stays below the
+      // 15000ms no-progress watchdog on the same path, so a performance that
+      // never finishes still reds here rather than being waited out.
+      await expect(page.locator("#spectacle")).toBeHidden({ timeout: 12000 });
       await expect(page.locator("#balance")).toHaveText("1,000.00");
       await expect(page.locator("#spin")).toBeEnabled();
       await expect(page.locator("#modal")).not.toBeVisible();

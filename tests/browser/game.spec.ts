@@ -28,7 +28,7 @@ test("player hierarchy keeps controls and removes decorative labels", async ({
 });
 
 for (const width of [1440, 390]) {
-  test(`rider crosses the scene once and automatically returns at ${width}`, async ({
+  test(`Ride of the Damned plays once and automatically returns at ${width}`, async ({
     page,
   }) => {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
@@ -36,18 +36,29 @@ for (const width of [1440, 390]) {
     await expect(page.locator("#connection")).toContainText("CONNECTED");
     await page.locator("#audio").click();
     await preview(page, "ride");
-    const video = page.locator(".spectral-rider video"),
-      rider = page.locator(".spectral-rider");
+    // RETARGETED AT THE LIVE MECHANISM. This read `.spectral-rider video` and
+    // required the element to translate across the viewport. That was the
+    // canvas rider driven by SpectralEffects.haunt() (src/client/effects.ts:240),
+    // which main.ts:326 only calls when the scene has no native performance.
+    // Ride of the Damned has had one since ad4adc5 (cinematics.ts:116-122 ->
+    // /video/rare-features-v4/ride.webm, 8.084s), so haunt() no longer runs and
+    // `.spectral-rider`'s video sits at currentTime 0 with readyState 4 forever
+    // - measured. The test was polling a video nothing plays.
+    //
+    // The horse now moves inside its own frame rather than the element moving
+    // across the screen, so the element-translation assertion is gone with the
+    // mechanism it described; what remains, and what this test is named for, is
+    // that the performance runs its frames once and the overlay returns on its
+    // own at both widths.
+    const video = page.locator(".feature-ghost");
+    await expect(video).toHaveClass(/rare-mounted-performance/);
     await expect
       .poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime))
       .toBeGreaterThan(0.3);
-    const start = await rider.boundingBox();
     const frames = await video.evaluate(
       (v: HTMLVideoElement) => v.getVideoPlaybackQuality().totalVideoFrames,
     );
     await page.waitForTimeout(650);
-    const next = await rider.boundingBox();
-    expect(next!.x).toBeLessThan(start!.x - width * 0.2);
     expect(
       await video.evaluate(
         (v: HTMLVideoElement) => v.getVideoPlaybackQuality().totalVideoFrames,
@@ -57,7 +68,9 @@ for (const width of [1440, 390]) {
     await page.screenshot({
       path: `docs/screenshots/rider-impact-${width}.png`,
     });
-    await expect(page.locator("#spectacle")).toBeHidden({ timeout: 5000 });
+    // 8.084s film, overlay closes 250ms after `ended` (main.ts:301); still under
+    // the 15000ms no-progress watchdog so a stalled performance reds here.
+    await expect(page.locator("#spectacle")).toBeHidden({ timeout: 12000 });
     await expect
       .poll(() => video.evaluate((v: HTMLVideoElement) => v.paused))
       .toBe(true);
