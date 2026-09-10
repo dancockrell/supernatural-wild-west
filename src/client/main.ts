@@ -62,7 +62,7 @@ app.innerHTML = `<canvas id="frontier" aria-label="An animated cursed frontier s
 <div class="cabinet"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="locations">${LOCATIONS.map((name, i) => `<button data-location="${i}" aria-label="${name} modifier"><span>${name}</span><i></i></button>`).join("")}</div>
 <div id="reels" class="reels" role="group" aria-label="Five reels, five rows">${Array.from({ length: 5 }, (_, i) => `<div class="reel" data-reel="${i}"></div>`).join("")}</div><div class="cabinet-bottom"><span id="cabinet-note"></span></div></div>
 <div class="event-line"><p id="status" role="status" aria-live="polite">Opening the gates to the frontier…</p><button id="recover" hidden>RECONNECT</button></div>
-<div class="controls"><div class="balance metric"><span>BALANCE <small>CR</small></span><strong id="balance">—</strong></div><div class="bet-control"><span>BET <small>CR</small></span><div><button id="bet-down" aria-label="Decrease bet">−</button><strong id="bet">1.00</strong><button id="bet-up" aria-label="Increase bet">+</button></div></div><button id="spin" class="spin-button" disabled><span class="spin-icon">↻</span><span id="spin-label">CONNECTING</span></button><div class="win metric"><span>TOTAL WIN <small>CR</small></span><strong id="win">0.00</strong></div><button id="history" class="history-button" aria-label="Round history">≡<span>HISTORY</span></button></div>
+<div class="controls"><div class="balance metric"><span>BALANCE <small>CR</small></span><strong id="balance">—</strong></div><div class="bet-control"><span>BET <small>CR</small></span><div><button id="bet-down" aria-label="Decrease bet">−</button><strong id="bet">1.00</strong><button id="bet-up" aria-label="Increase bet">+</button></div></div><button id="spin" class="spin-button" data-caption="long" disabled><span class="spin-icon">↻</span><span id="spin-label">CONNECTING</span></button><div class="win metric"><span>TOTAL WIN <small>CR</small></span><strong id="win">0.00</strong></div><button id="history" class="history-button" aria-label="Round history">≡<span>HISTORY</span></button></div>
 <div class="under-controls"><span id="round-label">WAITING FOR SESSION</span><span id="connection"><i></i> CONNECTING</span></div></section>
 </main>
 <footer><span>DEMO PLAY <b>·</b> NO CASH VALUE</span></footer></div>
@@ -317,7 +317,11 @@ function showSpectacle(
     }, {signal:spectacleAudioEvents.signal});
     spectacleTimer = setTimeout(close, 15000);
   } else {
-    spectacleTimer = setTimeout(close, reduced ? 900 : kind === "ride" ? 8000 : (kind === "noon" || kind === "brand") ? 7200 : 5700);
+    // Noon is no longer held for 7.2s alongside brand. Brand earns that: it
+    // draws a glyph with an ember animation. Noon is a title card over a dawn
+    // wash whose animation (dawn-return-light, player-ui.css) finishes in
+    // 2.2s, so the remaining five seconds were a static card between rounds.
+    spectacleTimer = setTimeout(close, reduced ? 900 : kind === "ride" ? 8000 : kind === "brand" ? 7200 : kind === "noon" ? 2600 : 5700);
   }
   if (kind === "ride" && !reduced && !nativePerformance)
     void effects.haunt().then(() => {
@@ -425,11 +429,18 @@ function refresh() {
   el<HTMLButtonElement>("spin").disabled = !connected || (busy && !finishAnimation) || pokerGuests.active || !el('spectacle').hidden;
   el<HTMLButtonElement>("autoplay").disabled =
     !autoplay.active && (busy || !connected);
-  el("spin-label").textContent = busy
+  const spinCaption = busy
     ? finishAnimation ? "QUICK STOP" : "RESOLVING"
     : state.phase === "bonus"
       ? `FREE SPIN · ${state.freeSpins}`
       : "SPIN";
+  el("spin-label").textContent = spinCaption;
+  // The button is a circle sized for SPIN, but it also has to say RESOLVING,
+  // QUICK STOP, CONNECTING and FREE SPIN · N. CSS cannot size text per caption,
+  // so shrinking the label enough for the longest state shrank SPIN with it —
+  // the state a player looks at nearly all the time. This flag lets the
+  // stylesheet drop the size only when the caption actually needs it.
+  el("spin").dataset.caption = spinCaption.length > 6 ? "long" : "short";
   el("phase").innerHTML =
     `<svg class="phase-emblem" viewBox="0 0 32 32" aria-hidden="true">${state.phase === "noon" ? '<circle cx="16" cy="16" r="6"/><path d="M16 2v5m0 18v5M2 16h5m18 0h5M6 6l4 4m12 12 4 4M6 26l4-4M22 10l4-4"/>' : '<path d="M21 4a12 12 0 1 0 7 19A13 13 0 0 1 21 4Z"/>'}</svg><span class="phase-title">${state.phase === "bonus" ? "Ride of the Damned" : state.phase === "witching" ? "Witching Hour" : "High Noon"}${state.phase === "witching" ? ` <small>${state.witchSpins} spins remaining</small>` : ""}</span>`;
   document.body.classList.toggle("night", state.phase !== "noon");

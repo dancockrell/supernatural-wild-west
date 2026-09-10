@@ -88,6 +88,13 @@ CASES: list[Sabotage] = [
         cfg={"min_px": 11, "targets": ["#balance"]},
     ),
     Sabotage(
+        check="label_fit",
+        what="blow the spin caption up so it cannot fit its button",
+        apply=lambda s: _style(s, "#spin-label{font-size:44px !important;white-space:nowrap !important;}"),
+        undo=_unstyle,
+        cfg={"tolerance_px": 2, "pairs": [{"label": "#spin-label", "host": "#spin", "states": ["CONNECTING"]}]},
+    ),
+    Sabotage(
         check="letterbox",
         what="shrink the stage to a quarter of the window",
         apply=lambda s: _style(s, ".parlor-stage{width:38vw !important;}"),

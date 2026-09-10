@@ -125,6 +125,28 @@ class GameSession:
     PANEL_IDS = {"settings": "#settings", "help": "#help",
                  "paytable": "#paytable", "history": "#history"}
 
+    def wait_for_spectacle(self, timeout_ms: int = 20000) -> bool:
+        """Wait out any full-screen feature performance.
+
+        While one is playing the game deliberately marks the whole shell
+        `inert`, so every control legitimately stops accepting clicks. Without
+        this wait the bot reported "the help button cannot be clicked" as a
+        game bug when the real answer was that it was politely refusing to be
+        clicked during a cutscene the bot itself had triggered.
+        """
+        try:
+            self.page.wait_for_function(
+                """() => {
+                    const s = document.getElementById('spectacle');
+                    const shell = document.getElementById('shell') || document.querySelector('.shell');
+                    return (!s || s.hidden) && !(shell && shell.hasAttribute('inert'));
+                }""",
+                timeout=timeout_ms,
+            )
+            return True
+        except Exception:
+            return False
+
     def open_panel(self, which: str, timeout_ms: int = 4000) -> str:
         """Returns 'opened', 'absent', or 'unclickable'.
 
@@ -132,6 +154,7 @@ class GameSession:
         version let a 30s Playwright timeout kill the whole check, which threw
         away every other panel result for that viewport.
         """
+        self.wait_for_spectacle()
         locator = self.page.locator(self.PANEL_IDS[which])
         if locator.count() == 0 or not locator.is_visible():
             return "absent"
@@ -177,6 +200,9 @@ class GameSession:
 
     def rects(self, selectors: list[str]) -> dict[str, Any]:
         return self.page.evaluate(probes.RECTS_JS, selectors)
+
+    def label_fit(self, pairs: list[dict[str, Any]]) -> dict[str, Any]:
+        return self.page.evaluate(probes.FIT_JS, pairs)
 
     def text_metrics(self, selectors: list[str]) -> dict[str, Any]:
         return self.page.evaluate(probes.TEXT_JS, selectors)

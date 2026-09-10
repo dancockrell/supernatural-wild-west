@@ -16,6 +16,20 @@
     "spin_responds": {},
     "tap_targets": { "min_px": 24 },
     "legibility": { "min_px": 11, "min_contrast": 3.0 },
+    "label_fit": {
+      "tolerance_px": 2,
+      "_": "Each state carries the attributes main.ts sets with it; caption length > 6 means data-caption=long.",
+      "pairs": [{
+        "label": "#spin-label", "host": "#spin",
+        "states": [
+          { "text": "SPIN",          "hostAttrs": { "data-caption": "short" } },
+          { "text": "RESOLVING",     "hostAttrs": { "data-caption": "long" } },
+          { "text": "QUICK STOP",    "hostAttrs": { "data-caption": "long" } },
+          { "text": "CONNECTING",    "hostAttrs": { "data-caption": "long" } },
+          { "text": "FREE SPIN · 8", "hostAttrs": { "data-caption": "long" } }
+        ]
+      }]
+    },
     "ledger": {},
     "offscreen": {},
     "overlap": {},

@@ -18,7 +18,7 @@
 .unified-parlor .parlor-environment { position:absolute; inset:0 auto auto 0; width:100%; height:auto; z-index:0; }
 .parlor-light { position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
 .parlor-environment[src$="/environment-color.mp4"],
-body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); }
+body:not(.night) .parlor-floor-repair { filter:brightness(1.22) contrast(1.12) saturate(1.06); }
 .parlor-light .daylight { opacity:1; transition:opacity 1200ms ease; mix-blend-mode:screen; }
 .night .parlor-light .daylight { opacity:0; }
 .parlor-light .moonlight { opacity:0; mix-blend-mode:screen; transition:opacity 1200ms ease; }
@@ -34,7 +34,21 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); 
   .unified-parlor body { min-height:60cqw; background:#100e0a; }
   .unified-parlor .vignette { display:none; }
   .unified-parlor .shell { width:100%; max-width:none; padding:0; margin:0; }
-  .unified-parlor .topbar { position:absolute; top:0; right:1cqw; height:3cqw; border:0; }
+  /* Fixed, not absolute: the stage can now overscan past the viewport, and a
+     topbar pinned to the stage's own right edge rode off screen with it. */
+  .unified-parlor .topbar { position:fixed; top:0; right:1cqw; height:3cqw; border:0; z-index:40; }
+  /* The topbar's own box scales above, but nothing scaled the controls
+     inside it until now — at a narrow stage (a portrait phone can letterbox
+     this down under 250px tall) their fixed-px sizes from style.css/
+     player-ui.css dwarfed the 3cqw topbar and spilled over the title. */
+  .unified-parlor .top-actions { gap:.6cqw; }
+  .unified-parlor .icon-button { width:2.2cqw; height:2.6cqw; font-size:1.5cqw; }
+  .unified-parlor .outline-button { padding:.7cqw 1cqw; font-size:.7cqw; letter-spacing:.1cqw; }
+  .unified-parlor .quick-mixer summary { padding:.7cqw 1cqw; font-size:.95cqw; border-radius:.3cqw; }
+  .unified-parlor .quick-mixer summary span { margin-left:.6cqw; }
+  .unified-parlor .quick-mixer-panel { top:calc(100% + .6cqw); width:min(21cqw,calc(100vw - 2.4cqw)); padding:1.6cqw; border-radius:.55cqw; }
+  .unified-parlor .quick-mixer-panel label { font-size:1cqw; }
+  .unified-parlor .quick-mixer-panel output { font-size:.9cqw; }
   .unified-parlor .title-area { position:absolute; left:37.1cqw; top:3.1cqw; width:26.9cqw; height:6.2cqw; margin:0; padding:0; display:flex; align-items:center; justify-content:center; }
   .unified-parlor .title-area h1 { font-size:3cqw; line-height:1; text-align:center; }
   .unified-parlor .title-area h1 span { display:block; font-size:1.35cqw; letter-spacing:.2cqw; }
@@ -108,7 +122,51 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); 
  .unified-parlor .narrative-gambler { left:64.7cqw; top:27.2cqw; width:38cqw; height:28.5cqw; }
  .unified-parlor .parlor-exterior-residents .rider { left:77cqw; top:19cqw; width:17cqw; height:12.75cqw; }
  .unified-parlor .controls .spin-button { border-radius:50%; width:4.8cqw; height:4.8cqw; flex:0 0 4.8cqw; margin-top:-.7cqw; border:3px double #b99855; background:radial-gradient(ellipse at 38% 25%,#665237,#34251b 60%,#140f0a); box-shadow:0 0 0 3px #241a11,inset 0 0 0 2px #6f5434,0 4px 6px #0008; color:#f2cf86; }
- .unified-parlor .controls #spin-label { font:700 1.15cqw 'Cinzel',serif; }
+ /* The caption is set by main.ts and is not always SPIN. Measured at 1920x1080
+    with the authored 1.15cqw and .9cqw side padding, in a 92.1px circle whose
+    content box was only 51.6px wide: SPIN 60.8, FREE SPIN . 8 63.3 (already
+    wrapping to three lines), RESOLVING 148.8, CONNECTING 180.3. The two long
+    ones are single unbreakable words, so they did not wrap - they spilled
+    88.2px out of the circle and printed across the "+" stepper on one side and
+    the AUTO button on the other. RESOLVING shows on every spin, so that was
+    the normal look of the rail, not an edge case.
+
+    The button stays round. It cannot grow into a pill for the long states
+    only: nothing in the DOM distinguishes them - #spin carries no state class
+    and `disabled` covers both SPIN and CONNECTING - so no selector can reach
+    them, and growing it unconditionally would push #autoplay around inside the
+    fixed 8.4cqw grid track on every spin.
+
+    So the caption wraps instead, which is what FREE SPIN . 8 already did and
+    what it already looked like. Three numbers set the values, all measured in
+    the real face rather than computed:
+
+    - padding .1cqw (was .3cqw .9cqw) gives 82.3px of content width in the
+      92.1px circle. At .9cqw there was not enough width for a two-line break
+      at any legible size.
+    - overflow-wrap:anywhere gives RESOLVING and CONNECTING a break opportunity
+      they otherwise have none of. Without it the font would have to drop to
+      9.8px to fit CONNECTING on one line, and 6.9px at the 1390 stage.
+    - .85cqw with line-height 1.02 is the largest size that still breaks every
+      state into two lines AND keeps the line boxes inside the *circle*, not
+      merely inside the bounding rect - a rect-only check passes at 1.15cqw
+      while the text visibly pokes through the ring. Worst-case clearance from
+      a line-box corner to the ring is 3.6px (RESOLVING); at .9cqw it is 1.4px
+      and RESOLVING reads as touching the border, at 1.0cqw CONNECTING breaks
+      to three lines and leaves an orphan "G".
+
+    Cost: SPIN drops from 22.1px to 16.3px on the desktop stage. That is the
+    price of one uniform size, since CSS cannot size text per caption.
+    The @container (max-width:1000px) block at the end of the file overrides
+    all three of these (padding 0, 11px, nowrap) and is unaffected - nowrap
+    disables overflow-wrap, so the 96x32 pill keeps its single line. */
+ .unified-parlor .controls .spin-button { padding:.1cqw; }
+ /* Only the long captions shrink. Sizing every state for CONNECTING cost
+    SPIN a third of its size, and SPIN is what a player looks at nearly
+    all the time; main.ts sets data-caption so the stylesheet can tell
+    them apart. */
+ .unified-parlor .controls #spin-label { font:700 1.15cqw/1.05 'Cinzel',serif; overflow-wrap:anywhere; }
+ .unified-parlor .controls .spin-button[data-caption='long'] #spin-label { font-size:0.85cqw; line-height:1.02; }
  .unified-parlor .controls .spin-icon { display:none; }
 }
 @media(min-width:0px) {
@@ -124,14 +182,29 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); 
    bright" is the pink and blue rim baked into the resident footage itself,
    which no rule here can reach. Leave this alone. */
 .parlor-foreground-fog { position:absolute; left:0; top:0; width:100%; height:auto; pointer-events:none; z-index:1; }
+/* A backdrop-blur strip used to sit here to soften a horizontal edge by the
+   table. Removed 10 Sep 2026: Dan could see it as a blur band smeared across
+   the balustrade, and it was only ever a cosmetic patch for a symptom. The
+   thing actually making that area look wrong was the desk's own shadow — a
+   near-opaque straight-edged polygon, since replaced with a proper radial
+   contact shadow in narrative-gambler.ts. Treat a visible blur band as worse
+   than the edge it hides. */
 /* Where each resident meets the floor. Percentages are of her own slot and were
    read off the running scene: the queen stands a little lower in frame than the
    medium, and both clips carry a spectral trail below the boots, so these are
    set against the boots rather than the bottom of the figure. */
-.resident-contact-shadow { position:absolute; left:50%; transform:translateX(-50%); pointer-events:none; z-index:0; height:5.5%; filter:blur(2px);
-  background:radial-gradient(ellipse at 50% 50%, rgba(3,5,7,.78) 0%, rgba(3,5,7,.42) 40%, rgba(3,5,7,0) 70%); }
-.unified-parlor .ghost-porch.left .resident-contact-shadow { top:79%; width:30%; margin-left:16%; }
-.unified-parlor .ghost-porch.right .resident-contact-shadow { top:76%; width:40%; }
+.resident-contact-shadow { position:absolute; left:50%; transform:translateX(-50%); pointer-events:none; z-index:0; height:9.5%; filter:blur(4px);
+  background:radial-gradient(ellipse at 50% 50%, rgba(3,5,7,.95) 0%, rgba(3,5,7,.62) 40%, rgba(3,5,7,0) 74%); }
+/* Re-measured 10 Sep 2026 against the running clips rather than by eye. The
+   lowest opaque row of the lantern maiden's footage sits at 96.4% of her frame
+   and the brazier maiden's at 90.9% (stable across every idle variant), but
+   these were at 79% and 76% — putting both shadows 68-78px ABOVE the boots, on
+   the skirt, so the women read as floating with no contact shadow at all.
+   Darkened and widened twice on 10 Sep 2026 at Dan's request; the tops move up
+   by half the added height so the ellipse stays centred on the boot line (feet
+   96.35% and 90.89%, ellipse now 9.5% tall, so top = feet - 4.75%). */
+.unified-parlor .ghost-porch.left .resident-contact-shadow { top:91.6%; width:48%; margin-left:16%; }
+.unified-parlor .ghost-porch.right .resident-contact-shadow { top:86.14%; width:60%; }
 /* Light thrown by the thing each resident is carrying. Centres are the practical
    itself, measured off the running clips: the queen's lantern sits at 21% across
    and 27% down her frame across all four of her takes, the medium's bowl moves
@@ -155,8 +228,30 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); 
 
 /* One authored coordinate system. Letterboxing preserves every spatial relationship. */
 .unified-parlor body { margin:0; min-height:100svh; overflow:hidden; background:#080b0c; }
-.unified-parlor #app { width:100vw; height:100svh; display:grid; place-items:center; overflow:hidden; }
-.parlor-stage { position:relative; width:min(100vw,177.6833svh); aspect-ratio:1672/941; container-type:inline-size; overflow:hidden; isolation:isolate; }
+/* position:relative + an absolutely centred stage rather than grid centring:
+   a grid item wider than its track gets clamped to the start edge, which put
+   the whole overscan crop on one side and cut the gambler off entirely. */
+.unified-parlor #app { width:100vw; height:100svh; position:relative; overflow:hidden; }
+/* Pure "contain" sizing letterboxed hard on any viewport that is not close to
+   1672:941 — measured at 1390x1558 it spent 49.8% of the screen on black bars.
+   The authored coordinate system only needs its own aspect ratio kept, not the
+   whole frame kept on screen, so the stage may now overscale past the viewport
+   and let #app's overflow:hidden crop the outer art. The cap is what keeps that
+   honest: the game column lives between 31.9cqw and 68.7cqw, so cropping stays
+   clear of it until roughly 1.55x, and --parlor-fill stops well short. */
+/* Centred with calculated offsets rather than a translate: a transformed
+   ancestor becomes the containing block for position:fixed descendants, which
+   silently re-anchored the fixed topbar to the stage and pushed it off screen
+   again. No transform here means fixed means fixed. */
+.parlor-stage { --parlor-contain:min(100vw,177.6833svh); --parlor-fill:1.2;
+  /* Overscan is horizontal only. The authored frame keeps UI near both the top
+     (title, topbar) and the bottom (controls, the player's hand, under-controls),
+     so cropping vertically cuts the hand off — measured at 1920x900, where the
+     hand ran to y=985 in a 900px viewport. Capping the width at 177.6833svh
+     keeps the stage height within the viewport; only the side art is ever cut. */
+  --parlor-w:min(var(--parlor-contain) * var(--parlor-fill),177.6833svh); --parlor-h:calc(var(--parlor-w) * 941 / 1672);
+  position:absolute; left:calc(50% - var(--parlor-w) / 2); top:calc(50% - var(--parlor-h) / 2);
+  width:var(--parlor-w); aspect-ratio:1672/941; container-type:inline-size; overflow:hidden; isolation:isolate; }
 .unified-parlor .parlor-stage .boundary-cast { display:block; }
 /* Painted metal lettering retains accessible text underneath. */
 .unified-parlor .title-area h1 { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
@@ -254,5 +349,147 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.04) contrast(1.09); 
 .unified-parlor canvas[data-movie="preacher"],
 .unified-parlor .ghost-sprite[data-ghost="preacher-book"] { filter:url(#resident-soft-rim); }
 
-/* Keep the room-floor fog away from the two foreground women. */
-.unified-parlor .parlor-foreground-fog { clip-path:inset(0 0 0 38%); }
+/* Keep the room-floor fog away from the two foreground women. This was a hard
+   clip-path:inset(0 0 0 38%), which cut a translucent fog layer with a razor
+   edge: at 1920 wide that lands on x=729.6 and it measured as a 22-25 unit
+   luminance step running the full height of the room, straight through the
+   controls, the brass rail and the floor. A gradient mask keeps exactly the
+   same protection - the women's porches end at about 37.5%, so the fog is
+   still fully absent across them - and reaches full strength by 52% instead
+   of switching on in one pixel. Fog strength itself is untouched. */
+.unified-parlor .parlor-foreground-fog { mask-image:linear-gradient(to right,transparent 38%,#000 52%); }
+
+/* Tap-size floors. Everything above is sized in cqw against .parlor-stage, which
+   is correct on a desktop stage (~1919px, 1cqw = 19px) and collapses on a phone:
+   at 375x812 the stage letterboxes to 450px, so 1cqw = 4.5px and #paytable
+   measured 15x3px - too small for Playwright (or a thumb) to hit at all.
+   max() keeps the authored proportion wherever it is already the larger value,
+   so the desktop stage is untouched, and stops the collapse below that.
+   Every floor here was measured against its own desktop size and set below it -
+   icon-button 42.2x49.9, #help 79.7x46, .quick-mixer summary 127.6x52.8,
+   #history 30.7x48 - so none of them engage at 1920x1080. Measure, do not
+   estimate: a first pass used min-height:max(32px,2.6cqw) for #help and grew it
+   from 46 to 49.9px on the desktop stage. */
+/* The topbar's own 3cqw box has to grow with them, or the floored buttons
+   centre on a 13px row and half of each one lands above y=0. */
+.unified-parlor .topbar { height:max(40px,3cqw); }
+.unified-parlor .top-actions { gap:max(6px,.6cqw); }
+.unified-parlor .icon-button { width:max(32px,2.2cqw); height:max(32px,2.6cqw); font-size:max(15px,1.5cqw); }
+.unified-parlor .outline-button { min-height:max(32px,2.3cqw); padding:max(6px,.7cqw) max(10px,1cqw); font-size:max(11px,.7cqw); }
+.unified-parlor .quick-mixer summary { min-height:max(32px,2.5cqw); padding:max(6px,.7cqw) max(10px,1cqw); font-size:max(11px,.95cqw); }
+.unified-parlor .controls .history-button { height:max(28px,2.5cqw); min-width:max(28px,1.45cqw); font-size:max(14px,1.2cqw); }
+
+/* The bet steppers and #spin, same treatment, measured the same way. The
+   steppers are authored at width:1.1cqw with no height at all, so they came
+   out 21x24 on the desktop stage, 18x21 at 1390x1558 and 5x6 on a phone -
+   unusable by any input device. A 24px floor is at or above the authored
+   desktop size in both axes (21 wide, 24 tall), so the desktop rail keeps its
+   3.17cqw height and only gains 3px of stepper width; the two smaller stages
+   grow into a rail that already had room for them. #spin is 4.8cqw, which is
+   92px on the desktop stage and 22px on a phone, so a 32px floor engages only
+   below a ~667px stage. Floors alone are not enough on a phone, because the
+   rail itself is 14px there - see the container query at the end of the file,
+   which re-lays the rail out in px on a small stage. */
+.unified-parlor .controls .bet-control button { min-width:max(24px,1.1cqw); min-height:max(24px,1.4cqw); }
+.unified-parlor .controls .bet-control > div { gap:max(4px,.25cqw); }
+.unified-parlor .controls .spin-button { width:max(32px,4.8cqw); height:max(32px,4.8cqw); flex-basis:max(32px,4.8cqw); }
+
+/* #paytable measured 62x13 and 54x11 on the two large stages. Unlike the
+   controls above, its authored height is already under a usable tap target,
+   so a floor does change the desktop - deliberately, that is the defect. It
+   sits in .game-meta, which is absolutely positioned above .game, so growing
+   it moves nothing in .game/.cabinet/.reels. The bar is grown *upward*: its
+   bottom edge stays at -.85cqw, which is where the 1cqw-tall bar's bottom
+   already was, so it cannot descend onto .locations at top:-.75cqw. Above it
+   is only the title art, which is pointer-events:none. The small-stage
+   container query below overrides both of these with its own px values. */
+.unified-parlor .game-meta { height:max(24px,1cqw); top:calc(-.85cqw - max(24px,1cqw)); }
+.unified-parlor #paytable { min-height:max(24px,1cqw); }
+
+/* #paytable and the location buttons cannot use max(): their authored desktop
+   sizes (13px tall) are already under a usable tap target, so any floor big
+   enough to help a phone would also change the desktop. Instead, only stages
+   too small to render the authored bar at all get a re-laid-out version: two
+   24px rows stacked in the space above .game, which is 11.36cqw of clearance
+   (113px even at the 1000px threshold). This deliberately overlaps the lower
+   edge of the title art on a phone - an unreachable control is worse. No .game,
+   .cabinet, .reels or .controls geometry is touched, so the reel-board
+   assertions in tests/browser/parlor.spec.ts are unaffected. */
+@container (max-width:1000px) {
+  /* The static <footer> demo banner is the last child of .shell. main collapses
+     to ~12px here (every child is absolute), so the banner's 60px band lands
+     across the top of .game and swallowed every click aimed at #paytable and the
+     location buttons - z-index alone does not win the hit test against it. The
+     banner is one line of non-interactive text ("DEMO PLAY - NO CASH VALUE"), so
+     it has no business absorbing pointer events; z-index keeps the bars legible
+     above it. Neither changes how anything is drawn on a desktop stage. */
+  .unified-parlor footer { pointer-events:none; }
+  .unified-parlor .game-meta { top:-51px; height:24px; font-size:11px; letter-spacing:normal; z-index:6; }
+  .unified-parlor .game-meta #phase { font-size:11px; }
+  .unified-parlor .game-meta .phase-title small { font-size:10px; }
+  .unified-parlor .game-meta .phase-emblem { width:12px; height:12px; }
+  .unified-parlor #paytable { min-height:24px; padding:0 8px; font-size:11px; letter-spacing:normal; }
+  .unified-parlor #paytable span { margin-left:4px; }
+  .unified-parlor .locations { top:-26px; height:24px; gap:4px; font-size:11px; z-index:6; }
+  .unified-parlor .locations button { height:24px; min-height:24px; line-height:24px; padding:0 8px; font-size:11px; }
+
+  /* The controls rail is the same collapse one level up: it is 3.17cqw tall,
+     which is 14px on a 450px phone stage, so no floor on a control inside it
+     can produce a 24px target - #spin measured 22x22 in a 14px rail and the
+     steppers 5x6. On a small stage the rail is therefore re-laid out in px.
+
+     Height 34px (32px spin plus 1px either side), positioned on the same
+     authored centre line - 33.49cqw + 3.17cqw/2 = 35.075cqw - so it grows
+     equally up into the event line and down toward .player-play-space at
+     38.65cqw rather than shifting the rail off its registration.
+
+     Width 76cqw, still centred on .game: five controls with 24px minimums
+     need ~110px of hard width and the authored rail is 36.78cqw = 166px on a
+     phone, which left ~29px for each metric. Grid to flex because the authored
+     column track for the steppers is .9fr of the leftover, which cannot hold
+     them. .game, .cabinet and .reels are untouched, so the 1672x941 reel-board
+     assertions in tests/browser/parlor.spec.ts are unaffected.
+
+     This was 60cqw (270px on a phone) until #spin-label was floored below.
+     A rail of width W centred on .game spans (32.48 + (34.99-W)/2) to that
+     plus W, i.e. 12.0cqw to 88.0cqw at W=76 - inside the stage at every size
+     this query matches, so no arithmetic about viewport cropping is needed:
+     the rail cannot leave the stage, and the stage is never wider than the
+     viewport by more than its own symmetric overscan. Measured at 375x812 it
+     runs x=16.4 to x=358.4 of 375. */
+  .unified-parlor .controls {
+    top:calc(35.075cqw - 17px); left:calc((34.99cqw - 76cqw) / 2); width:76cqw; height:34px;
+    display:flex; align-items:center; justify-content:space-between; gap:4px; padding:0 4px;
+  }
+  .unified-parlor .controls .metric,
+  .unified-parlor .controls .bet-control { padding:0 2px; }
+  .unified-parlor .controls .metric > span,
+  .unified-parlor .controls .bet-control > span { font-size:7px; margin-bottom:0; letter-spacing:normal; }
+  .unified-parlor .controls .metric strong { font-size:11px; }
+  .unified-parlor .controls #bet { font-size:11px; }
+  .unified-parlor .controls .bet-control > div { gap:2px; }
+  .unified-parlor .controls .bet-control button { font-size:15px; line-height:1; }
+  /* The label is the reason the rail above is 76cqw rather than 60. A 32px
+     circle was floored into place by the max() rules further up, but nothing
+     floored the text inside it, so #spin-label rendered at 7px - the button
+     was a usable tap target announcing itself illegibly.
+
+     11px is the floor the bot asserts, and at 11px this label does not fit in
+     any circle that fits a 34px rail. Measured in the real face (Cinzel 700,
+     letter-spacing .36px) the states are: SPIN 28.7, RESOLVING 70.5, QUICK
+     STOP 75.9, FREE SPIN . 8 77.7, CONNECTING 85.9. So the small-stage button
+     becomes a pill sized to the longest state rather than a circle: 96px wide
+     with the authored .9cqw side padding dropped gives 90px of inner width,
+     4px clear of CONNECTING, and white-space:nowrap keeps every state on one
+     line so none of them can push the button taller than the rail.
+
+     Widths then total 307.7px of hard content plus 16px of gaps and 8px of
+     padding = 331.7 in a 342px rail, so nothing is flex-shrunk. Round and
+     circular above 1000px, where 4.8cqw is 92px and the label is 22px - the
+     desktop button is untouched. */
+  .unified-parlor .controls .spin-button {
+    margin:0; width:96px; height:32px; flex:0 0 96px; padding:0; border-radius:16px;
+  }
+  .unified-parlor .controls #spin-label { font-size:11px; line-height:1; white-space:nowrap; }
+  .unified-parlor .controls .history-button { height:28px; font-size:14px; }
+}

@@ -314,3 +314,85 @@ TEXT_JS = """
   return out;
 }
 """
+
+
+# Does a label fit inside the control that holds it? scrollWidth exceeding
+# clientWidth means the text is being clipped or spilling out.
+FIT_JS = """
+(pairs) => {
+  const out = {};
+  for (const {label, host, states} of pairs) {
+    const el = document.querySelector(label);
+    const box = document.querySelector(host);
+    if (!el || !box) { out[label] = null; continue; }
+    const original = el.textContent;
+    const originalAttrs = {};
+    const worst = {state: null, overflowX: 0, overflowY: 0};
+    for (const entry of (states && states.length ? states : [original])) {
+      // A state is not just its text. The app sets attributes alongside the
+      // caption (data-caption drives the font size), and forcing the words
+      // without them measures a combination the game never renders — which is
+      // exactly how this probe invented a 10px overflow that no player sees.
+      const state = typeof entry === 'string' ? entry : entry.text;
+      const attrs = (typeof entry === 'object' && entry.hostAttrs) || {};
+      for (const [k, v] of Object.entries(attrs)) {
+        if (!(k in originalAttrs)) originalAttrs[k] = box.getAttribute(k);
+        box.setAttribute(k, v);
+      }
+      el.textContent = state;
+      void el.offsetWidth;
+      // Measure the text itself, not the span. A wrapped span is as wide as
+      // the line box it sits in, so its corners stick out of a round button
+      // even when every glyph is comfortably inside — that produced a
+      // confident 8px "overflow" for a caption that actually fits.
+      const b = box.getBoundingClientRect();
+      let lines = [];
+      if (el.firstChild && el.firstChild.nodeType === 3) {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        lines = [...range.getClientRects()].filter(x => x.width > 0 && x.height > 0);
+      }
+      if (!lines.length) lines = [el.getBoundingClientRect()];
+      const r = {
+        left: Math.min(...lines.map(l => l.left)), right: Math.max(...lines.map(l => l.right)),
+        top: Math.min(...lines.map(l => l.top)), bottom: Math.max(...lines.map(l => l.bottom)),
+        width: Math.max(...lines.map(l => l.width)),
+        height: Math.max(...lines.map(l => l.bottom)) - Math.min(...lines.map(l => l.top)),
+      };
+      const ox = Math.max(0, r.right - b.right) + Math.max(0, b.left - r.left);
+      const oy = Math.max(0, r.bottom - b.bottom) + Math.max(0, b.top - r.top);
+      // A rectangle test is not enough for a round control: text can sit
+      // inside the bounding box and still poke straight through the ring.
+      // When the host is circular, measure the worst label corner against the
+      // radius instead.
+      const radii = getComputedStyle(box).borderRadius || '';
+      const round = radii.includes('50%') && Math.abs(b.width - b.height) < 2;
+      let escape = 0;
+      if (round) {
+        const cx = b.left + b.width / 2, cy = b.top + b.height / 2, rad = b.width / 2;
+        for (const line of lines)
+          for (const [px, py] of [[line.left, line.top], [line.right, line.top],
+                                  [line.left, line.bottom], [line.right, line.bottom]])
+            escape = Math.max(escape, Math.hypot(px - cx, py - cy) - rad);
+        escape = +escape.toFixed(1);
+      }
+      const spill = round ? Math.max(escape, 0) : ox + oy;
+      // Record the first state unconditionally: tracking only the worst
+      // meant a caption set that all fits left worst.state null, and the
+      // check then reported nothing at all — indistinguishable from never
+      // having run.
+      if (worst.state === null || spill > worst.overflowX + worst.overflowY)
+        Object.assign(worst, {state, overflowX: round ? spill : +ox.toFixed(1),
+                              overflowY: round ? 0 : +oy.toFixed(1),
+                              shape: round ? 'circle' : 'rect',
+                              labelW: +r.width.toFixed(1), hostW: +b.width.toFixed(1)});
+    }
+    el.textContent = original;
+    for (const [k, v] of Object.entries(originalAttrs)) {
+      if (v === null) box.removeAttribute(k); else box.setAttribute(k, v);
+    }
+    out[label] = worst;
+  }
+  return out;
+}
+"""

@@ -201,6 +201,49 @@ def legibility(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
     return out
 
 
+@check("label_fit")
+def label_fit(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
+    """A control's text must fit inside the control, in every state it shows.
+
+    The spin button reads SPIN most of the time and is sized for it, but it
+    also says RESOLVING, QUICK STOP, CONNECTING and FREE SPIN. Checking only
+    the state that happens to be on screen misses the ones that overflow.
+    """
+    pairs = cfg.get("pairs") or [{
+        "label": "#spin-label", "host": "#spin",
+        "states": ["SPIN", "RESOLVING", "QUICK STOP", "CONNECTING", "FREE SPIN · 8"],
+    }]
+    limit = float(cfg.get("tolerance_px", 2))
+    out: list[Complaint] = []
+    measured: dict[str, Any] = {}
+    for label, worst in sess.label_fit(pairs).items():
+        if not worst or worst.get("state") is None:
+            continue
+        measured[label] = worst
+        spill = worst["overflowX"] + worst["overflowY"]
+        if spill > limit:
+            out.append(Complaint(
+                check="label_fit", severity="major",
+                title=f"{label} overflows its control by {spill:.0f}px saying {worst['state']!r}",
+                detail=("The control is sized for its shortest caption. In this state the text runs "
+                        "outside the button, so it is clipped or spills over the art. For a round "
+                        "button this is measured against the ring, not the bounding box — text can "
+                        "sit inside the box and still break through the circle."),
+                evidence={"label": label, "worstState": worst["state"],
+                          "overflowPx": [worst["overflowX"], worst["overflowY"]],
+                          "labelWidth": worst.get("labelW"), "hostWidth": worst.get("hostW"),
+                          "hostShape": worst.get("shape", "rect"),
+                          "tolerancePx": limit},
+                repro={"viewport": sess.viewport.name, "setText": worst["state"]},
+                shot=str(sess.shot(f"label-fit-{label.strip('.#')}")),
+            ))
+    if not out and measured:
+        out.append(praise("label_fit", f"every caption fits its control at {sess.viewport.name}",
+                          "I tried each state the button can display and none of them spill out.",
+                          measured=measured))
+    return out
+
+
 # --- grounding --------------------------------------------------------------
 
 @check("grounding")
