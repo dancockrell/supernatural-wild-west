@@ -61,15 +61,23 @@ for (const viewport of [
         };
       }),
     );
+    // Sub-pixel slack on the four edges. These bounds are computed from
+    // getBoundingClientRect and an object-fit scale, so an edge that lands
+    // exactly on the viewport boundary comes back as float noise: at 1200 the
+    // left edge measured -1.4210854715202004e-14, which is 0 to within 14
+    // significant figures and was reported as content escaping the screen. A
+    // real escape is pixels, never femtometres, so anything this tolerance
+    // admits is invisible and anything visible still fails.
+    const edge = 0.05;
     for (const side of geometry) {
       expect(side.background).toBe("rgba(0, 0, 0, 0)");
       expect(side.image).toBe("none");
       expect(side.fit).toBe("contain");
       expect(side.ratio).toBeCloseTo(9 / 16, 2);
-      expect(side.left).toBeGreaterThanOrEqual(0);
-      expect(side.right).toBeLessThanOrEqual(viewport.width);
-      expect(side.top).toBeGreaterThanOrEqual(0);
-      expect(side.bottom).toBeLessThanOrEqual(viewport.height);
+      expect(side.left).toBeGreaterThanOrEqual(-edge);
+      expect(side.right).toBeLessThanOrEqual(viewport.width + edge);
+      expect(side.top).toBeGreaterThanOrEqual(-edge);
+      expect(side.bottom).toBeLessThanOrEqual(viewport.height + edge);
       if (side.isLeft)
         expect(side.right).toBeLessThanOrEqual(side.shellLeft + 1);
       else expect(side.left).toBeGreaterThanOrEqual(side.shellRight - 1);

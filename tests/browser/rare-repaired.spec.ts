@@ -28,12 +28,23 @@ for (const [kind,name,seconds] of [['fortune','fortune',7],['awaken-0','graveyar
 test('brazier reaction review uses high resolution and the scene lighting',async({page})=>{
  await page.setViewportSize({width:3840,height:2160});await page.goto('/?parlor=1');
  await page.locator('#help').click();await page.locator('#rare-animation-gallery').click();
- await page.locator('[data-character-preview="1"]').click();
+ // STALE SELECTOR, CORRECTED. This clicked [data-character-preview="1"], which
+ // is a positional index into the gallery's own list, and that list has grown:
+ // slot 1 is now the gambler's notice clip (parlor-gambler-hair-v1/notice.webm),
+ // so the whole body below was measuring the wrong performer. The brazier
+ // maiden's win reaction has a stable name, so ask for it by name.
+ await page.getByRole('button',{name:'Brazier maiden - reacts to a win',exact:true}).click();
  const clip=page.locator('.reaction-review');
  await expect(clip).toHaveAttribute('src','/video/rare-features-v4/medium-reaction.webm');
  await expect.poll(()=>clip.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(2);
  expect(await clip.evaluate((v:HTMLVideoElement)=>v.videoHeight)).toBe(1920);
- expect(await clip.evaluate(v=>getComputedStyle(v).filter)).toContain('resident-soft-rim');
+ // STALE ASSERTION, CORRECTED. This asked for `resident-soft-rim` on a maiden
+ // preview. It cannot be there: showAnimationPreview() sets style.filter='none'
+ // on exactly the Lantern and Brazier maiden previews (src/client/main.ts), which
+ // is the same decision 68a0f0b took in the room - no added shading on the two
+ // women - and which women-no-effects.spec.ts exists to hold. The scene lighting
+ // this test is named for is the transparent background asserted below, not a rim.
+ expect(await clip.evaluate(v=>getComputedStyle(v).filter)).toBe('none');
  expect(await clip.evaluate(v=>getComputedStyle(v).backgroundColor)).toBe('rgba(0, 0, 0, 0)');
  expect(await clip.evaluate(v=>getComputedStyle(v).backgroundImage)).toBe('none');
  await page.screenshot({path:'docs/rare-repaired-medium-4k.png'});
