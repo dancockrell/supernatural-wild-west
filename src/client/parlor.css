@@ -438,7 +438,17 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.22) contrast(1.12) s
      it has no business absorbing pointer events; z-index keeps the bars legible
      above it. Neither changes how anything is drawn on a desktop stage. */
   .unified-parlor footer { pointer-events:none; }
-  .unified-parlor .game-meta { top:-51px; height:24px; font-size:11px; letter-spacing:normal; z-index:6; }
+  /* #paytable is absolutely positioned at right:13px, and the 72px inline
+     padding on .game-meta in player-ui.css is what reserves room for it while
+     keeping #phase centred. parlor.css sets padding:0 further up, which drops
+     that gutter - harmless on a wide stage (34.4px of clearance at 1440) and
+     not on a narrow one. Measured at a 600px viewport: #phase ends at 344.1
+     and #paytable starts at 337.2, so the bar reads "HIGH NOONPAYTABLE" with
+     no gap at all. The gutter is restored here in real pixels, matching the
+     real-pixel sizes this query gives the bar: #paytable measures 81px wide
+     plus its 13px offset, so 104px clears it with room to spare, and being
+     symmetric it leaves #phase centred in the bar exactly as before. */
+  .unified-parlor .game-meta { top:-51px; height:24px; font-size:11px; letter-spacing:normal; z-index:6; padding-inline:104px; }
   .unified-parlor .game-meta #phase { font-size:11px; }
   .unified-parlor .game-meta .phase-title small { font-size:10px; }
   .unified-parlor .game-meta .phase-emblem { width:12px; height:12px; }
