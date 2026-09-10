@@ -67,7 +67,26 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.22) contrast(1.12) s
   .unified-parlor .controls span,.unified-parlor .controls small { font-size:.5cqw; }
   .unified-parlor .controls #bet { font-size:.85cqw; }
   .unified-parlor .controls .spin-button { height:3cqw; padding:.3cqw .9cqw; }
-  .unified-parlor .event-line { position:absolute; top:32cqw; height:1cqw; min-height:0; margin:0; font-size:.55cqw; width:100%; }
+  /* This row carries #status and #recover, and #recover is the only way out of
+     a failed round. On a phone the controls rail below is re-laid out in real
+     pixels and grows 17px up from its authored centre line, which is more than
+     the 3.075cqw (13.8px at 375 wide) of clearance this row has - so the two
+     boxes overlap and .controls wins the hit test on document order alone.
+     Measured at 375x812: #recover sits at x=197 y=469 65x15, fully on screen,
+     pointer-events auto, no inert ancestor, and elementFromPoint at its centre
+     returns button#spin. A real click times out; calling .click() directly in
+     script recovers the session instantly, so the handler was never the
+     problem - the press could not land, and the game was unrecoverable after
+     any server fault.
+
+     Fixed by raising the row and making it transparent to pointers except for
+     the button itself, rather than by moving anything: there is no spare
+     vertical room here (rail centre 35.075cqw, player hand at 38.65cqw), and
+     shifting the rail off its registration would move every control. The row
+     is text plus one hidden button, so it has no business absorbing clicks at
+     any size; #recover keeps its own. Nothing is drawn differently. */
+  .unified-parlor .event-line { position:absolute; top:32cqw; height:1cqw; min-height:0; margin:0; font-size:.55cqw; width:100%; z-index:7; pointer-events:none; }
+  .unified-parlor .event-line #recover { pointer-events:auto; }
   .unified-parlor .player-play-space { position:absolute; top:38.65cqw; width:100%; margin:0; padding:0; min-height:0; }
   .unified-parlor .player-play-space .poker-slot { flex:0 0 4.6cqw; width:4.6cqw; height:5.04cqw; }
   .unified-parlor .under-controls { position:absolute; top:43cqw; width:100%; }
