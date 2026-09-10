@@ -52,7 +52,14 @@ it("the rare full gold draw is reachable and obeys the shared bonus cap", () => 
   expect(r.gold?.amount).toBe(r.payout);
   expect(r.events.some((e) => e.type === "cap")).toBe(true);
 });
-it("collects one visible card per spin and locks its wager until settlement", () => {
+it("collects one visible card per spin, completing on the fifth", () => {
+  // This used to also assert that a differing bet threw mid-hand ("locks its
+  // wager until settlement"). Dan reversed that on 10 Sep 2026 — the swing is
+  // now deliberate, priced in optimal-strategy.ts — and that correctness
+  // property now lives in tests/wager-lock.test.ts, which can assert it
+  // properly (a replay-based check that the completing spin's bet, not the
+  // opening one, decides the payout) without tangling this seed-controlled
+  // progression's shared RNG stream.
   let state = initialState();
   const rng = new SeededRng(42);
   for (let n = 1; n <= 5; n++) {
@@ -61,8 +68,6 @@ it("collects one visible card per spin and locks its wager until settlement", ()
     expect(r.cardFaces?.[r.poker!.cell!]).toBe(r.poker!.cards[n - 1]);
     expect(r.poker?.complete).toBe(n === 5);
     state = r.state;
-    if (n < 5)
-      expect(() => resolveSpin(state, 200, rng, "wrong-bet")).toThrow();
   }
   expect(state.poker?.cards).toEqual([]);
 });

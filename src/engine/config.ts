@@ -23,7 +23,17 @@ export const CONFIG = {
   initialBalance: 100000,
   maxExposure: 10000,
   goldLinePay: 5,
-  pokerPayScale: 20,
+  // Priced for the bet swing (10 Sep 2026), not just for flat play: the
+  // poker hand is dealt one card per spin and pays on the completing spin's
+  // bet, so a player who raises once four cards are showing is pricing
+  // real arithmetic (src/engine/optimal-strategy.ts). Calibrated against
+  // the real engine playing that strategy, not the idealized formula in
+  // scripts/poker-strategy.ts — a witching hour can lock the wager before
+  // the decisive spin arrives, discounting the idealized number by several
+  // points. Six seeds at 1.5M spins each, scripts/simulate-optimal.ts:
+  // 99.51, 99.74, 98.37, 99.36, 99.50, 100.80 -> mean 99.55%, target 99.5%.
+  // Flat play (bet never adjusted) returns about 77%; see README.md.
+  pokerPayScale: 4.53,
   goldScreenPay: 10000,
   goldRushDenominator: 1000000,
   scatterPerReel: 940,

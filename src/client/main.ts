@@ -347,11 +347,15 @@ function setStatus(text: string, attention = false) {
     .classList.toggle("needs-attention", attention || !connected);
 }
 function currentBet() {
+  // A showing poker hand no longer pins the display to its opening bet
+  // (Dan, 10 Sep 2026): the fifth card's odds are exact arithmetic once four
+  // are showing, so a player who raises then is pricing in real information,
+  // not exploiting an oversight. The bet-up/bet-down buttons below match.
   return state?.phase === "bonus"
     ? state.bonusBet
     : state?.phase === "witching"
       ? state.roundBet
-      : state?.poker?.bet || CONFIG.bets[betIndex];
+      : CONFIG.bets[betIndex];
 }
 function drawGrid(
   grid: Grid,
@@ -386,17 +390,17 @@ function refresh() {
   el("balance").textContent = money(state.balance);
   el("bet").textContent = money(currentBet());
   if (!lastResult) pokerTable.restore(state.poker?.cards || [], "", 0, true);
+  // `state.phase !== "noon"` still locks these during bonus (bonusBet
+  // governs, unconditionally) and witching (the engine rejects a differing
+  // bet). Neither is about the poker hand, so neither changed. What used to
+  // also be here — `!!state.poker?.cards.length` — is gone: a showing hand
+  // no longer freezes the bet, on purpose.
   el<HTMLButtonElement>("bet-down").disabled =
-    busy ||
-    autoplay.active ||
-    !!state.poker?.cards.length ||
-    state.phase !== "noon" ||
-    betIndex === 0;
+    busy || autoplay.active || state.phase !== "noon" || betIndex === 0;
   el<HTMLButtonElement>("bet-up").disabled =
     busy ||
     autoplay.active ||
     state.phase !== "noon" ||
-    !!state.poker?.cards.length ||
     betIndex === CONFIG.bets.length - 1;
   el<HTMLButtonElement>("spin").disabled = !connected || (busy && !finishAnimation) || pokerGuests.active || !el('spectacle').hidden;
   el<HTMLButtonElement>("autoplay").disabled =

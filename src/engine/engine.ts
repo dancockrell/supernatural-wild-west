@@ -113,8 +113,13 @@ export function resolveSpin(
   if (phase === "witching" && requestedBet !== before.roundBet)
     throw new Error("Wager is locked until dawn");
   const bet = bonus ? s.bonusBet : requestedBet;
-  if (before.poker?.cards.length && before.poker.bet !== bet)
-    throw new Error("Wager is locked until the hand resolves");
+  // Deliberately unlocked (Dan, 10 Sep 2026): the poker hand is dealt one
+  // card per spin and the payout uses the COMPLETING spin's bet, not the
+  // opening one, so a player watching the hand build can raise once the
+  // fifth card's odds are known. That is priced into `pokerPayScale`
+  // (src/engine/poker-completion.ts, src/engine/optimal-strategy.ts) rather
+  // than blocked here, the way real full-pay video poker prices optimal
+  // strategy into its posted return instead of preventing it.
   const debit = bonus ? 0 : bet;
   if (s.balance < debit) throw new Error("Insufficient credits");
   if (!bonus) {

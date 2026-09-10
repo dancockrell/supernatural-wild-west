@@ -105,7 +105,12 @@ for (const width of [1440, 390])
         ),
     ).toBe(true);
     await expect(page.locator(".poker-cards .poker-slot.dealt")).toHaveCount(4);
-    await expect(page.locator("#bet-up")).toBeDisabled();
+    // Reversed 10 Sep 2026: four cards showing used to freeze the bet
+    // controls. Now the fifth card's odds are known exactly, and a player
+    // who raises on that information is pricing it in, not exploiting an
+    // oversight — see src/engine/optimal-strategy.ts. The button stays
+    // enabled here on purpose.
+    await expect(page.locator("#bet-up")).toBeEnabled();
     // Observe the brief flight at insertion rather than racing a polling interval.
     await page.evaluate(() => {
       const observer = new MutationObserver(() => {
