@@ -7,6 +7,9 @@ for (const night of [false, true]) test(`sky plays three native wraps: ${night ?
   await page.setViewportSize({width:1672,height:941});
   if(night) await page.route('**/api/session',r=>r.fulfill({json:{state:{...initialState(),phase:'witching',witchSpins:6},lastResult:null}}));
   await page.goto('/?parlor=1');
+  // Both films are unhidden during the 600ms phase crossfade, so wait for it
+  // to settle before naming one. See parlor.spec.ts for the full note.
+  await expect.poll(()=>page.locator('.parlor-environment:not([hidden])').count()).toBe(1);
   const movie=page.locator('.parlor-environment:not([hidden])');
   await expect.poll(()=>movie.evaluate(v=>(v as HTMLVideoElement).readyState)).toBeGreaterThanOrEqual(2);
   const result=await movie.evaluate(async node=>{

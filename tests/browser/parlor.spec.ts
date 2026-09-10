@@ -136,6 +136,14 @@ test('Witching Hour uses the matching colored room without moving the board',asy
  await page.route('**/api/session',r=>r.fulfill({json:{state:{...initialState(),phase:'witching',witchSpins:6},lastResult:null}}));
  await page.goto('/?parlor=1');
  await expect(page.locator('#phase')).toContainText('Witching');
+ // ParlorScene crossfades between the day and night films by unhiding both
+ // for a 600ms blend (parlor-scene.ts:61-70), so "the film that is not
+ // hidden" names two elements while a phase change is settling. This used
+ // to pass by luck: the night clip was 5x larger and had not decoded yet,
+ // so the blend had not started when the assertion ran. 7e5ec0e made it
+ // decode sooner and the race surfaced. Wait for the blend to finish, then
+ // ask which film is left - which is the property this test is named for.
+ await expect.poll(()=>page.locator('.parlor-environment:not([hidden])').count()).toBe(1);
  const film=page.locator('.parlor-environment:not([hidden])');
  await expect(film).toHaveAttribute('src',/environment-color-night.mp4/);
  await expect.poll(()=>film.evaluate(v=>(v as HTMLVideoElement).currentTime)).toBeGreaterThan(1);
