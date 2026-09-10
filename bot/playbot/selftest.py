@@ -44,6 +44,29 @@ def _unstyle(sess: GameSession) -> None:
     sess.page.wait_for_timeout(350)
 
 
+def _inflate_head(sess: GameSession) -> None:
+    """Make one clip claim to be 200 MB, without writing 200 MB to disk.
+
+    The load check weighs the shipping inventory with HEAD requests, so the
+    honest sabotage is at that boundary: a route that rewrites content-length
+    on one media response is indistinguishable, from the check's side, from
+    somebody re-exporting a clip at its old bitrate. Writing a real 200 MB file
+    into public/ would also work and would be a destructive test on a shared
+    tree.
+    """
+    def handler(route: Any) -> None:
+        if route.request.method == "HEAD" and route.request.url.endswith("ride.webm"):
+            route.fulfill(status=200, headers={"content-length": str(200 * 1024 * 1024),
+                                               "content-type": "video/webm"}, body="")
+        else:
+            route.continue_()
+    sess.page.route("**/*.webm", handler)
+
+
+def _clear_head(sess: GameSession) -> None:
+    sess.page.unroute("**/*.webm")
+
+
 CASES: list[Sabotage] = [
     Sabotage(
         check="offscreen",
@@ -203,6 +226,14 @@ CASES: list[Sabotage] = [
         # had pushed the game into night — the check was right and the
         # assertion was wrong. No other clip in the game carries this stem.
         expect_title="environment-color",
+    ),
+    Sabotage(
+        check="load",
+        what="make one clip claim 200 MB, the size these were before the matte fix",
+        apply=_inflate_head,
+        undo=_clear_head,
+        cfg={"throttle_mbps": 12, "settle_ms": 1200, "inventory": "../docs/runtime-assets.json"},
+        expect_title="one asset is",
     ),
 ]
 

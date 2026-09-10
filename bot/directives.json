@@ -5,47 +5,125 @@
   "shots_dir": "out/shots",
   "warmup_spins": 2,
   "bet_nudges": 1,
-
   "viewports": [
-    { "width": 1920, "height": 1080, "label": "desktop-16x9" },
-    { "width": 1390, "height": 1558, "label": "tall-window" },
-    { "width": 375,  "height": 812,  "label": "phone-portrait" }
+    {
+      "width": 1920,
+      "height": 1080,
+      "label": "desktop-16x9"
+    },
+    {
+      "width": 1390,
+      "height": 1558,
+      "label": "tall-window"
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "label": "phone-portrait"
+    }
   ],
-
   "checks": {
     "spin_responds": {},
-    "tap_targets": { "min_px": 24 },
-    "legibility": { "min_px": 11, "min_contrast": 3.0 },
+    "tap_targets": {
+      "min_px": 24
+    },
+    "legibility": {
+      "min_px": 11,
+      "min_contrast": 3.0
+    },
     "label_fit": {
       "tolerance_px": 2,
       "_": "Each state carries the attributes main.ts sets with it; caption length > 6 means data-caption=long.",
-      "pairs": [{
-        "label": "#spin-label", "host": "#spin",
-        "states": [
-          { "text": "SPIN",          "hostAttrs": { "data-caption": "short" } },
-          { "text": "RESOLVING",     "hostAttrs": { "data-caption": "long" } },
-          { "text": "QUICK STOP",    "hostAttrs": { "data-caption": "long" } },
-          { "text": "CONNECTING",    "hostAttrs": { "data-caption": "long" } },
-          { "text": "FREE SPIN · 8", "hostAttrs": { "data-caption": "long" } }
-        ]
-      }]
+      "pairs": [
+        {
+          "label": "#spin-label",
+          "host": "#spin",
+          "states": [
+            {
+              "text": "SPIN",
+              "hostAttrs": {
+                "data-caption": "short"
+              }
+            },
+            {
+              "text": "RESOLVING",
+              "hostAttrs": {
+                "data-caption": "long"
+              }
+            },
+            {
+              "text": "QUICK STOP",
+              "hostAttrs": {
+                "data-caption": "long"
+              }
+            },
+            {
+              "text": "CONNECTING",
+              "hostAttrs": {
+                "data-caption": "long"
+              }
+            },
+            {
+              "text": "FREE SPIN · 8",
+              "hostAttrs": {
+                "data-caption": "long"
+              }
+            }
+          ]
+        }
+      ]
     },
     "ledger": {},
     "keyboard_play": {},
     "persistence": {},
-    "cutscenes": { "kinds": ["ride", "witch", "awaken-0", "fortune", "noon", "brand"], "dismiss_ms": 20000, "skip_viewports": ["phone-portrait"] },
-    "leaks": { "spins": 6, "max_new_videos": 4, "skip_viewports": ["tall-window", "phone-portrait"] },
-    "autoplay": { "expect_rounds": 2, "watch_ms": 16000, "skip_viewports": ["phone-portrait"] },
+    "cutscenes": {
+      "kinds": [
+        "ride",
+        "witch",
+        "awaken-0",
+        "fortune",
+        "noon",
+        "brand"
+      ],
+      "dismiss_ms": 20000,
+      "skip_viewports": [
+        "phone-portrait"
+      ]
+    },
+    "leaks": {
+      "spins": 6,
+      "max_new_videos": 4,
+      "skip_viewports": [
+        "tall-window",
+        "phone-portrait"
+      ]
+    },
+    "autoplay": {
+      "expect_rounds": 2,
+      "watch_ms": 16000,
+      "skip_viewports": [
+        "phone-portrait"
+      ]
+    },
     "assets": {
       "_": "settle_ms is how long a video gets to leave readyState 0 before I call it stalled; min_media is a floor on how many mounted elements must be found, so an empty census reports itself instead of reading as clean.",
       "settle_ms": 2500,
       "min_media": 6,
       "verify_paths": true,
-      "media_paths": ["/video/", "/art/", "/audio/", "/fonts/"]
+      "media_paths": [
+        "/video/",
+        "/art/",
+        "/audio/",
+        "/fonts/"
+      ]
     },
     "resilience": {
       "_": "delay_ms must exceed the client's own AbortSignal.timeout(12000) in src/client/adapter.ts, or the delay case tests nothing but patience.",
-      "modes": ["status500", "abort", "delay"],
+      "modes": [
+        "status500",
+        "abort",
+        "delay"
+      ],
       "delay_ms": 14000,
       "settle_ms": 5000,
       "recover_ms": 9000,
@@ -53,7 +131,13 @@
       "round_ms": 15000,
       "min_message_px": 10,
       "__platform_errors": "Exact browser strings, not a guess at what sounds technical. The client rethrows the fetch DOMException message verbatim, so these reach the player.",
-      "platform_errors": ["Failed to fetch", "signal timed out", "NetworkError", "Load failed", "The user aborted a request"]
+      "platform_errors": [
+        "Failed to fetch",
+        "signal timed out",
+        "NetworkError",
+        "Load failed",
+        "The user aborted a request"
+      ]
     },
     "backgrounding": {
       "hidden_ms": 6000,
@@ -66,8 +150,14 @@
     },
     "offscreen": {},
     "overlap": {},
-    "panels": { "panels": ["help", "paytable", "history", "settings"] },
-
+    "panels": {
+      "panels": [
+        "help",
+        "paytable",
+        "history",
+        "settings"
+      ]
+    },
     "grounding": {
       "tolerance_px": 18,
       "pairs": {
@@ -75,7 +165,6 @@
         ".ghost-porch.right": ".ghost-porch.right .resident-contact-shadow"
       }
     },
-
     "seams": {
       "threshold": 14,
       "layers": [
@@ -87,13 +176,33 @@
         ".parlor-exterior-residents"
       ]
     },
-
-    "sprite_motion": { "watch_ms": 30000 },
-
-    "reduced_motion": { "max_movement": 2.0, "skip_viewports": ["phone-portrait"] },
-
-    "letterbox": { "max_waste_pct": 42 },
-
-    "health": {}
+    "sprite_motion": {
+      "watch_ms": 30000
+    },
+    "reduced_motion": {
+      "max_movement": 2.0,
+      "skip_viewports": [
+        "phone-portrait"
+      ]
+    },
+    "letterbox": {
+      "max_waste_pct": 42
+    },
+    "health": {},
+    "load": {
+      "_": "Measured on an emulated 12 Mbps connection: on localhost the dev server hands over 126 MB/s and every timing is a measurement of this machine's disk. max_single_asset_mb is the durable guard - page weight drifts innocently, one huge clip does not.",
+      "max_playable_ms": 15000,
+      "max_mb_before_playable": 60,
+      "max_single_asset_mb": 30,
+      "settle_ms": 4000,
+      "min_responses": 10,
+      "skip_viewports": [
+        "tall-window",
+        "phone-portrait"
+      ],
+      "throttle_mbps": 12,
+      "inventory": "../docs/runtime-assets.json",
+      "min_inventory": 40
+    }
   }
 }

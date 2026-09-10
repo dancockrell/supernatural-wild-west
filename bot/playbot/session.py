@@ -36,6 +36,7 @@ class GameSession:
         self._headless = headless
         self.console_errors: list[str] = []
         self.failed_requests: list[str] = []
+        self.transfers: list[dict[str, Any]] = []
         # Requests that arrived and were refused. `requestfailed` never fires
         # for these — a 404 is a perfectly successful HTTP conversation — so
         # without this list a missing asset leaves no trace in the log at all.
@@ -103,9 +104,23 @@ class GameSession:
             status = response.status
         except Exception:
             return
+        headers = response.headers or {}
         if status >= 400:
             self.bad_responses.append({"status": status, "url": response.url,
-                                       "type": (response.headers or {}).get("content-type", "")})
+                                       "type": headers.get("content-type", "")})
+        # Size comes from the header rather than from response.body(), which
+        # would pull every megabyte of video through this process to weigh it.
+        # A response with no content-length is recorded at 0 and counted, so a
+        # server that stops sending the header shows up as an implausibly light
+        # page rather than as a page that quietly stopped being measured.
+        try:
+            length = int(headers.get("content-length") or 0)
+        except ValueError:
+            length = 0
+        self.transfers.append({"url": response.url, "status": status,
+                               "type": headers.get("content-type", ""),
+                               "bytes": length,
+                               "sized": "content-length" in headers})
 
     # -- lifecycle ---------------------------------------------------------
     def open(self) -> None:
@@ -124,6 +139,70 @@ class GameSession:
         except Exception:
             pass
         self.page.wait_for_timeout(2500)
+
+    def throttle(self, mbps: float | None, latency_ms: int = 40) -> bool:
+        """Emulate a real connection, or clear the emulation with None.
+
+        Without this the load measurement is a measurement of this machine's
+        disk: the dev server hands over about 126 MB/s, so the game reported
+        itself playable in 555 ms having pulled 70 MB in that window. Both
+        numbers were true and neither described anything a player would ever
+        experience. Returns False if the emulation could not be installed, so a
+        caller can say "not measured" instead of publishing localhost timings
+        as though they meant something.
+        """
+        try:
+            cdp = self.page.context.new_cdp_session(self.page)
+            cdp.send("Network.enable")
+            cdp.send("Network.emulateNetworkConditions", {
+                "offline": False,
+                "latency": 0 if mbps is None else latency_ms,
+                "downloadThroughput": -1 if mbps is None else int(mbps * 1_000_000 / 8),
+                "uploadThroughput": -1 if mbps is None else int(mbps * 1_000_000 / 8),
+            })
+            return True
+        except Exception:
+            return False
+
+    def measure_load(self, settle_ms: int = 4000) -> dict[str, Any]:
+        """Reload cold and weigh what a player waits for.
+
+        Deliberately a fresh navigation with the cache disabled rather than a
+        measurement of the already-open page: the interesting number is what
+        somebody opening this game for the first time pays, and by the time any
+        other check runs, everything is warm.
+
+        Returns the wall time until the spin control is usable, the bytes that
+        arrived before that moment, and the single largest response, which is
+        the one that actually decides whether a first visit feels broken.
+        """
+        self._context.clear_cookies()
+        try:
+            self.page.context.set_extra_http_headers({"Cache-Control": "no-cache"})
+        except Exception:
+            pass
+        self.transfers.clear()
+        started = time.monotonic()
+        self.page.goto(self.url, wait_until="commit")
+        self.page.wait_for_selector("#spin:not([disabled])", timeout=60000)
+        playable_ms = int((time.monotonic() - started) * 1000)
+        before = list(self.transfers)
+        self.page.wait_for_timeout(settle_ms)
+        settled = list(self.transfers)
+        media = [t for t in settled
+                 if t["type"].startswith(("video/", "audio/", "image/"))
+                 or t["url"].rsplit(".", 1)[-1].split("?")[0] in ("webm", "mp4", "mp3", "png", "webp")]
+        largest = max(media, key=lambda t: t["bytes"], default=None)
+        return {
+            "playable_ms": playable_ms,
+            "responses_before_playable": len(before),
+            "bytes_before_playable": sum(t["bytes"] for t in before),
+            "responses_total": len(settled),
+            "bytes_total": sum(t["bytes"] for t in settled),
+            "media_responses": len(media),
+            "unsized_responses": sum(1 for t in settled if not t["sized"]),
+            "largest_media": largest,
+        }
 
     def resize(self, viewport: Viewport) -> None:
         self.viewport = viewport

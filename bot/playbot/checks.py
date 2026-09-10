@@ -712,6 +712,153 @@ def leaks(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
     return out
 
 
+# --- load -------------------------------------------------------------------
+
+
+def _inventory_sizes(sess: GameSession, cfg: dict[str, Any]) -> dict[str, Any] | None:
+    """The largest media file the server would hand over, from the manifest.
+
+    Returns None rather than a zero when it cannot establish this, because a
+    missing manifest and a game with no large files produce the same number and
+    only one of them is good news.
+    """
+    import json as _json
+    from pathlib import Path as _Path
+    path = _Path(cfg.get("inventory", "../docs/runtime-assets.json"))
+    try:
+        listed = _json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    media = [p for p in listed if p.rsplit(".", 1)[-1].lower() in ("webm", "mp4", "mp3", "png", "webp")]
+    if len(media) < int(cfg.get("min_inventory", 40)):
+        return None
+    sizes = sess.head(media)
+    weighed = [{"url": u, "bytes": int(r.get("length") or 0)}
+               for u, r in sizes.items() if r.get("status") == 200 and r.get("length")]
+    if len(weighed) < int(cfg.get("min_inventory", 40)):
+        return None
+    best = max(weighed, key=lambda r: r["bytes"])
+    best["weighed"] = len(weighed)
+    best["listed"] = len(media)
+    return best
+
+
+@check("load")
+def load(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
+    """What a first visit costs, and the one number that guards it.
+
+    This check exists because of what was found on 11 Sep 2026: the clips carry
+    alpha, and the colour plane under their transparent pixels was random
+    per-frame noise. Invisible, uncompressible, and most of the bitrate. One
+    nine-second performance was 95 MB. Cleaning the matte took 43 clips from
+    1,430.6 MB to 294.5 MB with no change to any dimension.
+
+    Nothing stopped that coming back. A single re-exported clip dropped into
+    public/video would restore it silently, because everything still plays -
+    it just plays after a wait nobody measures. So the durable guard here is
+    `max_single_asset_mb`: not the page weight, which drifts for a dozen
+    innocent reasons, but the largest single response, which is what actually
+    decides whether the game feels broken on a real connection.
+
+    Measured cold, with the cache cleared, because by the time any other check
+    runs everything is warm and the number is meaningless.
+    """
+    budget_ms = int(cfg.get("max_playable_ms", 15000))
+    budget_mb = float(cfg.get("max_mb_before_playable", 60))
+    single_mb = float(cfg.get("max_single_asset_mb", 30))
+    floor = int(cfg.get("min_responses", 10))
+
+    mbps = cfg.get("throttle_mbps", 12)
+    throttled = sess.throttle(mbps) if mbps else False
+    try:
+        stats = sess.measure_load(settle_ms=int(cfg.get("settle_ms", 4000)))
+    finally:
+        if throttled:
+            sess.throttle(None)
+    stats["throttle_mbps"] = mbps if throttled else None
+    mb = lambda n: round(n / (1024 * 1024), 2)
+    out: list[Complaint] = []
+
+    # Count the fragile thing. If almost nothing was observed, the instrument
+    # broke - a page that genuinely served ten responses and a listener that
+    # stopped firing look identical in the totals.
+    if stats["responses_total"] < floor:
+        return [undetermined(
+            "load", "I could not weigh the first visit",
+            f"Only {stats['responses_total']} responses were seen, below the floor of {floor}. "
+            "Either the page did not load or the response listener is not firing; "
+            "either way these numbers say nothing about the game.",
+            repro={"viewport": sess.viewport.name}, stats=stats)]
+
+    # The largest asset must NOT be read from what the browser happened to
+    # fetch. Under emulation only 1.24 MB arrives before the game is playable,
+    # so "largest response seen" would report a small number for a game
+    # carrying a 95 MB clip that simply had not been reached yet - a guard that
+    # passes because it never looked. Ask the server instead, over the whole
+    # shipping inventory, which tests/browser/runtime-assets.spec.ts pins to
+    # exactly what public/ serves.
+    inventory = _inventory_sizes(sess, cfg)
+    if inventory is None:
+        out.append(undetermined(
+            "load", "I could not weigh the shipping inventory",
+            f"{cfg.get('inventory', '../docs/runtime-assets.json')} could not be read or returned too "
+            "few sized media paths, so the largest-asset budget was not applied. The load timings "
+            "below stand; the size guard did not run.",
+            repro={"viewport": sess.viewport.name}, stats=stats))
+        largest = None
+    else:
+        largest = inventory
+        stats["largest_shipped"] = largest
+    if largest and largest["bytes"] > single_mb * 1024 * 1024:
+        out.append(Complaint(
+            check="load", severity="major",
+            title=f"one asset is {mb(largest['bytes'])} MB",
+            detail=(f"{largest['url'].rsplit('/', 1)[-1]} alone is {mb(largest['bytes'])} MB, over the "
+                    f"{single_mb} MB budget. A clip this size holds its own performance behind a poster "
+                    "on any connection a player is likely to have. If it carries alpha, check whether the "
+                    "colour plane under its transparent pixels is noise: run "
+                    "`node scripts/reencode-video.mjs --matte --keep-size --only=<path>`, which refuses "
+                    "anything that would change how the clip looks."),
+            evidence={"asset": largest, "budget_mb": single_mb},
+            repro={"viewport": sess.viewport.name},
+        ))
+
+    if mbps and not throttled:
+        out.append(undetermined(
+            "load", "I could not measure the load time honestly",
+            "Network emulation would not install, so the only timing available is this machine's "
+            "local disk speed. The byte counts below are still true; the milliseconds are not a "
+            "claim about any player's connection.",
+            repro={"viewport": sess.viewport.name}, stats=stats))
+    elif stats["playable_ms"] > budget_ms:
+        out.append(Complaint(
+            check="load", severity="major",
+            title=f"{stats['playable_ms']} ms before the game could be played",
+            detail=(f"The spin control did not become usable for {stats['playable_ms']} ms on a cold load, "
+                    f"past the {budget_ms} ms budget. {stats['responses_before_playable']} responses and "
+                    f"{mb(stats['bytes_before_playable'])} MB arrived in that time."),
+            evidence=stats, repro={"viewport": sess.viewport.name},
+        ))
+
+    if stats["bytes_before_playable"] > budget_mb * 1024 * 1024:
+        out.append(Complaint(
+            check="load", severity="minor",
+            title=f"{mb(stats['bytes_before_playable'])} MB before the first spin is possible",
+            detail=(f"A cold visit pulls {mb(stats['bytes_before_playable'])} MB before the game is playable, "
+                    f"over the {budget_mb} MB budget. Media that is not on screen yet can wait."),
+            evidence=stats, repro={"viewport": sess.viewport.name},
+        ))
+
+    if not out:
+        out.append(praise(
+            "load",
+            f"playable in {stats['playable_ms']} ms, {mb(stats['bytes_before_playable'])} MB",
+            (f"Cold load: {stats['responses_total']} responses, {mb(stats['bytes_total'])} MB in total, "
+             f"largest single asset {mb(largest['bytes']) if largest else 0} MB."),
+            **stats))
+    return out
+
+
 # --- assets -----------------------------------------------------------------
 
 _IMAGE_TYPES = ("image/",)
