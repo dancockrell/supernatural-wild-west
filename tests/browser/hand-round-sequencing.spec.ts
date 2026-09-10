@@ -41,8 +41,10 @@ test('shared feature finish preserves the next award and dismissal releases wait
   await page.addScriptTag({content:ts.transpileModule(`
     const calls=[];let spectacleSequence=0,awardFrame=0,spectacleTimer,spectacleAudioEvents;let stopSpectacleScore=()=>{};
     const spectacle={hidden:false,querySelectorAll:()=>[{pause(){calls.push('pause')}}]};
-    const el=()=>spectacle;const audio={stopFeature(){calls.push('audio-stop')}};const refresh=()=>{};
+    const shell={removeAttribute(){calls.push('shell-inert-off')}};
+    const el=(id)=>id==='shell'?shell:spectacle;const audio={stopFeature(){calls.push('audio-stop')}};const refresh=()=>{};
     const spectacleWaiters=new Set();let pendingAward=()=>{calls.push('next-award');spectacle.hidden=false;};
+    let focusBeforeSpectacle=null;
     ${fn('waitForSpectacles')} ${fn('finishSpectacle')}
     let resolved=false;waitForSpectacles().then(()=>resolved=true);
     Object.assign(window,{finishSpectacle,snapshot:()=>({calls,hidden:spectacle.hidden,resolved,waiters:spectacleWaiters.size})});
@@ -50,7 +52,11 @@ test('shared feature finish preserves the next award and dismissal releases wait
   await page.evaluate(()=>(window as any).finishSpectacle(true));
   expect(await page.evaluate(()=>(window as any).snapshot())).toMatchObject({hidden:false,resolved:false,waiters:1});
   await page.evaluate(()=>(window as any).finishSpectacle(false));
-  expect(await page.evaluate(()=>(window as any).snapshot())).toEqual({hidden:true,resolved:true,waiters:0,calls:['audio-stop','pause','next-award','audio-stop','pause']});
+  // 'shell-inert-off' appears once here, not after the first finishSpectacle
+  // call above: that call's pendingAward reopens the spectacle
+  // (hidden=false again), so the inert/focus-restore block — gated on the
+  // spectacle actually staying closed — correctly skips it.
+  expect(await page.evaluate(()=>(window as any).snapshot())).toEqual({hidden:true,resolved:true,waiters:0,calls:['audio-stop','pause','next-award','audio-stop','pause','shell-inert-off']});
 });
 for(const cancellation of ['hidden','motion'] as const)test(`${cancellation} cancellation during a hand cannot reopen its pending feature`,async({page})=>{
   await page.setContent('<main></main>');

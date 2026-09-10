@@ -8,10 +8,13 @@ test("player hierarchy keeps controls and removes decorative labels", async ({
   await expect(page.locator("#connection")).toContainText("CONNECTED");
   await expect(page.locator("h1")).toHaveText("SUPERNATURAL WILD WEST");
   await expect(page).toHaveTitle("Supernatural Wild West");
+  // #skip-spectacle was dropped from this "decorative cruft" list on 10 Sep
+  // 2026: it now exists on purpose (see spectacle-accessibility.spec.ts) —
+  // it was previously absent from the DOM while its CSS sat unused across
+  // three stylesheets, a real gap since the full-screen cinematic overlay
+  // had no keyboard-reachable way to skip or stop it.
   await expect(
-    page.locator(
-      "#legend,.lore-aside,.subtitle,.town-caption,.feature-strip,#skip-spectacle",
-    ),
+    page.locator("#legend,.lore-aside,.subtitle,.town-caption,.feature-strip"),
   ).toHaveCount(0);
   await expect(page.locator(".symbol > span")).toHaveCount(0);
   await expect(page.locator("#spin")).toBeVisible();

@@ -56,7 +56,7 @@ const descriptions = [
   "Church · Reel 5: a Preacher anywhere on this reel doubles all ways wins.",
 ];
 app.innerHTML = `<canvas id="frontier" aria-label="An animated cursed frontier street"></canvas><div class="vignette"></div>
-<div class="shell"><header class="topbar"><div class="top-actions"><button id="audio" class="icon-button" aria-label="Enable sound" aria-pressed="false">♫</button><button id="settings" class="icon-button" aria-label="Open settings">⚙</button><button id="help" class="outline-button">HELP</button></div></header>
+<div class="shell" id="shell"><header class="topbar"><div class="top-actions"><button id="audio" class="icon-button" aria-label="Enable sound" aria-pressed="false">♫</button><button id="settings" class="icon-button" aria-label="Open settings">⚙</button><button id="help" class="outline-button">HELP</button></div></header>
 <main><div class="title-area"><h1><span>SUPERNATURAL</span> WILD WEST</h1></div>
 <section class="game" aria-label="Supernatural Wild West slot"><div class="game-meta"><span id="phase"><i></i> HIGH NOON</span><button id="paytable">PAYTABLE <span>↗</span></button></div>
 <div class="cabinet"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="locations">${LOCATIONS.map((name, i) => `<button data-location="${i}" aria-label="${name} modifier"><span>${name}</span><i></i></button>`).join("")}</div>
@@ -197,10 +197,18 @@ document.addEventListener("visibilitychange", () => {
 });
 
 let focusBefore: HTMLElement | null = null;
+let focusBeforeSpectacle: HTMLElement | null = null;
 app.insertAdjacentHTML(
   "beforeend",
-  '<div id="spectacle" class="spectacle" aria-live="polite" hidden><div class="spectacle-card"><h2 id="spectacle-title"></h2><p id="spectacle-copy"></p></div></div>',
+  '<div id="spectacle" class="spectacle" hidden><div class="spectacle-card"><h2 id="spectacle-title"></h2><p id="spectacle-copy"></p><button id="skip-spectacle">SKIP</button></div><p id="spectacle-announce" class="visually-hidden" role="status" aria-live="polite"></p></div>',
 );
+el("skip-spectacle").onclick = () => finishSpectacle(true);
+// Skip is the overlay's only focusable element while it is open (the rest
+// of the page is inert), so trapping Tab here keeps keyboard focus from
+// escaping into content that is visually covered but not actually blocked.
+el("skip-spectacle").addEventListener("keydown", (e) => {
+  if (e.key === "Tab") e.preventDefault();
+});
 let spectacleTimer: ReturnType<typeof setTimeout> | undefined;
 let pendingAward: (() => void) | undefined;
 let awardFrame = 0;
@@ -221,6 +229,11 @@ function finishSpectacle(continueAwards:boolean) {
   el('spectacle').hidden=true;
   const next=continueAwards ? pendingAward : undefined; pendingAward=undefined;
   next?.();
+  if(el('spectacle').hidden){
+    el("shell").removeAttribute("inert");
+    focusBeforeSpectacle?.focus();
+    focusBeforeSpectacle = null;
+  }
   if(el('spectacle').hidden && !pendingAward){for(const resolve of spectacleWaiters)resolve();spectacleWaiters.clear();}
   refresh();
 }
@@ -241,8 +254,14 @@ function showSpectacle(
   cancelAnimationFrame(awardFrame);
   el("spectacle-title").textContent = title;
   el("spectacle-copy").textContent = copy;
+  el("spectacle-announce").textContent = copy ? `${title}. ${copy}` : title;
 
+  if (el("spectacle").hidden) {
+    focusBeforeSpectacle = document.activeElement as HTMLElement;
+    el("shell").setAttribute("inert", "");
+  }
   el("spectacle").hidden = false;
+  el<HTMLButtonElement>("skip-spectacle").focus();
   refresh();
   audio.beginFeature();
   cinematics.play(kind, location);
@@ -342,6 +361,7 @@ modal.addEventListener("click", (e) => {
 });
 function setStatus(text: string, attention = false) {
   el("status").textContent = text;
+  el("status").setAttribute("role", attention ? "alert" : "status");
   document
     .querySelector(".event-line")!
     .classList.toggle("needs-attention", attention || !connected);
@@ -627,6 +647,7 @@ async function spin(automatic = false): Promise<SpinResult | undefined> {
     connection(false);
     setStatus(
       `${(e as Error).message}. Reconnect to recover this round safely.`,
+      true,
     );
   } finally {
     busy = false;
@@ -681,7 +702,7 @@ async function connect() {
     refresh();
   } catch (e) {
     connection(false);
-    setStatus(`Connection unavailable: ${(e as Error).message}`);
+    setStatus(`Connection unavailable: ${(e as Error).message}`, true);
   }
 }
 el("spin").onclick = () => void spin();
@@ -695,6 +716,11 @@ el("bet-up").onclick = () => {
   refresh();
 };
 document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !e.repeat && !el("spectacle").hidden) {
+    e.preventDefault();
+    finishSpectacle(true);
+    return;
+  }
   if (
     e.code === "Space" &&
     !e.repeat &&
