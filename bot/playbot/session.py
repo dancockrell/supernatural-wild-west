@@ -109,6 +109,37 @@ class GameSession:
         self.page.wait_for_timeout(250)
         return True
 
+    def start_autoplay(self) -> str:
+        """Open the autoplay dialog and start it. Returns started/absent/failed."""
+        button = self.page.locator("#autoplay")
+        if button.count() == 0 or not button.is_visible():
+            return "absent"
+        try:
+            button.click(timeout=4000)
+        except Exception:
+            return "failed"
+        self.page.wait_for_timeout(600)
+        form = self.page.locator("#auto-form button[type=submit]")
+        if form.count() == 0:
+            return "failed"
+        try:
+            form.click(timeout=4000)
+        except Exception:
+            return "failed"
+        self.page.wait_for_timeout(1200)
+        return "started"
+
+    def stop_autoplay(self) -> bool:
+        button = self.page.locator("#autoplay")
+        try:
+            if "■" in (button.text_content() or "") or "Stop" in (button.get_attribute("aria-label") or ""):
+                button.click(timeout=4000)
+                self.page.wait_for_timeout(600)
+                return True
+        except Exception:
+            return False
+        return False
+
     def state(self) -> dict[str, Any]:
         return self.page.evaluate(
             """() => ({

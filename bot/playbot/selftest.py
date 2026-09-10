@@ -95,6 +95,30 @@ CASES: list[Sabotage] = [
         cfg={"tolerance_px": 2, "pairs": [{"label": "#spin-label", "host": "#spin", "states": ["CONNECTING"]}]},
     ),
     Sabotage(
+        check="keyboard_play",
+        what="swallow Enter on the spin button",
+        apply=lambda s: s.page.evaluate(
+            "() => { window.__botKeyBlock = e => { if (e.key === 'Enter') { e.stopImmediatePropagation();"
+            " e.preventDefault(); } };"
+            " document.getElementById('spin').addEventListener('keydown', window.__botKeyBlock, true); }"),
+        undo=lambda s: s.page.evaluate(
+            "() => document.getElementById('spin').removeEventListener('keydown', window.__botKeyBlock, true)"),
+        cfg={},
+    ),
+    Sabotage(
+        check="cutscenes",
+        what="leave the shell inert so the game never comes back",
+        apply=lambda s: s.page.evaluate(
+            "() => { const sh = document.getElementById('shell') || document.querySelector('.shell');"
+            " sh.setAttribute('inert',''); window.__botPin = new MutationObserver(() =>"
+            " { if (!sh.hasAttribute('inert')) sh.setAttribute('inert',''); });"
+            " window.__botPin.observe(sh, {attributes:true}); }"),
+        undo=lambda s: s.page.evaluate(
+            "() => { window.__botPin && window.__botPin.disconnect();"
+            " (document.getElementById('shell') || document.querySelector('.shell')).removeAttribute('inert'); }"),
+        cfg={"kinds": ["noon"], "dismiss_ms": 6000},
+    ),
+    Sabotage(
         check="letterbox",
         what="shrink the stage to a quarter of the window",
         apply=lambda s: _style(s, ".parlor-stage{width:38vw !important;}"),

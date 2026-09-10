@@ -31,6 +31,11 @@
       }]
     },
     "ledger": {},
+    "keyboard_play": {},
+    "persistence": {},
+    "cutscenes": { "kinds": ["ride", "witch", "awaken-0", "fortune", "noon", "brand"], "dismiss_ms": 20000, "skip_viewports": ["phone-portrait"] },
+    "leaks": { "spins": 6, "max_new_videos": 4, "skip_viewports": ["tall-window", "phone-portrait"] },
+    "autoplay": { "expect_rounds": 2, "watch_ms": 16000, "skip_viewports": ["phone-portrait"] },
     "offscreen": {},
     "overlap": {},
     "panels": { "panels": ["help", "paytable", "history", "settings"] },

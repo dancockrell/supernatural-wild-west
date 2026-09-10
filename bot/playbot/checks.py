@@ -421,6 +421,283 @@ def reduced_motion(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
                    frameDelta=round(moved, 2), limit=limit)]
 
 
+@check("keyboard_play")
+def keyboard_play(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
+    """The whole game has to be playable without a mouse."""
+    out: list[Complaint] = []
+    sess.wait_for_spectacle()
+    before = sess.state()
+    reached = sess.page.evaluate(
+        """() => {
+            const spin = document.getElementById('spin');
+            spin.focus();
+            return document.activeElement === spin;
+        }"""
+    )
+    if not reached:
+        out.append(Complaint(
+            check="keyboard_play", severity="major",
+            title="the spin button cannot take keyboard focus",
+            detail="I could not focus the main control, so the game cannot be played from a keyboard.",
+            evidence={}, repro={"viewport": sess.viewport.name},
+        ))
+        return out
+    sess.page.keyboard.press("Enter")
+    sess.page.wait_for_timeout(4200)
+    after = sess.state()
+    if before.get("round") == after.get("round"):
+        out.append(Complaint(
+            check="keyboard_play", severity="major",
+            title="pressing Enter on the focused spin button did nothing",
+            detail=("The button had focus and Enter did not start a round, so a keyboard player "
+                    "cannot actually play."),
+            evidence={"before": before, "after": after},
+            repro={"viewport": sess.viewport.name},
+            shot=str(sess.shot("keyboard-enter")),
+        ))
+    # Focus must be visible, or a keyboard player cannot tell where they are.
+    outline = sess.page.evaluate(
+        """() => {
+            const s = getComputedStyle(document.getElementById('spin'), ':focus-visible');
+            const plain = getComputedStyle(document.getElementById('spin'));
+            return {outline: s.outlineStyle, width: s.outlineWidth,
+                    shadow: s.boxShadow !== plain.boxShadow};
+        }"""
+    )
+    if outline.get("outline") in (None, "none") and not outline.get("shadow"):
+        out.append(Complaint(
+            check="keyboard_play", severity="minor",
+            title="the focused control shows no focus ring",
+            detail="Nothing marks which control has keyboard focus, so tabbing through is guesswork.",
+            evidence=outline, repro={"viewport": sess.viewport.name},
+        ))
+    if not out:
+        out.append(praise("keyboard_play", f"the game is playable from the keyboard at {sess.viewport.name}",
+                          "Spin takes focus, Enter starts a round, and focus is visible."))
+    return out
+
+
+@check("persistence")
+def persistence(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
+    """A reload must not lose or invent credits.
+
+    This game keeps an authoritative session server-side and restores the last
+    settled round, so a refresh mid-session is a supported thing a player does.
+    """
+    sess.wait_for_spectacle()
+    before = sess.state()
+    if not before.get("balance"):
+        return []
+    sess.page.reload(wait_until="load")
+    sess.open()
+    after = sess.state()
+    out: list[Complaint] = []
+    if before.get("balance") != after.get("balance"):
+        out.append(Complaint(
+            check="persistence", severity="blocker",
+            title=f"balance changed across a reload: {before.get('balance')} -> {after.get('balance')}",
+            detail="I refreshed the page and my credits were different afterwards.",
+            evidence={"before": before, "after": after},
+            repro={"viewport": sess.viewport.name},
+            shot=str(sess.shot("persistence-balance")),
+        ))
+    if before.get("round") != after.get("round"):
+        out.append(Complaint(
+            check="persistence", severity="major",
+            title=f"round counter moved across a reload: {before.get('round')} -> {after.get('round')}",
+            detail="Refreshing appears to have advanced or lost a round.",
+            evidence={"before": before, "after": after},
+            repro={"viewport": sess.viewport.name},
+        ))
+    if not out:
+        out.append(praise("persistence", "a reload restores the same session",
+                          "Credits and round survived a refresh unchanged.",
+                          balance=after.get("balance"), round=after.get("round")))
+    return out
+
+
+@check("autoplay")
+def autoplay(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
+    """Autoplay must actually run rounds and must stop when told."""
+    rounds = int(cfg.get("expect_rounds", 2))
+    sess.wait_for_spectacle()
+    started = sess.start_autoplay()
+    if started != "started":
+        return [] if started == "absent" else [Complaint(
+            check="autoplay", severity="major",
+            title=f"autoplay would not start ({started})",
+            detail="I opened autoplay and could not get it running.",
+            evidence={"state": started}, repro={"viewport": sess.viewport.name},
+            shot=str(sess.shot("autoplay-start")),
+        )]
+    before = sess.state()
+    sess.page.wait_for_timeout(int(cfg.get("watch_ms", 16000)))
+    mid = sess.state()
+    out: list[Complaint] = []
+
+    def seq(text: str | None) -> int:
+        digits = "".join(c for c in (text or "") if c.isdigit())
+        return int(digits) if digits else -1
+
+    played = seq(mid.get("round")) - seq(before.get("round"))
+    if played < rounds:
+        out.append(Complaint(
+            check="autoplay", severity="major",
+            title=f"autoplay only played {max(played, 0)} rounds when left running",
+            detail="I started autoplay and it did not keep playing on its own.",
+            evidence={"roundsPlayed": played, "expected": rounds,
+                      "before": before.get("round"), "after": mid.get("round")},
+            repro={"viewport": sess.viewport.name},
+            shot=str(sess.shot("autoplay-stalled")),
+        ))
+    stopped = sess.stop_autoplay()
+    sess.page.wait_for_timeout(6000)
+    after_stop = sess.state()
+    sess.page.wait_for_timeout(6000)
+    later = sess.state()
+    if stopped and seq(later.get("round")) != seq(after_stop.get("round")):
+        out.append(Complaint(
+            check="autoplay", severity="blocker",
+            title="autoplay kept spending credits after I stopped it",
+            detail="I pressed stop and rounds kept being played.",
+            evidence={"atStop": after_stop.get("round"), "later": later.get("round")},
+            repro={"viewport": sess.viewport.name},
+            shot=str(sess.shot("autoplay-runaway")),
+        ))
+    if not out:
+        out.append(praise("autoplay", "autoplay runs and stops on command",
+                          "It played rounds unattended and stopped dead when I pressed stop.",
+                          roundsPlayed=played))
+    return out
+
+
+@check("cutscenes")
+def cutscenes(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
+    """Every feature performance must end and give the game back.
+
+    While one plays, the shell is deliberately marked inert so the covered page
+    cannot be clicked. That makes a cutscene which fails to close far worse
+    than a cosmetic bug: it leaves the whole game unplayable with no error.
+    """
+    kinds = cfg.get("kinds") or ["ride", "witch", "awaken-0", "fortune", "noon", "brand"]
+    limit = int(cfg.get("dismiss_ms", 20000))
+    out: list[Complaint] = []
+    checked: list[str] = []
+    for kind in kinds:
+        if not sess.preview_feature(kind):
+            # Failing to even start one is itself the symptom worth reporting.
+            # While a performance is up the shell is inert, so a game stuck in
+            # that state cannot be driven at all — and a check that quietly
+            # skipped would have called a bricked game clean.
+            state = sess.page.evaluate(
+                """() => {
+                    const shell = document.getElementById('shell') || document.querySelector('.shell');
+                    const spectacle = document.getElementById('spectacle');
+                    return {inert: !!(shell && shell.hasAttribute('inert')),
+                            showing: spectacle ? !spectacle.hidden : false};
+                }"""
+            )
+            if state["inert"] or state["showing"]:
+                out.append(Complaint(
+                    check="cutscenes", severity="blocker",
+                    title="the game is stuck behind a performance and will not respond",
+                    detail=("I could not reach the controls at all. The interface is inert, which is "
+                            "what happens while a cutscene plays — so one has not ended."),
+                    evidence={"kind": kind, **state},
+                    repro={"viewport": sess.viewport.name, "feature": kind},
+                    shot=str(sess.shot(f"cutscene-bricked-{kind}")),
+                ))
+                break
+            continue
+        appeared = sess.page.evaluate("() => !document.getElementById('spectacle').hidden")
+        cleared = sess.wait_for_spectacle(timeout_ms=limit)
+        stuck = sess.page.evaluate(
+            """() => {
+                const shell = document.getElementById('shell') || document.querySelector('.shell');
+                const spectacle = document.getElementById('spectacle');
+                return {inert: !!(shell && shell.hasAttribute('inert')),
+                        showing: spectacle ? !spectacle.hidden : false,
+                        spinDisabled: !!document.getElementById('spin')?.disabled};
+            }"""
+        )
+        checked.append(kind)
+        if not cleared or stuck["inert"] or stuck["showing"]:
+            out.append(Complaint(
+                check="cutscenes", severity="blocker",
+                title=f"the {kind} performance never gave the game back",
+                detail=("The overlay did not finish, and while it is up the whole interface is inert. "
+                        "From a player's side the game has simply stopped responding."),
+                evidence={"kind": kind, "appeared": appeared, "dismissedWithinMs": limit, **stuck},
+                repro={"viewport": sess.viewport.name, "feature": kind},
+                shot=str(sess.shot(f"cutscene-stuck-{kind}")),
+            ))
+            sess.page.reload(wait_until="load")
+            sess.open()
+        elif stuck["spinDisabled"]:
+            sess.page.wait_for_timeout(3000)
+            if sess.page.locator("#spin").is_disabled():
+                out.append(Complaint(
+                    check="cutscenes", severity="major",
+                    title=f"spin stayed disabled after the {kind} performance",
+                    detail="The cutscene ended but the game did not hand back the spin button.",
+                    evidence={"kind": kind, **stuck},
+                    repro={"viewport": sess.viewport.name, "feature": kind},
+                    shot=str(sess.shot(f"cutscene-nospin-{kind}")),
+                ))
+    if not out and checked:
+        out.append(praise("cutscenes", "every feature performance ends and returns control",
+                          "I triggered each one and the overlay cleared, the shell stopped being "
+                          "inert, and spin came back.", kinds=checked))
+    return out
+
+
+@check("leaks")
+def leaks(sess: GameSession, cfg: dict[str, Any]) -> list[Complaint]:
+    """Playing for a while must not pile up media elements or memory.
+
+    This game swaps a lot of video. A session that quietly grows a few hundred
+    elements plays fine for a minute and badly for an hour, which is exactly
+    the kind of thing a person testing by hand never sees.
+    """
+    spins = int(cfg.get("spins", 6))
+    growth_limit = int(cfg.get("max_new_videos", 4))
+
+    def census() -> dict[str, Any]:
+        return sess.page.evaluate(
+            """() => ({
+                videos: document.querySelectorAll('video').length,
+                canvases: document.querySelectorAll('canvas').length,
+                nodes: document.getElementsByTagName('*').length,
+                heapMB: performance.memory ? +(performance.memory.usedJSHeapSize / 1048576).toFixed(1) : null,
+            })"""
+        )
+
+    sess.wait_for_spectacle()
+    before = census()
+    for _ in range(spins):
+        sess.spin()
+        sess.wait_for_spectacle()
+    after = census()
+    grew = {k: (after[k] - before[k]) for k in ("videos", "canvases", "nodes")
+            if isinstance(after[k], int) and isinstance(before[k], int)}
+    out: list[Complaint] = []
+    if grew.get("videos", 0) > growth_limit:
+        out.append(Complaint(
+            check="leaks", severity="major",
+            title=f"{grew['videos']} extra video elements after {spins} spins",
+            detail=("Media elements are accumulating as I play. Left running this will chew memory "
+                    "and eventually stutter."),
+            evidence={"before": before, "after": after, "growth": grew, "spins": spins,
+                      "limit": growth_limit},
+            repro={"viewport": sess.viewport.name},
+        ))
+    if not out:
+        out.append(praise("leaks", f"nothing piles up over {spins} spins",
+                          "Video and canvas counts stayed flat while I played.",
+                          before=before, after=after, growth=grew))
+    return out
+
+
 # --- health -----------------------------------------------------------------
 
 @check("health")
