@@ -248,9 +248,9 @@
 }
 .symbol.winning {
   border: 1px solid #ffe1a6;
-  box-shadow:
-    inset 0 0 18px #fcbd4766,
-    0 0 15px #f9bc4366;
+  /* box-shadow lives in card-fx.css, which loads later and always wins
+     this tie against style.css's and this file's identical-specificity
+     declarations — see the note there. */
   z-index: 2;
 }
 .symbol.winning:after {

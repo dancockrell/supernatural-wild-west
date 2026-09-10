@@ -17,6 +17,13 @@ export function movie(key: MovieKey, offset = 0, source: string = MOVIES[key]) {
   video.loop = true;
   video.playsInline = true;
   video.preload = "auto";
+  // These six loops are visible ambient background from the very first
+  // paint, so they still need to start buffering immediately — but they
+  // are not what makes the game playable (the poster already covers the
+  // gap until each one decodes, per the fallback in MovieSymbols.paint).
+  // Deprioritizing their fetch keeps them from competing with the JS
+  // bundle and the session connect() call for early bandwidth.
+  video.setAttribute("fetchpriority", "low");
   video.dataset.movie = key;
   // Slow the baked vapor only in the repeating reel portrait.
   if (key === 'preacher') video.playbackRate = .8;
