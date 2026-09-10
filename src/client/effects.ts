@@ -1,17 +1,52 @@
 import type { SpinResult } from "../engine/types";
-import { ghostSprite } from "./ghost-sprite";
-/** All spectacle is downstream of authoritative results; no outcome generation here. */
+/**
+ * All spectacle is downstream of authoritative results; no outcome generation here.
+ *
+ * DEAD FALLBACK REMOVED. This class used to carry a second Ride of the Damned:
+ * a `.spectral-rider` div holding `ghostSprite("rider-gallop")`
+ * (/video/rider-gallop-v5.webm), a `riding`/`preparing` class pair, a
+ * MutationObserver watching both that element and #spectacle, an async
+ * `haunt()` that crossed the horse over the reveal, and a canvas smoke plume
+ * that only emitted while `riding` was set.
+ *
+ * It was the no-native-film path: main.ts called it as
+ * `if (kind === "ride" && !reduced && !nativePerformance) effects.haunt()`.
+ * That branch cannot be taken. `nativePerformance` is
+ * `#spectacle .feature-ghost`, read immediately after `cinematics.play(kind)`,
+ * and cinematics.ts appends a `.feature-ghost` spirit unconditionally for
+ * kind 'ride' (src/client/cinematics.ts:85-125), synchronously, before its src
+ * has been fetched.
+ *
+ * The load-failure case is the one worth measuring rather than reasoning
+ * about, because that is the only thing the fallback could still have been
+ * for. Measured, with /video/rare-features-v4/ride.webm aborted at the route:
+ * from the instant #spectacle opens it holds exactly one `.feature-ghost`
+ * (readyState 0, error still null), which errors 3ms later with code 4
+ * (MEDIA_ERR_SRC_NOT_SUPPORTED); the spectacle then closes through that
+ * element's own `error` listener in main.ts rather than falling back to
+ * anything. So `nativePerformance` is non-null for this kind whether the film
+ * loads or not, `!nativePerformance` is unsatisfiable, and haunt() could not
+ * run even in the case it existed for - the guard tested element presence,
+ * which is not the same proposition as "the film plays".
+ *
+ * Two other specs had already measured the same thing from the outside; see
+ * the comments in tests/browser/rider-loading.spec.ts and game.spec.ts, which
+ * record `.spectral-rider`'s video sitting at currentTime 0 with readyState 4
+ * forever while the authored film plays.
+ *
+ * What removing it saves is one duplicate page-load video fetch: measured, `/`
+ * requested /video/rider-gallop-v5.webm twice and its poster once before, and
+ * once and once after. The file does not disappear from the page and should
+ * not - `rider` is a live reel symbol (symbols.ts:30) whose tile is decoded by
+ * MovieSymbols from the same source. This class was the second decoder of it.
+ * The horse in the reveal is not lost either: it is the authored film, and
+ * cinematics.followNativeFilm drives its reveal from the film's own clock.
+ */
 export class SpectralEffects {
   private canvas = document.createElement("canvas");
   private ctx: CanvasRenderingContext2D;
-  private rider = document.createElement("div");
-  private performance = ghostSprite("rider-gallop");
-  private riderObserver: MutationObserver;
   private wash = document.createElement("div");
   private frame = 0;
-  private smokeBrush = document.createElement("canvas");
-  private smoke: { x: number; y: number; size: number; age: number }[] = [];
-  private lastSmoke = 0;
   private reduced = false;
   private bolt = 0;
   private boltX = 0.72;
@@ -19,53 +54,15 @@ export class SpectralEffects {
   private height = 0;
   private timers: ReturnType<typeof setTimeout>[] = [];
   private presentation = 0;
-  private haunting = 0;
-  private visibility = () => {
-    if (document.hidden) this.performance.pause();
-    else if (
-      !this.reduced &&
-      this.rider.classList.contains("riding") &&
-      !this.rider.parentElement?.hidden
-    )
-      void this.performance.play().catch(() => {});
-  };
   constructor() {
-    this.smokeBrush.width = this.smokeBrush.height = 96;
-    const brush = this.smokeBrush.getContext("2d")!;
-    const haze = brush.createRadialGradient(48, 48, 0, 48, 48, 48);
-    haze.addColorStop(0, "#a6b9aa66");
-    haze.addColorStop(0.35, "#879e943d");
-    haze.addColorStop(1, "#82918b00");
-    brush.fillStyle = haze;
-    brush.fillRect(0, 0, 96, 96);
     this.canvas.id = "impact-effects";
     this.canvas.setAttribute("aria-hidden", "true");
     document.body.append(this.canvas);
     this.ctx = this.canvas.getContext("2d")!;
-    this.rider.className = "spectral-rider";
-    this.rider.setAttribute("aria-hidden", "true");
-    this.performance.muted = true;
-    this.performance.playsInline = true;
-    this.performance.preload = "auto";
-    this.rider.append(this.performance);
-    this.riderObserver = new MutationObserver(() => {
-      if (
-        this.rider.parentElement?.hidden ||
-        (!this.rider.classList.contains("riding") &&
-          !this.rider.classList.contains("preparing"))
-      )
-        this.performance.pause();
-    });
-    this.riderObserver.observe(this.rider, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-    document.body.append(this.rider);
     this.wash.className = "storm-wash";
     this.wash.setAttribute("aria-hidden", "true");
     document.body.append(this.wash);
     window.addEventListener("resize", this.resize);
-    document.addEventListener("visibilitychange", this.visibility);
     this.resize();
     this.frame = requestAnimationFrame(this.render);
   }
@@ -87,15 +84,12 @@ export class SpectralEffects {
   setReduced(value: boolean) {
     this.reduced = value;
     if (value) {
-      this.smoke = [];
       this.presentation++;
       document.querySelector(".win-ribbon")?.remove();
       document
         .querySelectorAll(".win-focus")
         .forEach((s) => s.classList.remove("win-focus"));
       this.bolt = 0;
-      this.rider.classList.remove("riding");
-      this.performance.pause();
       document
         .querySelectorAll(".reel-impact,.anticipation,.cabinet-impact")
         .forEach((e) =>
@@ -212,42 +206,6 @@ export class SpectralEffects {
     this.wash.classList.add("struck");
     this.later(() => this.wash.classList.remove("struck"), 950);
   }
-  async haunt() {
-    if (this.reduced) return;
-    const haunting = ++this.haunting;
-    // Keep the apparition inside the reveal so copy remains above it and skip hides it.
-    document.getElementById("spectacle")?.append(this.rider);
-    this.riderObserver.observe(document.getElementById("spectacle")!, {
-      attributes: true,
-      attributeFilter: ["hidden"],
-    });
-    this.lightning();
-    this.impact();
-    this.rider.classList.remove("riding");
-    void this.rider.offsetWidth;
-    this.rider.classList.add("preparing");
-    this.performance.currentTime = 0;
-    try {
-      await this.performance.play();
-      if (
-        haunting !== this.haunting ||
-        this.reduced ||
-        this.rider.parentElement?.hidden
-      ) {
-        this.performance.pause();
-        return;
-      }
-      this.rider.classList.add("riding");
-      this.later(() => {
-        if (haunting === this.haunting) this.rider.classList.remove("riding");
-      }, 3200);
-    } catch {
-      this.rider.classList.remove("riding");
-    } finally {
-      this.rider.classList.remove("preparing");
-    }
-  }
-
   private lastTime = 0;
   private render = (time: number) => {
     this.frame = requestAnimationFrame(this.render);
@@ -257,42 +215,6 @@ export class SpectralEffects {
     const c = this.ctx;
     c.clearRect(0, 0, this.width, this.height);
     if (this.reduced) return;
-    c.globalCompositeOperation = "source-over";
-    if (
-      this.rider.classList.contains("riding") &&
-      !this.rider.parentElement?.hidden &&
-      time - this.lastSmoke > 110
-    ) {
-      this.lastSmoke = time;
-      const box = this.performance.getBoundingClientRect();
-      const imageHeight = Math.min(box.height, box.width * 0.75);
-      const x = box.x + box.width * 0.48;
-      const y = box.y + (box.height - imageHeight) / 2 + imageHeight * 0.87;
-      if (x > -80 && x < innerWidth + 80)
-        this.smoke.push({
-          x,
-          y,
-          size: Math.min(180, box.width * 0.18),
-          age: 0,
-        });
-    }
-    for (const puff of this.smoke) {
-      puff.age += dt;
-      puff.x += dt * 20;
-      puff.y -= dt * 4;
-      const swell = 1 + puff.age * 0.65;
-      c.globalAlpha =
-        Math.min(1, puff.age * 8) * Math.max(0, 1 - puff.age / 1.5) * 0.65;
-      c.drawImage(
-        this.smokeBrush,
-        puff.x - puff.size * swell,
-        puff.y - puff.size * 0.3,
-        puff.size * 2 * swell,
-        puff.size * 0.6 * swell,
-      );
-    }
-    this.smoke = this.smoke.filter((p) => p.age < 1.5);
-    c.globalAlpha = 1;
     c.globalCompositeOperation = "lighter";
     if (this.bolt > 0) {
       this.bolt = Math.max(0, this.bolt - dt * 1.9);
@@ -313,14 +235,10 @@ export class SpectralEffects {
     c.globalCompositeOperation = "source-over";
   };
   dispose() {
-    this.performance.pause();
-    this.riderObserver.disconnect();
-    document.removeEventListener("visibilitychange", this.visibility);
     cancelAnimationFrame(this.frame);
     window.removeEventListener("resize", this.resize);
     this.timers.forEach(clearTimeout);
     this.canvas.remove();
-    this.rider.remove();
     this.wash.remove();
   }
 }

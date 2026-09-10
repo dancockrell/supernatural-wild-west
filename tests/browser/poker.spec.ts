@@ -92,11 +92,16 @@ for (const width of [1440, 390])
     await page.goto("/");
     await expect(page.locator("#connection")).toContainText("CONNECTED");
     await expect(page.locator(".player-play-space")).toHaveCount(1);
-    await expect(
-      page.locator(
-        ".opponent-place,.opponent-cards,.dealer-stage,.table-environment",
-      ),
-    ).toHaveCount(0);
+    // VACUOUS ABSENCE, REPLACED. This required
+    // `.opponent-place,.opponent-cards,.dealer-stage,.table-environment` to be
+    // absent. None of those four is written by any source file in any commit -
+    // `.dealer-stage` and `.opponent-*` survive only as orphaned rules in
+    // src/client/player-ui.css, `.table-environment` nowhere at all - so the
+    // count was 0 by construction and the line could not fail whatever the
+    // product did. A tombstone reads exactly like a check and is worth nothing
+    // as one. The property it was reaching for is that this is a one-seat
+    // table, which is falsifiable: a second seat would make it 2.
+    await expect(page.locator(".poker-table .player-seat")).toHaveCount(1);
     expect(
       await page
         .locator(".player-play-space")

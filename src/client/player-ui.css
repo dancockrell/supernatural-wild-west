@@ -189,42 +189,14 @@ footer {
 body:has(.spectacle:not([hidden])) .win-ribbon {
   visibility: hidden;
 }
-.spectacle > .spectral-rider {
-  left: 0;
-  top: 19vh;
-  width: min(68vw, 980px);
-  height: 60vh;
-  transform-origin: 50% 85%;
-  transform: translateX(105vw);
-  opacity: 0;
-}
-.spectral-rider.riding {
-  animation: rider-cross-room 3.04s linear both;
-}
-/* Four articulated strides carry the horse across a gently approaching ground plane. */
-@keyframes rider-cross-room {
-  0% {
-    transform: translate(105vw, -4vh) scale(0.78);
-    opacity: 0;
-  }
-  9% {
-    opacity: 1;
-  }
-  45% {
-    transform: translate(32vw, 0) scale(0.94);
-    opacity: 1;
-  }
-  88% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-78vw, 6vh) scale(1.12);
-    opacity: 0;
-  }
-}
-.spectral-rider video {
-  mask-image: none;
-}
+/* The `.spectral-rider` block that stood here - its placement, its
+   `rider-cross-room` keyframes and the `.riding` animation - is gone with the
+   element. SpectralEffects no longer builds one; see the note at the top of
+   src/client/effects.ts for why the canvas rider could never run. Measured 0
+   elements on `/` and `/?parlor=1` before and after, against positive controls
+   (.storm-wash, #impact-effects) that read 1 in the same sample. Sibling rules
+   for the same dead element survive in cinematics.css and impact.css, which
+   are not this agent's files - reported, not edited. */
 .reduced-motion .feature-ghost {
   animation: none;
 }
@@ -237,11 +209,6 @@ body:has(.spectacle:not([hidden])) .win-ribbon {
   }
   .title-area h1 > span {
     letter-spacing: 0.25em;
-  }
-  .spectacle > .spectral-rider {
-    top: 22vh;
-    width: 85vw;
-    height: 45vh;
   }
   .feature-ghost {
     top: 14vh;
@@ -628,38 +595,7 @@ body:has(.spectacle:not([hidden])) .win-ribbon {
     gap: 10px;
   }
 }
-.spectacle > .spectral-rider {
-  width: min(88vw, 1200px);
-  height: 70vh;
-  top: 14vh;
-}
-@keyframes rider-cross-room {
-  0% {
-    transform: translate(105vw, -6vh) scale(0.75);
-    opacity: 0;
-  }
-  8% {
-    opacity: 1;
-  }
-  42% {
-    transform: translate(28vw, -1vh) scale(0.98);
-    opacity: 1;
-  }
-  74% {
-    transform: translate(-43vw, 3vh) scale(1.13);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-110vw, 7vh) scale(1.2);
-    opacity: 0;
-  }
-}
 @media (max-width: 650px) {
-  .spectacle > .spectral-rider {
-    width: 108vw;
-    height: 55vh;
-    top: 19vh;
-  }
   .card-back {
     border-width: 2px;
   }
@@ -1223,12 +1159,6 @@ body:has(.spectacle:not([hidden])) .win-ribbon {
     filter: brightness(1.4);
   }
 }
-.duel-result {
-  display: block;
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  margin-bottom: 3px;
-}
 @media (min-width: 1200px) {
   .shell {
     max-width: 900px;
@@ -1381,21 +1311,16 @@ body:has(.spectacle:not([hidden])) .win-ribbon {
   overflow: hidden;
   background: linear-gradient(145deg, #291a12, #694626 48%, #20130e);
 }
-.dealer-stage {
-  height: 170px;
-  width: 190px;
-  position: relative;
-  z-index: 3;
-  align-self: end;
-  overflow: hidden;
-}
-.dealer-stage video {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
-  object-position: 50% 35%;
-  mask-image: linear-gradient(#000 85%, transparent);
-}
+/* NON-EXISTENT SELECTORS, REMOVED. `.dealer-stage` (9 rules here) and
+   `.duel-result` (1) were never applied to anything: `git grep dealer-stage`
+   and `duel-result` over the whole history find them only in this file and in
+   test files, and measured at runtime both are 0 elements on `/` and
+   `/?parlor=1`, before and after a spin, in the same sample where .poker-felt,
+   .player-seat and .poker-award each read 1. The remaining two-seat-showdown
+   rules in this file - `.opponent-place`, `.opponent-cards`, `.opponent-seat`
+   and `.poker-table[data-showdown=...]` - measure 0 the same way and are
+   reported rather than removed here, because they share selector lists with
+   live `.poker-table`/`.poker-slot` rules and deserve their own pass. */
 .poker-felt {
   padding: 7px 10px;
   min-width: 0;
@@ -1446,10 +1371,6 @@ body:has(.spectacle:not([hidden])) .win-ribbon {
   .poker-table {
     grid-template-columns: 125px 1fr;
   }
-  .dealer-stage {
-    width: 140px;
-    height: 145px;
-  }
 }
 @media (max-width: 650px) {
   .boundary-cast {
@@ -1491,10 +1412,6 @@ body:has(.spectacle:not([hidden])) .win-ribbon {
     min-height: 110px;
     padding: 0 5px;
   }
-  .dealer-stage {
-    width: 100px;
-    height: 120px;
-  }
   .poker-felt {
     padding: 3px;
   }
@@ -1521,20 +1438,15 @@ body:has(#spectacle:not([hidden])) .boundary-cast {
   filter: brightness(0.62);
   transition: filter 0.35s;
 }
-body:has(#spectacle:not([hidden])) .dealer-stage {
-  filter: brightness(0.65);
-}
 @media(min-width:651px) {.reels .symbol{height:clamp(52px,calc((100svh - 540px)/var(--rows,5)),90px);}}
 @media(min-width:651px) and (max-height:800px) {
  .title-area h1{font-size:32px;}.title-area h1>span{font-size:11px;}.title-area{margin:2px 0 5px;}
- .poker-table{min-height:125px;}.dealer-stage{height:135px;}.poker-cards .poker-slot{height:50px;}.poker-felt{padding:3px 10px;}
+ .poker-table{min-height:125px;}.poker-cards .poker-slot{height:50px;}.poker-felt{padding:3px 10px;}
  .game-meta{min-height:40px;padding:6px 16px;}.locations{padding-top:2px;padding-bottom:2px;}
 }
 /* The opponent occupies his own place at the felt; his hand lands between his fingers. */
 .poker-table { grid-template-columns: 250px minmax(0, 1fr); }
 .opponent-place { position: relative; height: 185px; align-self: end; }
-.opponent-place .dealer-stage { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.opponent-place .dealer-stage video { object-fit: contain; object-position: center bottom; mask-image: none; }
 .opponent-place .opponent-seat { position: absolute; inset: auto 0 0; z-index: 4; margin: 0; }
 .opponent-place .opponent-cards { gap: 2px; justify-content: center; }
 .opponent-place .poker-slot { width: 34px; min-width: 0; height: 44px; flex: 0 0 34px; }
@@ -1584,7 +1496,6 @@ body:has(#spectacle:not([hidden])) .dealer-stage {
 }
 .poker-table .poker-felt { background: none; border: 0; box-shadow: none; border-radius: 0; padding: 0 12px; margin-bottom: 14px; }
 .opponent-place { height: 205px; }
-.opponent-place .dealer-stage { filter: drop-shadow(0 8px 5px #0005); }
 .opponent-place .opponent-seat { bottom: 7px; }
 .opponent-place .poker-slot { width: 38px; flex-basis: 38px; height: 48px; }
 @media (min-width: 1200px) {

@@ -323,13 +323,12 @@ function showSpectacle(
     // 2.2s, so the remaining five seconds were a static card between rounds.
     spectacleTimer = setTimeout(close, reduced ? 900 : kind === "ride" ? 8000 : kind === "brand" ? 7200 : kind === "noon" ? 2600 : 5700);
   }
-  if (kind === "ride" && !reduced && !nativePerformance)
-    void effects.haunt().then(() => {
-      if (sequence !== spectacleSequence || el("spectacle").hidden) return;
-      clearTimeout(spectacleTimer);
-      audio.play("ride");
-      spectacleTimer = setTimeout(close, 3400);
-    });
+  // The `!nativePerformance` fallback that used to hang off here - a canvas
+  // horse crossed by SpectralEffects.haunt() - is gone with the method. It
+  // could not run: cinematics.play('ride') appends a `.feature-ghost` before
+  // its film has loaded, so `nativePerformance` is never null for this kind,
+  // load failure included (that path closes the spectacle through the film's
+  // own error listener above). See the note at the top of effects.ts.
 }
 function dismissSpectacle() { finishSpectacle(false); }
 
