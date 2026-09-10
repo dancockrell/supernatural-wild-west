@@ -1,0 +1,52 @@
+{
+  "_": "Claude writes this file; the bot obeys it. Tighten a threshold to make the bot fussier, add a viewport to widen the sweep, set enabled:false to silence a check while its cause is being fixed.",
+  "url": "http://localhost:5180/?parlor=1",
+  "complaints": "out/complaints.jsonl",
+  "shots_dir": "out/shots",
+  "warmup_spins": 2,
+  "bet_nudges": 1,
+
+  "viewports": [
+    { "width": 1920, "height": 1080, "label": "desktop-16x9" },
+    { "width": 1390, "height": 1558, "label": "tall-window" },
+    { "width": 375,  "height": 812,  "label": "phone-portrait" }
+  ],
+
+  "checks": {
+    "spin_responds": {},
+    "tap_targets": { "min_px": 24 },
+    "legibility": { "min_px": 11, "min_contrast": 3.0 },
+    "ledger": {},
+    "offscreen": {},
+    "overlap": {},
+    "panels": { "panels": ["help", "paytable", "history", "settings"] },
+
+    "grounding": {
+      "tolerance_px": 18,
+      "pairs": {
+        ".ghost-porch.left": ".ghost-porch.left .resident-contact-shadow",
+        ".ghost-porch.right": ".ghost-porch.right .resident-contact-shadow"
+      }
+    },
+
+    "seams": {
+      "threshold": 14,
+      "layers": [
+        ".parlor-foreground-fog",
+        ".parlor-light",
+        ".parlor-floor-repair",
+        ".narrative-gambler",
+        ".boundary-cast",
+        ".parlor-exterior-residents"
+      ]
+    },
+
+    "sprite_motion": { "watch_ms": 30000 },
+
+    "reduced_motion": { "max_movement": 2.0, "skip_viewports": ["phone-portrait"] },
+
+    "letterbox": { "max_waste_pct": 42 },
+
+    "health": {}
+  }
+}
