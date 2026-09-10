@@ -1,10 +1,8 @@
 import {test,expect} from '@playwright/test';
-import {readFileSync} from 'node:fs';
-import ts from 'typescript';
+import {injectClient} from './client-module';
 test('each unique player card starts a fixed-hand ritual without interrupting body acting',async({page})=>{
  await page.setContent('<main></main>');
- const source=readFileSync('src/client/ghost-hand.ts','utf8').replace(/export /g,'')+'\n'+readFileSync('src/client/narrative-gambler.ts','utf8').replace(/^import .*$/gm,'').replace('export class','class');
- await page.addScriptTag({content:ts.transpileModule(source+';Object.assign(window,{NarrativeGambler});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{modules:['ghost-hand','narrative-gambler'],expose:['NarrativeGambler']});
  const result=await page.evaluate(()=>{
   HTMLMediaElement.prototype.play=function(){return Promise.resolve()};HTMLMediaElement.prototype.pause=function(){};HTMLMediaElement.prototype.load=function(){};
   const cues:number[]=[];const g=new (window as any).NarrativeGambler((_c:string,d:number)=>cues.push(d));

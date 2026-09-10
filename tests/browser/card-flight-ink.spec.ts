@@ -1,10 +1,8 @@
 import {test,expect} from '@playwright/test';
-import {readFileSync} from 'node:fs';
-import ts from 'typescript';
+import {injectClient} from './client-module';
 test('flying card ink matches its landing geometry',async({page})=>{
  await page.goto('/?parlor=1');
- const source=['card-face','poker-motion','poker-table'].map(name=>readFileSync(`src/client/${name}.ts`,'utf8').replace(/^import.*;\r?\n/gm,'').replace(/\bexport /g,'')).join('\n');
- await page.addScriptTag({content:ts.transpileModule(source+';Object.assign(window,{ReviewPokerTable:PokerTable});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{modules:['card-face','poker-motion','poker-table'],expose:{ReviewPokerTable:'PokerTable'}});
  await page.evaluate(()=>{
   const animate=Element.prototype.animate;
   Element.prototype.animate=function(frames,options){const a=animate.call(this,frames,options);if(this.classList.contains('poker-flying-card')){a.pause();a.currentTime=219;Object.assign(window,{flight:a});}return a;};

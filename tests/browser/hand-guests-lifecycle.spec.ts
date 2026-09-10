@@ -1,19 +1,19 @@
 import { test, expect } from "@playwright/test";
-import { readFileSync } from "node:fs";
-import ts from "typescript";
+import { injectClient } from "./client-module";
 
 test("cancelled hand films cannot restart from late decode events", async ({
   page,
 }) => {
   await page.setContent('<div id="host"></div>');
-  const source = readFileSync("src/client/poker-guests.ts", "utf8")
-    .replace(/^import .*;\r?\n/gm, "")
-    .replace("export class", "class");
-  await page.addScriptTag({
-    content: ts.transpileModule(
-      `function ghostSprite(){return document.createElement('video');} function parlorResidentMedia(){return {reaction:'test.webm'};} ${source};ADMITTED_V3_HANDS.clear();Object.assign(window,{PokerGuests});`,
-      { compilerOptions: { target: ts.ScriptTarget.ES2022 } },
-    ).outputText,
+  await injectClient(page, {
+    modules: ["ghost-hand", "poker-guests"],
+    stubs: {
+      ghostSprite: "()=>document.createElement('video')",
+      parlorResidentMedia: "()=>({reaction:'test.webm'})",
+    },
+    expose: ["PokerGuests"],
+    // No hand is admitted here: this test is about a cancelled film staying dead.
+    append: "ADMITTED_V3_HANDS.clear();",
   });
   const result = await page.evaluate(() => {
     document.documentElement.classList.add("unified-parlor");

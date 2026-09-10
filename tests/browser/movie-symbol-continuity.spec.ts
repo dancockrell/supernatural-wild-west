@@ -1,12 +1,9 @@
 import {test,expect} from '@playwright/test';
-import {readFileSync} from 'node:fs';
-import ts from 'typescript';
+import {injectClient} from './client-module';
 
 test('reel portraits retain decoded pixels through loop gaps and replace them for a different symbol',async({page})=>{
  await page.setContent('<main><canvas data-movie="queen"></canvas></main>');
- const media=readFileSync('src/client/resident-media.ts','utf8').replace(/export /g,'');
- const source=readFileSync('src/client/movie-loops.ts','utf8').replace(/^import .*$/gm,'').replace(/export /g,'');
- await page.addScriptTag({content:ts.transpileModule(media+'\n'+source+'\nObject.assign(window,{MovieSymbols});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{modules:['resident-media','movie-loops'],expose:['MovieSymbols']});
  const result=await page.evaluate(()=>{
   window.requestAnimationFrame=()=>0;
   HTMLMediaElement.prototype.play=function(){return Promise.resolve();};

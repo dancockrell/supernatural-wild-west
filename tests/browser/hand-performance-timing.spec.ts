@@ -1,26 +1,14 @@
 import { test, expect } from "@playwright/test";
-import { readFileSync } from "node:fs";
-import ts from "typescript";
+import { injectClient } from "./client-module";
 
 test("hand classifications retain their authored timing even when the overall spin is below wager", async ({
   page,
 }) => {
   await page.setContent('<div class="controls"></div><div id="cabinet"></div>');
-  const motion = readFileSync("src/client/poker-motion.ts", "utf8").replace(
-    /export /g,
-    "",
-  );
-  const table = readFileSync("src/client/poker-table.ts", "utf8")
-    .replace(/^import .*;\r?\n/gm, "")
-    .replace("export class", "class");
-  await page.addScriptTag({
-    content: ts.transpileModule(
-      'function cardFace(){return "<span>card</span>";}\n' +
-        motion +
-        table +
-        "\nObject.assign(window,{PokerTable});",
-      { compilerOptions: { target: ts.ScriptTarget.ES2022 } },
-    ).outputText,
+  await injectClient(page, {
+    modules: ["poker-motion", "poker-table"],
+    stubs: { cardFace: '()=>"<span>card</span>"' },
+    expose: ["PokerTable"],
   });
   const result = await page.evaluate(async () => {
     const timings: { duration: number; delay: number }[] = [];

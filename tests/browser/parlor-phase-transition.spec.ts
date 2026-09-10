@@ -1,15 +1,21 @@
 import {test,expect} from '@playwright/test';
-import {readFileSync} from 'node:fs';
-import ts from 'typescript';
+import {injectClient} from './client-module';
 
 test('room phase waits for decoded footage, blends, and releases the outgoing movie',async({page})=>{
  await page.goto('/?parlor=1');
  await page.setViewportSize({width:1672,height:941});
  await page.setContent('<style>body{margin:0;background:#080b10}.parlor-environment{position:absolute;width:100%;inset:0}.parlor-environment[hidden]{display:none}</style><div id="app"><canvas></canvas></div>');
- const source=readFileSync('src/client/parlor-scene.ts','utf8').replace(/^import .*;\r?\n/gm,'').replace('export class','class');
- const stubs='class ExteriorResidents {setReduced(){} dispose(){}} class NarrativeGambler {setReduced(){} dispose(){} noticeRound(){}} class ResidentFog {setReduced(){} dispose(){}}';
- await page.addScriptTag({content:ts.transpileModule(stubs+source+'\nwindow.phaseScene=new ParlorScene(document.querySelector("canvas"));',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{
+  // The cast is deliberately inert here: this test is about the room footage.
+  modules:['parlor-light','parlor-scene'],
+  stubs:{ExteriorResidents:'class {setReduced(){} dispose(){}}',NarrativeGambler:'class {setReduced(){} dispose(){} noticeRound(){}}'},
+  append:'window.phaseScene=new ParlorScene(document.querySelector("canvas"));',
+ });
  const films=page.locator('.parlor-environment');
+ // Assert the population before polling a property of it: `every` on an empty
+ // list is true, so this poll used to pass a scene that had failed to build,
+ // and the test only fell over four lines later on an undefined element.
+ await expect(films).toHaveCount(2);
  await expect.poll(()=>films.evaluateAll(vs=>vs.every(v=>(v as HTMLVideoElement).readyState>=2))).toBe(true);
  await page.evaluate(()=>{
   const scene=(window as any).phaseScene;
@@ -37,9 +43,12 @@ test('room phase waits for decoded footage, blends, and releases the outgoing mo
 
 test('reversing a room transition preserves its displayed blend',async({page})=>{
  await page.setContent('<div id="app"><canvas></canvas></div>');
- const source=readFileSync('src/client/parlor-scene.ts','utf8').replace(/^import .*;\r?\n/gm,'').replace('export class','class');
- const stubs='class ExteriorResidents {setReduced(){} dispose(){}} class NarrativeGambler {setReduced(){} dispose(){} noticeRound(){}} class ResidentFog {setReduced(){} dispose(){}}';
- await page.addScriptTag({content:ts.transpileModule(stubs+source+'\nwindow.phaseScene=new ParlorScene(document.querySelector("canvas"));',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{
+  // The cast is deliberately inert here: this test is about the room footage.
+  modules:['parlor-light','parlor-scene'],
+  stubs:{ExteriorResidents:'class {setReduced(){} dispose(){}}',NarrativeGambler:'class {setReduced(){} dispose(){} noticeRound(){}}'},
+  append:'window.phaseScene=new ParlorScene(document.querySelector("canvas"));',
+ });
  const result=await page.evaluate(()=>{
   const films=[...document.querySelectorAll<HTMLVideoElement>('.parlor-environment')];
   films.forEach(v=>Object.defineProperty(v,'readyState',{configurable:true,get:()=>2}));

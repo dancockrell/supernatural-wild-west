@@ -1,10 +1,12 @@
 import {test,expect} from '@playwright/test';
-import {readFileSync} from 'node:fs';
-import ts from 'typescript';
-const source=readFileSync('src/client/poker-guests.ts','utf8').replace(/^import .*;\r?\n/gm,'').replace('export class','class');
+import {injectClient} from './client-module';
 async function install(page:any){
   await page.setContent('<div id="host"></div>');
-  await page.addScriptTag({content:ts.transpileModule(`function ghostSprite(){return document.createElement('video');} function parlorResidentMedia(){return {reaction:'test.webm'};} ${source};Object.assign(window,{PokerGuests,HAND_PERFORMANCES,ADMITTED_V3_HANDS});`,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+  await injectClient(page,{
+    modules:['ghost-hand','poker-guests'],
+    stubs:{ghostSprite:"()=>document.createElement('video')",parlorResidentMedia:"()=>({reaction:'test.webm'})"},
+    expose:['PokerGuests','HAND_PERFORMANCES','ADMITTED_V3_HANDS'],
+  });
 }
 test('ten unique staged performances require seven native seconds and preserve background ghost roles',async({page})=>{
   await install(page);

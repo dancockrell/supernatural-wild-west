@@ -1,10 +1,8 @@
 import {test,expect} from '@playwright/test';
-import {readFileSync} from 'node:fs';
-import ts from 'typescript';
+import {injectClient} from './client-module';
 test('exterior ghosts ignore ordinary payouts and independently branch for 1000 credits',async({page})=>{
  await page.setContent('<div class="boundary-cast"></div>');
- const source=['character-sequence','resident-sequence','resident-reactions','exterior-residents'].map(name=>readFileSync(`src/client/${name}.ts`,'utf8').replace(/import[\s\S]*?from\s+['"][^'"]+['"];?/g,'').replace(/export /g,'')).join('\n');
- await page.addScriptTag({content:ts.transpileModule(source+'\nObject.assign(window,{ExteriorResidents});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{modules:['character-sequence','resident-sequence','resident-reactions','exterior-residents'],expose:['ExteriorResidents']});
  const result=await page.evaluate(()=>{
   Object.defineProperty(HTMLMediaElement.prototype,'readyState',{configurable:true,get:()=>4});
   Object.defineProperty(HTMLMediaElement.prototype,'seeking',{configurable:true,get:()=>false});

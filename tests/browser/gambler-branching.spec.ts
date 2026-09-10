@@ -1,11 +1,9 @@
 import {test,expect} from '@playwright/test';
-import {readFileSync} from 'node:fs';
-import ts from 'typescript';
+import {injectClient} from './client-module';
 
 test('hand arrivals coalesce, resolutions take priority and hidden tabs clear reactions',async({page})=>{
  await page.setContent('<main></main>');
- const source=readFileSync('src/client/ghost-hand.ts','utf8').replace(/export /g,'')+'\n'+readFileSync('src/client/narrative-gambler.ts','utf8').replace(/^import .*$/gm,'').replace('export class','class');
- await page.addScriptTag({content:ts.transpileModule(source+'\nObject.assign(window,{NarrativeGambler});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{modules:['ghost-hand','narrative-gambler'],expose:['NarrativeGambler']});
  const result=await page.evaluate(()=>{
   Object.defineProperty(HTMLMediaElement.prototype,'readyState',{configurable:true,get:()=>4});
   Object.defineProperty(HTMLMediaElement.prototype,'seeking',{configurable:true,get:()=>false});
@@ -52,8 +50,7 @@ test('hand arrivals coalesce, resolutions take priority and hidden tabs clear re
 
 test('a hand resolving during the deal reacts at the native boundary without a duplicate loss',async({page})=>{
  await page.setContent('<main></main>');
- const source=readFileSync('src/client/ghost-hand.ts','utf8').replace(/export /g,'')+'\n'+readFileSync('src/client/narrative-gambler.ts','utf8').replace(/^import .*$/gm,'').replace('export class','class');
- await page.addScriptTag({content:ts.transpileModule(source+'\nObject.assign(window,{NarrativeGambler});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{modules:['ghost-hand','narrative-gambler'],expose:['NarrativeGambler']});
  const results=await page.evaluate(()=>{
   Object.defineProperty(HTMLMediaElement.prototype,'readyState',{configurable:true,get:()=>4});
   Object.defineProperty(HTMLMediaElement.prototype,'seeking',{configurable:true,get:()=>false});

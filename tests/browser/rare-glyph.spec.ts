@@ -1,5 +1,9 @@
 import {test,expect} from '@playwright/test';
-for(const kind of ['noon','brand'] as const) test(`rare ${kind} has an intentional visible performance and can return safely`,async({page})=>{
+// Noon is not in this list any more: its performance is the authored warm dawn
+// wash, not a glyph, and that contract is owned by "High Noon has a warm reveal
+// and returns without dismissal" in ghosts.spec.ts — which also forbids a sun,
+// horizon or rays graphic. Brand is the only kind still drawn as a glyph.
+for(const kind of ['brand'] as const) test(`rare ${kind} has an intentional visible performance and can return safely`,async({page})=>{
  await page.setViewportSize({width:3840,height:2160});let wagers=0;
  page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/api/spin'))wagers++;});
  await page.goto('/?parlor=1');await expect(page.locator('#spin')).toBeEnabled();

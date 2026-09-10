@@ -1,10 +1,8 @@
 import {test,expect} from '@playwright/test';
-import {readFileSync} from 'node:fs';
-import ts from 'typescript';
+import {injectClient} from './client-module';
 test('quiet arrivals and tab return preserve fixed hand prefixes',async({page})=>{
  await page.setContent('<main></main>');
- const source=readFileSync('src/client/ghost-hand.ts','utf8').replace(/export /g,'')+'\n'+readFileSync('src/client/narrative-gambler.ts','utf8').replace(/^import .*$/gm,'').replace('export class','class');
- await page.addScriptTag({content:ts.transpileModule(source+';Object.assign(window,{NarrativeGambler});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{modules:['ghost-hand','narrative-gambler'],expose:['NarrativeGambler']});
  const result=await page.evaluate(()=>{
   HTMLMediaElement.prototype.play=function(){return Promise.resolve()};HTMLMediaElement.prototype.pause=function(){};HTMLMediaElement.prototype.load=function(){};
   let now=1000;Object.defineProperty(performance,'now',{value:()=>now});
@@ -27,9 +25,12 @@ test('quiet arrivals and tab return preserve fixed hand prefixes',async({page})=
 });
 test('cancelled player flights cannot notify the ghost and feature score owns foley priority',async({page})=>{
  await page.setContent('<div class="cabinet"></div><div class="controls"></div><div class="symbol"></div>');
- const poker=readFileSync('src/client/poker-table.ts','utf8').replace(/^import .*;\r?\n/gm,'').replace('export class','class');
- const sound=readFileSync('src/client/audio.ts','utf8').replace(/export /g,'');
- await page.addScriptTag({content:ts.transpileModule(`const cardFace=()=>'';const handChoreographyIndices=()=>[];const handMotion=()=>({name:'none'});${poker};${sound};Object.assign(window,{PokerTable,SoundBus});`,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{
+  modules:['poker-table','audio'],
+  // A motion with no frames: this test is about the flight being cancelled, not staged.
+  stubs:{cardFace:"()=>''",handChoreographyIndices:'()=>[]',handMotion:"()=>({name:'none'})",stageHandFrames:'frames=>frames'},
+  expose:['PokerTable','SoundBus'],
+ });
  const result=await page.evaluate(async()=>{
   let finish:()=>void=()=>{};HTMLElement.prototype.animate=function(){return {finished:new Promise<void>(r=>finish=r)} as unknown as Animation};
   const arrivals:string[]=[];const table=new (window as any).PokerTable(document.querySelector('.cabinet'),()=>{},(token:string)=>arrivals.push(token));
@@ -46,8 +47,11 @@ test('cancelled player flights cannot notify the ghost and feature score owns fo
 
 test('complete unpaid High card starts a reaction without paid-hand sound or matching celebration',async({page})=>{
  await page.setContent('<div class="cabinet"></div><div class="controls"></div>');
- const source=readFileSync('src/client/poker-table.ts','utf8').replace(/^import .*;\r?\n/gm,'').replace('export class','class');
- await page.addScriptTag({content:ts.transpileModule(`const cardFace=()=>'';const handChoreographyIndices=()=>[];const handMotion=()=>({name:'high-card'});${source};Object.assign(window,{PokerTable});`,{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{
+  modules:['poker-table'],
+  stubs:{cardFace:"()=>''",handChoreographyIndices:'()=>[]',handMotion:"()=>({name:'high-card'})",stageHandFrames:'frames=>frames'},
+  expose:['PokerTable'],
+ });
  const result=await page.evaluate(async()=>{
    HTMLElement.prototype.animate=function(){return {finished:Promise.resolve()} as unknown as Animation;};
    const sounds:string[]=[],events:string[]=[];const table=new (window as any).PokerTable(document.querySelector('.cabinet'),(s:string)=>sounds.push(s));

@@ -1,12 +1,9 @@
 import {test,expect} from '@playwright/test';
-import {readFileSync} from 'node:fs';
-import ts from 'typescript';
+import {injectClient} from './client-module';
 
 test('visibility changes hold the outgoing resident until the incoming frame is ready',async({page})=>{
  await page.setContent('<div id="slot"></div>');
- const sequence=readFileSync('src/client/character-sequence.ts','utf8').replace(/export /g,'');
- const adapter=readFileSync('src/client/resident-sequence.ts','utf8').replace(/import[\s\S]*?from "\.\/character-sequence";/,'').replace('export class','class');
- await page.addScriptTag({content:ts.transpileModule(sequence+'\n'+adapter+'\nObject.assign(window,{ResidentSequence});',{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText});
+ await injectClient(page,{modules:['character-sequence','resident-sequence'],expose:['ResidentSequence']});
  const result=await page.evaluate(()=>{
   HTMLMediaElement.prototype.load=function(){};
   const slot=document.getElementById('slot')!;
