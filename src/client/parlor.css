@@ -517,3 +517,116 @@ body:not(.night) .parlor-floor-repair { filter:brightness(1.22) contrast(1.12) s
   .unified-parlor .controls #spin-label { font-size:11px; line-height:1; white-space:nowrap; }
   .unified-parlor .controls .history-button { height:28px; font-size:14px; }
 }
+
+/* ---------------------------------------------------------------------------
+   Portrait phones: put the game below the room instead of inside it.
+
+   The parlor is a hand-authored 1672x941 coordinate system, and every control
+   is placed in cqw against the stage. That works whenever the window is
+   roughly that shape. On a portrait phone it collapses: at 390x1000 the stage
+   binds on width, so it is 468x263 and uses 26% of the window, while the whole
+   game column is squeezed into those 263 pixels. Measured there, the controls
+   rail ends at 602.6, the stage ends at 631.7 and the player's hand is 28px
+   tall - a 1.1px window for it - and .under-controls sits entirely below the
+   stage. Two tests were correctly reporting that as a collision and no amount
+   of nudging fixes it, because the content genuinely needs more room than the
+   stage has.
+
+   Overscanning harder does not help either: the game column is 34.99cqw wide,
+   so it grows with the stage. Sizing the stage until the column fills a 390px
+   screen means a stage 1114px wide, which crops the visible band to 32.5cqw to
+   67.5cqw - exactly the column, and nothing else. The women stand at 0cqw and
+   14cqw and the gambler at 74cqw, so that trade buys usable controls by
+   deleting every character from the screen, which is most of what this game is.
+
+   So the room keeps its authored framing at the top of the window, at whatever
+   size fits, and the game column leaves the stage's coordinate system and
+   stacks underneath it in real pixels - into the 737px that were empty. The
+   stage art is unchanged and uncropped vertically; nothing about the landscape
+   layout is touched, because none of this applies above 0.7 aspect.
+
+   Threshold: 7/10 rather than 4/5, so 800x1000 (0.8) keeps the authored layout
+   that tests/browser/parlor.spec.ts pins by stage-relative offsets.
+   --------------------------------------------------------------------------- */
+@media (max-aspect-ratio: 7/10) {
+  /* The room sits at the top of the window. #app still clips, so letting the
+     stage overflow only frees the column below it - the horizontal overscan is
+     cropped exactly as before. */
+  .unified-parlor .parlor-stage { top:0; overflow:visible; }
+
+  /* Out of the stage's coordinate system and centred on the WINDOW, not on the
+     stage: the stage is wider than the viewport by its own overscan, so half
+     that difference is subtracted back out. */
+  .unified-parlor .game {
+    position:absolute; top:calc(var(--parlor-h) + 8px);
+    left:calc((var(--parlor-w) - 100vw) / 2 + 8px);
+    width:calc(100vw - 16px); max-width:none;
+    display:flex; flex-direction:column; gap:6px; z-index:5;
+  }
+
+  /* Everything below here is the same column in normal flow. Each rule undoes
+     one authored absolute position; the sizes are real pixels because there is
+     no longer a stage to scale against. */
+  .unified-parlor .game-meta {
+    position:relative; top:auto; height:auto; min-height:26px;
+    padding:0 92px 0 0; font-size:12px; justify-content:flex-start;
+  }
+  .unified-parlor .game-meta #phase { font-size:12px; }
+  .unified-parlor .game-meta #paytable { min-height:26px; padding:0 10px; font-size:11px; }
+
+  .unified-parlor .cabinet {
+    position:relative; height:auto; width:100%;
+    display:flex; flex-direction:column; gap:4px;
+  }
+  /* top:auto matters: the container query above pulls this row up by 26px to
+     hang it off the cabinet, and position:relative alone would keep that
+     offset and drop the buttons straight onto the phase line. */
+  .unified-parlor .locations { position:relative; top:auto; height:auto; min-height:26px; gap:4px; font-size:11px; }
+  .unified-parlor .locations button { height:26px; min-height:26px; line-height:26px; padding:0 8px; font-size:11px; }
+  /* The board is square, so left to fill the column it grows with the screen
+     width and runs off the bottom - measured at 600x1000, the column ended at
+     1265 in a 1000px window. It is bounded by whichever runs out first, the
+     column's width or the height left under the room. The 280px is everything
+     else in the column measured at 390x1000: meta 26, locations 26, event 18,
+     controls 40, hand 66, under-controls 28, plus the gaps and the 8px under
+     the stage. --parlor-h inherits from .parlor-stage, which is still this
+     element's ancestor; only the positioning left the stage, not the DOM. */
+  .unified-parlor .reels {
+    position:relative; inset:auto; height:auto; aspect-ratio:1/1; gap:3px; padding:3px;
+    width:min(100%, calc(100svh - var(--parlor-h) - 280px)); margin-inline:auto;
+  }
+  .unified-parlor .symbol { height:auto; min-height:0; }
+
+  .unified-parlor .event-line {
+    position:relative; top:auto; height:auto; min-height:18px; width:100%;
+    font-size:12px; z-index:auto;
+  }
+  .unified-parlor .controls {
+    position:relative; top:auto; left:auto; width:100%; height:auto; min-height:40px;
+    display:flex; align-items:center; justify-content:space-between; gap:6px; padding:0 4px;
+  }
+  /* The cluster and the autoplay button are sized in cqw and nothing floored
+     them: measured at 600x1000 the cluster was 23px tall around a 32px spin
+     button, with 5.76px text on the cluster and 4.32px on autoplay. */
+  .unified-parlor .controls .spin-cluster { display:flex; align-items:center; gap:8px; height:auto; font-size:11px; }
+  .unified-parlor .controls #autoplay { width:auto; min-width:40px; height:32px; padding:0 8px; font-size:10px; line-height:1; }
+  /* The winning gestures lift a card about 15px out of the hand (measured:
+     the raised card crossed the rail by 9.4px over a 6px gap), so the hand
+     needs more than the column gap between it and the controls. There is room:
+     the column ends 107px above the bottom of a 390x1000 window. */
+  .unified-parlor .player-play-space { position:relative; top:auto; width:100%; margin-top:18px; }
+  .unified-parlor .player-play-space .poker-slot { flex:0 1 46px; width:46px; height:62px; }
+  .unified-parlor .under-controls { position:relative; top:auto; width:100%; font-size:11px; }
+
+  /* The hand performance is anchored 42cqw above the player's hand, which puts
+     it over the reels in the authored stage. Here cqw still measures the stage
+     while the column has its own geometry, so that offset lands the marquee
+     18px inside the controls rail (measured: marquee bottom 755, rail top
+     737). Re-anchored to the column instead: bottom 52px above the hand, which
+     clears the rail, and a height that keeps the performance over the board
+     where it belongs. parlor.css is imported after cinematics.css, so matching
+     its specificity is enough to win. */
+  .unified-parlor .poker-table.player-play-space .poker-guests.large-hand-stage {
+    top:auto; bottom:calc(100% + 52px); left:50%; width:100%; height:min(58vw,260px);
+  }
+}

@@ -14,19 +14,27 @@ for(const width of [3840,1440,390]) test(`foreground hand clears controls throug
   const cards=[...document.querySelectorAll<HTMLElement>('.poker-cards .poker-slot')];
   const controls=document.querySelector('.controls')!.getBoundingClientRect();
   const stage=document.querySelector('.parlor-stage')!.getBoundingClientRect();
+  // Below 0.7 aspect the game column deliberately leaves the stage and stacks
+  // underneath it (see the portrait block in parlor.css), because the authored
+  // 1672x941 frame cannot hold it on a phone - at 390x1000 it left a 1.1px
+  // window for the hand. So the thing the hand must stay inside is the stage
+  // in the authored layout and the window in portrait. Same property, and the
+  // portrait case is the stricter one: the window is what the player can see.
+  const portrait=innerWidth/innerHeight<=.7;
+  const floor=portrait?innerHeight:stage.bottom;
   let top=Infinity,bottom=-Infinity;
   for(const gesture of gestures) {
    const animations=cards.map((card,i)=>{const a=card.animate(gesture.frames[i],{duration:1000,easing:'cubic-bezier(.22,.7,.3,1)',fill:'both'});a.pause();return a;});
    for(let t=0;t<=1000;t+=25) {
     animations.forEach(a=>a.currentTime=t);
-    for(const card of cards){const r=card.getBoundingClientRect();top=Math.min(top,r.top-controls.bottom);bottom=Math.max(bottom,r.bottom-stage.bottom);}
+    for(const card of cards){const r=card.getBoundingClientRect();top=Math.min(top,r.top-controls.bottom);bottom=Math.max(bottom,r.bottom-floor);}
    }
    animations.forEach(a=>a.cancel());
   }
   const award=document.querySelector('.poker-award')!.getBoundingClientRect();
   const status=document.querySelector('#connection')!.getBoundingClientRect();
   const text=document.createRange();text.selectNodeContents(document.querySelector('.poker-award')!);const ink=text.getBoundingClientRect();
-  if(ink.bottom>stage.bottom+.5)throw new Error('Award below stage');
+  if(ink.bottom>floor+.5)throw new Error(portrait?'Award below the window':'Award below stage');
   if(ink.left<status.right&&ink.right>status.left&&ink.top<status.bottom&&ink.bottom>status.top)throw new Error('Award overlaps connection');
   return {top,bottom};
  },gestures);
