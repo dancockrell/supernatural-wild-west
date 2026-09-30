@@ -32,3 +32,5 @@ This repository starts with the current version. Previous Git history, discarded
 ## Development status
 
 Playable prototype, not certified. Both women have their original morning animation coverage restored: five room idles and one win reaction each, four female feature performances, and four female poker-hand performances. These twenty native films and matching posters are unchanged from `e836ec3`; `docs/women-performance-restoration.json` records their hashes. No character uses motion transfer or added body fog, relighting, or displacement. The original films retain their source-baked supernatural details; restoring their performances does not claim new matte cleanup. Current layout, floor shadows, sound cues, and reduced-motion controls remain. Remaining work includes visual refinement and sustained sound/device/accessibility evaluation.
+
+Pitch and licensing handoff: [current demo guide](docs/PITCH-DEMO.md), with demonstration steps, delivery requirements and outstanding acceptance items.

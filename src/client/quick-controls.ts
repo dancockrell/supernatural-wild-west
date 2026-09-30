@@ -1,3 +1,4 @@
+import { storage } from "./storage";
 import type { SoundBus } from "./audio";
 
 export function installQuickControls(
@@ -22,7 +23,7 @@ export function installQuickControls(
   for (const slider of [music, effects])
     slider.addEventListener("input", () => {
       audio.setLevels(Number(music.value) / 100, Number(effects.value) / 100);
-      localStorage.setItem("dd-mix", JSON.stringify(audio.levels));
+      storage.setItem("dd-mix", JSON.stringify(audio.levels));
       sync();
     });
   sync();

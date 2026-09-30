@@ -34,6 +34,10 @@ export class DemoRgsAdapter implements RgsAdapter {
   async connect() {
     return (await this.reconnect()).state;
   }
+  resetPublicDemo() {
+    if (!this.browser) throw new Error("Restart is available only in the public demo");
+    this.browser.reset();
+  }
   spin(r: SpinRequest) {
     return this.browser ? this.browser.spin(r) : request<SpinResult>("spin", r);
   }

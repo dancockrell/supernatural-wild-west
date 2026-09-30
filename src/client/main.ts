@@ -1,3 +1,5 @@
+import { storage, PUBLIC_PENDING_KEY } from "./storage";
+import { validSpinRequest } from "./demo-session";
 import { MovieSymbols } from "./movie-loops";
 import { BoundaryCast } from "./boundary-cast";
 import { POKER_PAYS as LEGACY_POKER_PAYS } from "../engine/legacy/poker-v12";
@@ -70,6 +72,7 @@ app.innerHTML = `<canvas id="frontier" aria-label="An animated cursed frontier s
 const el = <T extends HTMLElement = HTMLElement>(id: string) =>
   document.getElementById(id) as T;
 if(import.meta.env.MODE === "public-demo" && !location.search) history.replaceState(null,"",`${location.pathname}?parlor=1`);
+const pendingKey = import.meta.env.MODE === "public-demo" ? PUBLIC_PENDING_KEY : "dd-pending";
 const adapter = new DemoRgsAdapter(),
   audio = new SoundBus();
 const effects = new SpectralEffects();
@@ -85,7 +88,7 @@ const boundary = new BoundaryCast(document.querySelector(".shell")!, (cue) =>
   audio.play(cue),
 );
 try {
-  const mix = JSON.parse(localStorage.getItem("dd-mix") || "null");
+  const mix = JSON.parse(storage.getItem("dd-mix") || "null");
   if (mix && Number.isFinite(mix.music) && Number.isFinite(mix.effects))
     audio.setLevels(mix.music, mix.effects);
 } catch {
@@ -104,10 +107,10 @@ let state: GameState | undefined,
 let scene: FrontierScene | ParlorScene | undefined;
 const motionQuery = matchMedia("(prefers-reduced-motion: reduce)");
 let reduced =
-  localStorage.getItem("dd-motion") === null
+  storage.getItem("dd-motion") === null
     ? motionQuery.matches
-    : localStorage.getItem("dd-motion") === "true";
-audio.enabled = localStorage.getItem("dd-audio") === "true";
+    : storage.getItem("dd-motion") === "true";
+audio.enabled = storage.getItem("dd-audio") === "true";
 const modal = el<HTMLDialogElement>("modal");
 const spinCluster = document.createElement("div");
 spinCluster.className = "spin-cluster";
@@ -605,10 +608,10 @@ async function spin(automatic = false): Promise<SpinResult | undefined> {
           ? state.roundBet
           : CONFIG.bets[betIndex],
   };
-  localStorage.setItem("dd-pending", JSON.stringify(request));
+  storage.setItem(pendingKey, JSON.stringify(request));
   try {
     const result = await adapter.spin(request);
-    localStorage.removeItem("dd-pending");
+    storage.removeItem(pendingKey);
     await animate(result);
     await new Promise((r) =>
       setTimeout(r, Math.max(0, 2500 - (performance.now() - started))),
@@ -616,7 +619,7 @@ async function spin(automatic = false): Promise<SpinResult | undefined> {
     return result;
   } catch (e) {
     if (e instanceof RgsError && (e.status === 400 || e.status === 409))
-      localStorage.removeItem("dd-pending");
+      storage.removeItem(pendingKey);
     document
       .querySelectorAll(".reel")
       .forEach((r) => r.classList.remove("rolling"));
@@ -628,6 +631,12 @@ async function spin(automatic = false): Promise<SpinResult | undefined> {
     busy = false;
     refresh();
   }
+}
+function readPending(value: string): SpinRequest | undefined {
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (validSpinRequest(parsed)) return parsed;
+  } catch { /* Discard malformed pending data; the adapter owns the ledger. */ }
 }
 async function connect() {
   boundary.reset();
@@ -650,24 +659,27 @@ async function connect() {
         "This session belongs to another math version. Use the matching archived release or a new browser profile",
       );
     if (lastResult) betIndex = Math.max(0, CONFIG.bets.indexOf(lastResult.bet));
-    const pending = localStorage.getItem("dd-pending");
+    const pending = storage.getItem(pendingKey);
     if (pending) {
-      const request = JSON.parse(pending) as SpinRequest;
-      if (
-        state.sequence === request.expectedSequence ||
-        lastResult?.id === request.requestId
-      ) {
-        const result = await adapter.spin(request);
-        applyResult(result);
+      const request = readPending(pending);
+      if (request) {
+        if (
+          state.sequence === request.expectedSequence ||
+          lastResult?.id === request.requestId
+        ) {
+          const result = await adapter.spin(request);
+          await applyResult(result);
+        } else {
+          if (lastResult) await applyResult(lastResult);
+          setStatus("Session recovered. A newer round superseded the pending request.");
+        }
       } else {
-        if (lastResult) applyResult(lastResult);
-        setStatus(
-          "Session recovered from the server. A newer round superseded the pending request.",
-        );
+        if (lastResult) await applyResult(lastResult);
+        setStatus("Session restored. Unreadable pending round data was discarded.");
       }
-      localStorage.removeItem("dd-pending");
+      storage.removeItem(pendingKey);
     } else if (lastResult) {
-      applyResult(lastResult);
+      await applyResult(lastResult);
       setStatus("Welcome back. Your last settled round has been restored.");
     } else
       setStatus(
@@ -713,7 +725,7 @@ function audioButton() {
 }
 el("audio").onclick = () => {
   audio.enabled = !audio.enabled;
-  localStorage.setItem("dd-audio", String(audio.enabled));
+  storage.setItem("dd-audio", String(audio.enabled));
   audioButton();
   audio.play("stop");
 };
@@ -748,7 +760,7 @@ function applyMotion() {
 }
 applyMotion();
 motionQuery.addEventListener("change", (e) => {
-  if (localStorage.getItem("dd-motion") === null) {
+  if (storage.getItem("dd-motion") === null) {
     reduced = e.matches;
     applyMotion();
   }
@@ -767,6 +779,27 @@ el("settings").onclick = () => {
     '<button id="feature-showcase" class="action-button">Feature showcase</button><button id="autoplay-settings" class="outline-button">Autoplay settings</button>',
   );
   el("autoplay-settings").onclick = showAutoplaySettings;
+  if (import.meta.env.MODE === "public-demo") {
+    const unavailable = busy || pokerGuests.active || !el("spectacle").hidden;
+    el("modal-body").insertAdjacentHTML("beforeend",
+      `<p class="fine">Start over with ${money(CONFIG.initialBalance)} fictional credits. This clears this demo's round history and current hand.</p><button id="restart-demo" class="outline-button" ${unavailable ? "disabled" : ""}>Restart demo & refill credits</button>${unavailable ? '<p class="fine">Finish the current presentation before restarting.</p>' : ''}`);
+    el("restart-demo").onclick = async () => {
+      if (busy || pokerGuests.active || !el("spectacle").hidden) return;
+      autoplay.stop();
+      busy = true;
+      try {
+        adapter.resetPublicDemo();
+        betIndex = 2;
+        drawGrid(attract);
+        el("win").textContent = money(0);
+        modal.close();
+        await connect();
+      } finally {
+        busy = false;
+        refresh();
+      }
+    };
+  }
   el("feature-showcase").onclick = showAnimationPreview;
   el("animation-preview").onclick = showAnimationPreview;
   el("math-lab").onclick = showMathLab;
@@ -780,16 +813,16 @@ el("settings").onclick = () => {
         Number(el<HTMLInputElement>("music-volume").value) / 100,
         Number(el<HTMLInputElement>("effects-volume").value) / 100,
       );
-      localStorage.setItem("dd-mix", JSON.stringify(audio.levels));
+      storage.setItem("dd-mix", JSON.stringify(audio.levels));
     };
   el<HTMLInputElement>("motion-setting").onchange = (e) => {
     reduced = (e.target as HTMLInputElement).checked;
-    localStorage.setItem("dd-motion", String(reduced));
+    storage.setItem("dd-motion", String(reduced));
     applyMotion();
   };
   el<HTMLInputElement>("sound-setting").onchange = (e) => {
     audio.enabled = (e.target as HTMLInputElement).checked;
-    localStorage.setItem("dd-audio", String(audio.enabled));
+    storage.setItem("dd-audio", String(audio.enabled));
     audioButton();
     audio.play("stop");
   };
