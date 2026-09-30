@@ -1,4 +1,4 @@
-import { readFileSync,writeFileSync,readdirSync } from 'node:fs';
+import { readFileSync,writeFileSync,readdirSync,mkdirSync,copyFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { buildFeatureGallery } from '../server/showcase';
 const revision=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
@@ -15,4 +15,6 @@ for(const name of readdirSync('demo-dist/assets')){
 }
 writeFileSync('demo-dist/feature-gallery.json',JSON.stringify(buildFeatureGallery()));
 writeFileSync('demo-dist/.nojekyll','');
+mkdirSync('demo-dist/licenses',{recursive:true});
+for(const family of ['cinzel','dm-sans'])copyFileSync(`node_modules/@fontsource/${family}/LICENSE`,`demo-dist/licenses/${family}-OFL.txt`);
 writeFileSync('demo-dist/build.json',JSON.stringify({revision,mediaRevision,mode:'fictional-credit-browser-demo'}));
