@@ -85,6 +85,22 @@ describe('native idle repertoire', () => {
   });
   afterEach(() => vi.unstubAllGlobals());
 
+  it('loads only the next idle after playback, and reactions only when requested', () => {
+    const idle=new Clip(), next=new Clip(), later=new Clip(), reaction=new Clip();
+    const sequence=new ResidentSequence({prepend:vi.fn(),append:vi.fn()} as unknown as HTMLElement,
+      idle as unknown as HTMLVideoElement,reaction as unknown as HTMLVideoElement,
+      ()=>true,()=>{},[next,later] as unknown as HTMLVideoElement[]);
+    for(const clip of [next,later,reaction]){
+      expect(clip.preload).toBe('none');expect(clip.load).not.toHaveBeenCalled();
+    }
+    sequence.setPaused(false);
+    expect(next.load).toHaveBeenCalledTimes(1);
+    expect(later.load).not.toHaveBeenCalled();expect(reaction.load).not.toHaveBeenCalled();
+    idle.dispatchEvent(new Event('playing'));
+    expect(next.load).toHaveBeenCalledTimes(1);
+    sequence.enqueue();expect(reaction.load).toHaveBeenCalledTimes(1);
+  });
+
   it('changes idle only at the endpoint and gives a queued reaction priority', () => {
     const s = setup();
     expect(s.shown()).toBe(s.idle);

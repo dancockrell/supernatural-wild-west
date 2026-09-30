@@ -14,6 +14,7 @@ export class ResidentSequence {
   private awaitingFrame = false;
   private handoff = new AbortController();
   private heldFrame?: HTMLCanvasElement;
+  private warmed = new WeakSet<HTMLVideoElement>();
   constructor(
     private slot: HTMLElement,
     private idle: HTMLVideoElement,
@@ -27,12 +28,18 @@ export class ResidentSequence {
     for (const clip of [idle, ...idleVariants, reaction]) clip.loop = false;
     idle.dataset.performance = "idle";
     reaction.dataset.performance = "reaction";
-    reaction.preload = "auto";
+    // Let the visible performances load before optional films compete for bandwidth.
+    // Every native clip remains in the repertoire; prepare only the next boundary.
+    for (const clip of [...idleVariants, reaction]) clip.preload = "none";
+    this.warmed.add(idle);
     for (const video of [idle, ...idleVariants, reaction]) {
       video.dataset.performance = video === reaction ? 'reaction' : 'idle';
       video.addEventListener("playing", () => {
         if (video !== this.current) return;
         this.sequence.markStarted(this.sequence.current.token);
+        const choices = [idle, ...idleVariants];
+        const index = choices.indexOf(video);
+        this.warm(choices[index < 0 ? 0 : (index + 1) % choices.length]);
         if (
           video === reaction &&
           this.sequence.cue(this.sequence.current.token, "foley")
@@ -62,8 +69,12 @@ export class ResidentSequence {
         if (next && video !== idle) this.apply(next);
       });
     }
-    reaction.load();
-    idleVariants.forEach(clip => clip.load());
+  }
+  private warm(clip: HTMLVideoElement) {
+    if (this.warmed.has(clip) && !clip.error) return;
+    this.warmed.add(clip);
+    clip.preload = "auto";
+    clip.load();
   }
   enqueue(priority = 1) {
     this.sequence.enqueue({
@@ -73,7 +84,7 @@ export class ResidentSequence {
       coalesceKey: "resident-event",
       cues: ["foley"],
     });
-    if (this.reaction.error) this.reaction.load();
+    this.warm(this.reaction);
   }
   advanceTurn() {
     this.sequence.advanceTurn();

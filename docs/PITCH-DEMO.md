@@ -20,9 +20,9 @@ The current build uses fictional browser-local credits. The server adapter is a 
 
 ## Delivery
 
-Use Node 22.12 or later. `npm ci`, `npm test` and `npm run build` validate the source and ordinary client build. For the public demo, commit and publish the intended source revision before running `npm run build:demo`. Publish `demo-dist` to the existing GitHub Pages branch. `build.json` identifies the source revision.
+Use Node 22.12 or later. `npm ci`, `npm test` and `npm run build` validate the source and ordinary client build. For the public demo, commit and publish the intended source revision before running `npm run build:demo`. Publish `demo-dist` to the existing GitHub Pages branch. `build.json` identifies the source and media revisions.
 
-The public package deliberately loads art, audio and video from the source repository at that revision. It requires network access; it is not a self-contained offline package. A licensing recipient needing private hosting or offline exhibition will need the complete runtime media listed in `runtime-assets.json` and adjusted hosting paths.
+The public package deliberately loads art, audio and video from the source repository at the latest commit with the identical media tree. Code-only releases retain the cached media URLs. It requires network access; it is not a self-contained offline package. A licensing recipient needing private hosting or offline exhibition will need the complete runtime media listed in `runtime-assets.json` and adjusted hosting paths.
 
 ## Handoff inventory and remaining acceptance
 
